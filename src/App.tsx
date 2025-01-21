@@ -1,9 +1,10 @@
 import { Button } from '@/components/Button/Button';
+import Layout from './layouts';
 
 function App() {
   return (
     <div>
-      <Button label="Click me" onClick={() => {}} />
+      <Layout />
     </div>
   );
 }
