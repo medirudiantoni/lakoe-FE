@@ -1,21 +1,9 @@
-import { InputGroup } from '@/components/ui/input-group';
-import { Switch } from '@/components/ui/switch';
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  Image,
-  Input,
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
-  Text,
-} from '@chakra-ui/react';
-import { ChevronDown, Link, PackageSearch } from 'lucide-react';
-import CheckBox from './checkbox';
+
+import { InputGroup } from "@/components/ui/input-group"
+import { Switch } from "@/components/ui/switch"
+import { Box, Button, Flex, Grid, GridItem, Image, Input, MenuContent, MenuItem, MenuRoot, MenuTrigger, Text } from "@chakra-ui/react"
+import { ChevronDown, Link, PackageSearch } from "lucide-react"
+import CheckBox from "./Checkbox"
 
 const TabContentAll = () => {
   return (
