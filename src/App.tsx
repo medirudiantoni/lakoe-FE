@@ -7,9 +7,6 @@ import Layout from "./components/layout/Layout";
 import Order from "./components/page/orderpage/Order";
 import Setting from "./components/page/settingpage/Setting";
 
-
-
-
 function App() {
   const router = createBrowserRouter (
     [

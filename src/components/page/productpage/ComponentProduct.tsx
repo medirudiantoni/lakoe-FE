@@ -1,6 +1,10 @@
-import { InputGroup } from "@/components/ui/input-group"
-import { Box, Button, Flex, Grid, GridItem, Input, MenuContent, MenuItem, MenuRoot, MenuTrigger, Tabs, Text } from "@chakra-ui/react"
-import { ChevronDown, CirclePlus, PackageSearch } from "lucide-react"
+
+import { Box, Button, Flex, Tabs, Text } from "@chakra-ui/react"
+import { CirclePlus } from "lucide-react"
+
+import TabContentAll from "./component-product/TabContentAll"
+import TabContentActive from "./component-product/TabContentActive"
+import TabContentNonActive from "./component-product/TabContentNonActive"
 
 const ComponentProduct = () => {
     return(
@@ -29,59 +33,13 @@ const ComponentProduct = () => {
                 </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="semua">
-                <Box>
-                <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2}>
-                  <GridItem>
-                  <InputGroup
-                  flex="1"
-                  startElement={<PackageSearch />}
-                  width={'100%'}
-                              
-                >
-                  <Input marginLeft={2} placeholder="Search produk" />
-                </InputGroup>
-
-                  </GridItem>
-                  <GridItem>
-                  <MenuRoot>
-                    <MenuTrigger asChild>
-                      <Button variant={"outline"}  width={'100%'} display={'flex'} justifyContent={'space-between'}>
-                        <span className="font-normal">Semua Kategori</span>
-                        <ChevronDown />
-                      </Button>
-                    </MenuTrigger>
-                    <MenuContent>
-                      <MenuItem value="new-txt">New Text File</MenuItem>
-                      <MenuItem value="new-file">New File...</MenuItem>
-                      <MenuItem value="new-win">New Window</MenuItem>
-                      <MenuItem value="open-file">Open File...</MenuItem>
-                      <MenuItem value="export">Export</MenuItem>
-                    </MenuContent>
-                  </MenuRoot>
-                  </GridItem>
-                  <GridItem>
-                  <MenuRoot>
-                    <MenuTrigger asChild>
-                    <Button variant={"outline"}  width={'100%'} display={'flex'} justifyContent={'space-between'}>
-                        <span className="font-normal">Urutkan</span>
-                        <ChevronDown />
-                      </Button>
-                    </MenuTrigger>
-                    <MenuContent>
-                      <MenuItem value="new-txt">New Text File</MenuItem>
-                      <MenuItem value="new-file">New File...</MenuItem>
-                      <MenuItem value="new-win">New Window</MenuItem>
-                      <MenuItem value="open-file">Open File...</MenuItem>
-                      <MenuItem value="export">Export</MenuItem>
-                    </MenuContent>
-                  </MenuRoot>
-                  </GridItem>
-                </Grid>
-                </Box>
+                <TabContentAll/>
               </Tabs.Content>
-              <Tabs.Content value="aktif">Manage your projects</Tabs.Content>
+              <Tabs.Content value="aktif">      
+                <TabContentActive/>
+                </Tabs.Content>
               <Tabs.Content value="tidak aktif">
-                Manage your tasks for freelancers
+                <TabContentNonActive/>
               </Tabs.Content>
             </Tabs.Root>
           </Box>
