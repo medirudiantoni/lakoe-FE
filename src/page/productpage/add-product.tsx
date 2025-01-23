@@ -1,7 +1,7 @@
 import Navbar from '@/components/navbar/Navbar';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import SideBar from '../sidebar/SideLeftBar';
-import { AddProductContent } from './component-product/add-product-content';
+import { AddProductContent } from './component-product/component-add-product-content';
 
 export function AddProduct() {
   return (

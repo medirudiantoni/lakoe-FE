@@ -329,7 +329,6 @@ export function AddProductContent() {
       >
         <Box display={'flex'} justifyContent={'space-between'}>
           <Button variant="outline" borderRadius={'20px'}>
-            {' '}
             Preview Halaman Checkout
           </Button>
           <Box display={'flex'} gap={2}>

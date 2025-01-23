@@ -13,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ChevronDown, PackageOpen, PackageSearch } from 'lucide-react';
-import CheckBox from './Checkbox';
+import CheckBox from './checkbox';
 
 const TabContentNonActive = () => {
   return (

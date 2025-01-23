@@ -1,16 +1,18 @@
 import { Box, Button, Flex, Tabs, Text } from '@chakra-ui/react';
 import { CirclePlus } from 'lucide-react';
 
-import TabContentAll from './component-product/TabContentAll';
-import TabContentActive from './component-product/TabContentActive';
-import TabContentNonActive from './component-product/TabContentNonActive';
+import TabContentAll from './tab-content-all';
+import TabContentActive from './tab-content-active';
+import TabContentNonActive from './tab-content-non-active';
 import { Link } from 'react-router';
 
 const ComponentProduct = () => {
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <Text fontWeight={'semibold'}>Daftar Product</Text>
+        <Text fontWeight={'semibold'} fontSize={'24px'}>
+          Daftar Product
+        </Text>
         <Link to="/add-product">
           <Button
             backgroundColor={'#0086B4'}

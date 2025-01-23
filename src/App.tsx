@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Product from './components/page/productpage/Product';
-import Fallback from './components/fallback/Fallback';
-import Dashboard from './components/page/dashboardpage/Dashboard';
 import Layout from './components/layout/Layout';
-import Order from './components/page/orderpage/Order';
-import Setting from './components/page/settingpage/Setting';
-import { AddProduct } from './components/page/productpage/add-product';
-import OrderDetail from './components/page/orderpage/order-detail';
+import Fallback from './components/fallback/Fallback';
+import Dashboard from './page/dashboard-page/dashboard';
+import Order from './page/orderpage/order';
+import OrderDetail from './page/orderpage/order-detail';
+import Setting from './page/settingpage/Setting';
+import { AddProduct } from './page/productpage/add-product';
+import Product from './page/productpage/product';
 
 function App() {
   const router = createBrowserRouter([

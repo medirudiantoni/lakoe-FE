@@ -1,7 +1,7 @@
-import Navbar from '@/components/navbar/Navbar';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
+import { ComponentOrderDetail } from './component-order/component-order-detail';
 import SideBar from '../sidebar/SideLeftBar';
-import { ComponentOrderDetail } from './order-detail/component-order-detail';
+import Navbar from '@/components/navbar/Navbar';
 
 const OrderDetail = () => {
   return (
