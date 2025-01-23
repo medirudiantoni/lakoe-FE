@@ -33,7 +33,7 @@ const orders = [
     },
   },
   {
-    id: 2,
+    id: '2',
     status: 'Pesanan Baru',
     colorPalette: 'green',
     invoice: 'INV/20230809/MPL/00000239',
@@ -47,7 +47,7 @@ const orders = [
     },
   },
   {
-    id: 3,
+    id: '3',
     status: 'Siap Dikirim',
     colorPalette: 'blue',
     invoice: 'INV/20230809/MPL/00000239',
@@ -61,7 +61,7 @@ const orders = [
     },
   },
   {
-    id: 4,
+    id: '5',
     status: 'Dalam Pengiriman',
     colorPalette: 'orange',
     invoice: 'INV/20230809/MPL/00000239',
@@ -75,7 +75,7 @@ const orders = [
     },
   },
   {
-    id: 5,
+    id: '6',
     status: 'Pesanan Selesai',
     colorPalette: 'white',
     invoice: 'INV/20230809/MPL/00000239',
@@ -89,7 +89,7 @@ const orders = [
     },
   },
   {
-    id: 6,
+    id: '7',
     status: 'Dibatalkan',
     colorPalette: 'red',
     invoice: 'INV/20230809/MPL/00000239',
@@ -186,9 +186,9 @@ export function ComponentOrder() {
             </Box>
           </GridItem>
         </Grid>
-        <Tabs.Content value="semua">
+        <Tabs.Content value="semua" pb={30}>
           {orders.map((order, index) => (
-            <Link to="/order-detail/:id">
+            <Link to={`/order-detail/${order.id}`} key={index}>
               <Box
                 width="full"
                 border="1px solid"
@@ -197,7 +197,6 @@ export function ComponentOrder() {
                 borderRadius="10px"
                 mt={3}
                 p={3}
-                key={index}
               >
                 <Box>
                   <Box
