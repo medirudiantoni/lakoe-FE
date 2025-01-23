@@ -1,9 +1,9 @@
 import Navbar from '@/components/navbar/Navbar';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import SideBar from '../sidebar/SideLeftBar';
-import { ComponentOrder } from './component-order';
+import { AddProductContent } from './component-product/add-product-content';
 
-const Order = () => {
+export function AddProduct() {
   return (
     <Box>
       <Navbar />
@@ -20,13 +20,11 @@ const Order = () => {
           </Box>
         </GridItem>
         <GridItem backgroundColor={'#F8F8F8'}>
-          <Box h="100vh">
-            <ComponentOrder />
+          <Box>
+            <AddProductContent />
           </Box>
         </GridItem>
       </Grid>
     </Box>
   );
-};
-
-export default Order;
+}

@@ -1,9 +1,9 @@
 import Navbar from '@/components/navbar/Navbar';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import SideBar from '../sidebar/SideLeftBar';
-import { ComponentOrder } from './component-order';
+import { ComponentOrderDetail } from './order-detail/component-order-detail';
 
-const Order = () => {
+const OrderDetail = () => {
   return (
     <Box>
       <Navbar />
@@ -21,7 +21,7 @@ const Order = () => {
         </GridItem>
         <GridItem backgroundColor={'#F8F8F8'}>
           <Box h="100vh">
-            <ComponentOrder />
+            <ComponentOrderDetail />
           </Box>
         </GridItem>
       </Grid>
@@ -29,4 +29,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default OrderDetail;

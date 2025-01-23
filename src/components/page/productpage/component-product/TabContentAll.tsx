@@ -1,18 +1,33 @@
-
-import { InputGroup } from "@/components/ui/input-group"
-import { Switch } from "@/components/ui/switch"
-import { Box, Button, Flex, Grid, GridItem, Image, Input, MenuContent, MenuItem, MenuRoot, MenuTrigger, Text } from "@chakra-ui/react"
-import { ChevronDown, Link, PackageSearch } from "lucide-react"
-import CheckBox from "./Checkbox"
+import { InputGroup } from '@/components/ui/input-group';
+import { Switch } from '@/components/ui/switch';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Image,
+  Input,
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+  Text,
+} from '@chakra-ui/react';
+import { ChevronDown, Link, PackageSearch } from 'lucide-react';
+import CheckBox from './Checkbox';
 
 const TabContentAll = () => {
   return (
     <Box>
       <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2}>
-        <GridItem>
-          <InputGroup flex="1" startElement={<PackageSearch />} width={'100%'}>
-            <Input placeholder="Search produk" outline={'#0086B4'} />
+        <GridItem position={'relative'}>
+          <InputGroup flex="1" width={'100%'}>
+            <Input px={11} placeholder="Search produk" outline={'#0086B4'} />
           </InputGroup>
+          <Box position={'absolute'} top={2} left={4}>
+            <PackageSearch color="#75757C" />
+          </Box>
         </GridItem>
         <GridItem>
           <Box position={'relative'}>
