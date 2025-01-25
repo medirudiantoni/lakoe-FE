@@ -22,7 +22,7 @@ import { TabOrderComplete } from './tab-order-complete-order';
 import { TabCancelledOrder } from './tab-cancelled-order';
 import { InputGroup } from '@/components/ui/input-group';
 
-export function ComponentOrder() {
+export function Order() {
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
