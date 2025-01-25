@@ -49,7 +49,7 @@ import { useState } from 'react';
 import { LuCheck, LuPackage, LuShip } from 'react-icons/lu';
 import orders from '@/data-dummy/orders.json';
 
-export function ComponentOrderDetail() {
+export function OrderDetail() {
   const { id } = useParams<{ id: string }>();
   const order = orders.find((order) => order.id === id);
   const [isOpen, setIsOpen] = useState(false);

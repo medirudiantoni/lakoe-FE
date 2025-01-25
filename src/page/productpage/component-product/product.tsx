@@ -6,7 +6,7 @@ import TabContentActive from './tab-content-active';
 import TabContentNonActive from './tab-content-non-active';
 import { Link } from 'react-router';
 
-const ComponentProduct = () => {
+export function Product() {
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
@@ -44,4 +44,4 @@ const ComponentProduct = () => {
   );
 };
 
-export default ComponentProduct;
+

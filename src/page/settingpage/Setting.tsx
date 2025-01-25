@@ -1,32 +1,34 @@
-import Navbar from '@/components/navbar/Navbar';
-import { Box, Grid, GridItem } from '@chakra-ui/react';
-import SideBar from '../sidebar/SideLeftBar';
-import ComponentProduct from '../productpage/component-product/component-product';
+import { Box, Flex, Tabs, Text } from '@chakra-ui/react';
+import { InformationSetting } from './component-setting/information-setting';
+import { LocationSetting } from './component-setting/location-setting';
+import { TemplateSetting } from './component-setting/template-setting';
 
-const Setting = () => {
+
+
+export function Setting() {
   return (
-    <Box>
-      <Navbar />
-      <Grid templateColumns="2fr 7fr" gap={3} width={'100%'} pt={'60px'}>
-        <GridItem width={'100%'}>
-          <Box
-            h="100vh"
-            width={'23%'}
-            borderRight={'1.5px solid'}
-            borderColor={'gray.200'}
-            position={'fixed'}
-          >
-            <SideBar />
-          </Box>
-        </GridItem>
-        <GridItem backgroundColor={'#F8F8F8'}>
-          <Box h="100vh">
-            <ComponentProduct />
-          </Box>
-        </GridItem>
-      </Grid>
+    <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
+      <Flex justifyContent={'space-between'} alignItems={'center'}>
+        <Text fontWeight={'semibold'} fontSize={'24px'}>
+          Toko Arya Abadi
+        </Text>
+      </Flex>
+      <Tabs.Root defaultValue="informasi" mt={5}>
+        <Tabs.List>
+          <Tabs.Trigger value="informasi">Informasi</Tabs.Trigger>
+          <Tabs.Trigger value="lokasi">Lokasi</Tabs.Trigger>
+          <Tabs.Trigger value="template">Template Pesan</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="informasi">
+          <InformationSetting />
+        </Tabs.Content>
+        <Tabs.Content value="lokasi">
+            <LocationSetting/>
+        </Tabs.Content>
+        <Tabs.Content value="template">
+            <TemplateSetting/>
+        </Tabs.Content>
+      </Tabs.Root>
     </Box>
   );
-};
-
-export default Setting;
+}
