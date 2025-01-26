@@ -19,7 +19,7 @@ const SideBar = () => {
         <ul className="list-none">
           <li>
             <Link
-              to="/"
+              to="/dashboard"
               className={`flex items-center my-2 px-5 py-2 ${
                 isActive(['/'])
                   ? 'text-[#0086B4] bg-[#F8F8F8]'
