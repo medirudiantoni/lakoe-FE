@@ -37,6 +37,7 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
+  Circle,
   CircleUser,
   NotepadText,
   NotepadTextDashed,
@@ -117,8 +118,8 @@ export function OrderDetail() {
           <Collapsible.Content>
             <TimelineRoot maxW="400px">
               <TimelineItem>
-                <TimelineConnector>
-                  <LuShip />
+                <TimelineConnector backgroundColor={'blue.400'}>
+                  <Circle/>
                 </TimelineConnector>
                 <TimelineContent>
                   <TimelineTitle>Product Shipped</TimelineTitle>
@@ -131,8 +132,8 @@ export function OrderDetail() {
               </TimelineItem>
 
               <TimelineItem>
-                <TimelineConnector>
-                  <LuCheck />
+                <TimelineConnector backgroundColor={'gray.500'}>
+                  <Circle/>
                 </TimelineConnector>
                 <TimelineContent>
                   <TimelineTitle textStyle="sm">Order Confirmed</TimelineTitle>
@@ -141,8 +142,8 @@ export function OrderDetail() {
               </TimelineItem>
 
               <TimelineItem>
-                <TimelineConnector>
-                  <LuPackage />
+                <TimelineConnector  backgroundColor={'gray.500'}>
+                  <Circle/>
                 </TimelineConnector>
                 <TimelineContent>
                   <TimelineTitle textStyle="sm">Order Delivered</TimelineTitle>
