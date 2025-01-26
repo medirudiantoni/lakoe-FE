@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Group, Input, InputAddon } from '@chakra-ui/react';
 import { useState } from 'react';
 
 export function DialogPrice() {
@@ -27,7 +27,12 @@ export function DialogPrice() {
           <DialogHeader>
             <DialogTitle>Ubah harga untuk produk...</DialogTitle>
           </DialogHeader>
-          <DialogBody></DialogBody>
+          <DialogBody>
+            <Group attached width={'full'}>
+              <InputAddon>Rp</InputAddon>
+              <Input placeholder="Ubah harga produk" outlineColor={'blue.400'} />
+            </Group>
+          </DialogBody>
           <DialogFooter>
             <DialogActionTrigger asChild>
               <Button variant="outline">Cancel</Button>

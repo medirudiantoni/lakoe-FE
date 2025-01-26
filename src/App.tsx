@@ -1,42 +1,51 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Layout from './components/layout/Layout';
 import Fallback from './components/fallback/Fallback';
 
 import { Login } from './page/auth/login';
 import { Register } from './page/auth/register';
 import { LandingPage } from './page/landing-page/landing-page';
-import { Dashboard } from './page/dashboard-page/Dashboard';
-import { Product } from './page/productpage/component-product/product';
+
 import { Order } from './page/orderpage/component-order/order';
-import { Setting } from './page/settingpage/Setting';
 import { OrderDetail } from './page/orderpage/component-order/order-detail';
-import { AddProductContent } from './page/productpage/component-product/add-product-content';
+import { Setting } from './page/settingpage/Setting';
+
+import { useAuthStore } from './features/auth/auth-store/auth-store';
+import PrivateRoute from './layouts/private-layout';
+import { Dashboard } from './page/dashboard-page/dashboard';
+import { AddProductContent } from './page/productpage/add-product-content';
+import { Product } from './page/productpage/component-product/product';
+import { Detailproduct } from './page/productpage/detail-product';
+
 
 function App() {
+  const user = useAuthStore((state) => state.user);
   const router = createBrowserRouter([
-    {
-      path: '/',
-      Component: Layout,
-      HydrateFallback: Fallback,
-      children: [
+      {
+        path: '/login',
+        Component: Login,
+        HydrateFallback: Fallback,
+      },
+      {
+        path: '/register',
+        Component: Register,
+        HydrateFallback: Fallback,
+      },{
+        path: '/',
+        element: <PrivateRoute user={user} />,
+        children: [
         {
-          path: '/',
+          path: '/dashboard',
           Component: Dashboard,
-          HydrateFallback: Fallback,
-        },
-        {
-          path: '/login',
-          Component: Login,
-          HydrateFallback: Fallback,
-        },
-        {
-          path: '/register',
-          Component: Register,
           HydrateFallback: Fallback,
         },
         {
           path: '/product',
           Component: Product,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: '/product-detail/:id',
+          Component: Detailproduct,
           HydrateFallback: Fallback,
         },
         {

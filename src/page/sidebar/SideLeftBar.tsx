@@ -1,12 +1,26 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { Link, useLocation } from 'react-router';
 import { BoxIcon, LayoutDashboard, Settings, ShoppingBag } from 'lucide-react';
+import { useEffect } from 'react';
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const isActive = (paths: string[]) => paths.includes(currentPath);
+  // Cek apakah path saat ini aktif (dengan `startsWith`)
+  const isActive = (paths: string[]) => {
+    return paths.some(
+      (path) =>
+        currentPath === path || // Path persis cocok
+        (path !== '/' && currentPath.startsWith(path)) // Path lain selain "/" cocok
+    );
+  };
+  
+
+  useEffect(() => {
+    console.log('Current Path:', currentPath);
+  }, [currentPath]);
+
   return (
     <Box
       h="100vh"
@@ -19,9 +33,9 @@ const SideBar = () => {
         <ul className="list-none">
           <li>
             <Link
-              to="/"
+              to="/dashboard"
               className={`flex items-center my-2 px-5 py-2 ${
-                isActive(['/'])
+                isActive(['/dashboard'])
                   ? 'text-[#0086B4] bg-[#F8F8F8]'
                   : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
               }`}
@@ -36,7 +50,7 @@ const SideBar = () => {
             <Link
               to="/product"
               className={`flex items-center my-2 px-5 py-2 ${
-                isActive(['/product', '/add-product'])
+                isActive(['/product', '/product/'])
                   ? 'text-[#0086B4] bg-[#F8F8F8]'
                   : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
               }`}
