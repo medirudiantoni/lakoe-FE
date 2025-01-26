@@ -5,7 +5,7 @@ import Fallback from './components/fallback/Fallback';
 import { Login } from './page/auth/login';
 import { Register } from './page/auth/register';
 import { LandingPage } from './page/landing-page/landing-page';
-import { Dashboard } from './page/dashboard-page/Dashboard';
+import { Dashboard } from './page/dashboard-page/dashboard';
 import { Product } from './page/productpage/component-product/product';
 import { Order } from './page/orderpage/component-order/order';
 import { Setting } from './page/settingpage/Setting';
@@ -16,11 +16,16 @@ function App() {
   const router = createBrowserRouter([
     {
       path: '/',
+      Component: LandingPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/',
       Component: Layout,
       HydrateFallback: Fallback,
       children: [
         {
-          path: '/',
+          path: '/dashboard',
           Component: Dashboard,
           HydrateFallback: Fallback,
         },
