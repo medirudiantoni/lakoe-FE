@@ -4,7 +4,6 @@ import Fallback from './components/fallback/Fallback';
 import { Login } from './page/auth/login';
 import { Register } from './page/auth/register';
 import { LandingPage } from './page/landing-page/landing-page';
-
 import { Order } from './page/orderpage/component-order/order';
 import { OrderDetail } from './page/orderpage/component-order/order-detail';
 import { Setting } from './page/settingpage/Setting';
@@ -20,6 +19,11 @@ import { Detailproduct } from './page/productpage/detail-product';
 function App() {
   const user = useAuthStore((state) => state.user);
   const router = createBrowserRouter([
+    {
+      path: '/',
+      Component: LandingPage,
+      HydrateFallback: Fallback,
+    },
       {
         path: '/login',
         Component: Login,
