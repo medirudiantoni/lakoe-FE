@@ -14,13 +14,18 @@ import { Dashboard } from './page/dashboard-page/dashboard';
 import { AddProductContent } from './page/productpage/add-product-content';
 import { Product } from './page/productpage/component-product/product';
 import { Detailproduct } from './page/productpage/detail-product';
-import { Toaster } from 'react-hot-toast'; 
+import { Toaster } from 'react-hot-toast';
 import AboutPage from './page/landing-page/about-page';
 import PricingPage from './page/pricing/Pricing';
 import { RegisterStore } from './page/auth/register-store';
+import PaymentPage from './page/payment-page/PaymentPage';
+import { useEffect } from 'react';
 
 function App() {
-  const user = useAuthStore((state: any) => state.user);
+  const { user } = useAuthStore();
+  useEffect(() => {
+    console.log('user from app.tsx: ', user);
+  }, [user]);
   const router = createBrowserRouter([
     {
       path: '/',
@@ -35,6 +40,11 @@ function App() {
     {
       path: '/pricing',
       Component: PricingPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/payment',
+      Component: PaymentPage,
       HydrateFallback: Fallback,
     },
     {
