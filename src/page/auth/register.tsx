@@ -71,7 +71,8 @@ export function Register() {
     <Box
       display={'flex'}
       alignItems={'center'}
-      justifyContent={'center'}
+      // justifyContent={'center'}
+      pt="20"
       flexDirection={'column'}
       width={'100vw'}
       height={'100vh'}
@@ -129,6 +130,22 @@ export function Register() {
           </Field>
           <Field label="Password" mt={2}>
             <Input placeholder="Masukan password" {...register('password')} />
+            {errors.password && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop={1.5}
+              >
+                {errors.password.message}
+              </Text>
+            )}
+          </Field>
+          <Field label="Konfirmasi Password" mt={2}>
+            <Input
+              placeholder="Masukan ulang password"
+              {...register('password')}
+            />
             {errors.password && (
               <Text
                 color="red.500"
