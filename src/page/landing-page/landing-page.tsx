@@ -1,6 +1,5 @@
 import RippleButton from '@/components/Button/Ripple.button';
 import CurveSection from '@/components/curveSection/curveSection';
-import LogoIcon from '@/components/icons/logo';
 import {
   Badge,
   Box,
@@ -11,54 +10,27 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import kendaliPenuh from '@/assets/kendali-penuh.png';
 import loyalitas from '@/assets/loyalitas.png';
 import Independensi from '@/assets/independensi.png';
-import { Copyright } from 'lucide-react';
+import Navbar_Landing_page from '@/components/landingPage/Navbar_Landing_page';
+import Footer from '@/components/landingPage/Footer';
+
+const Button_MulaiSekarang = () => {
+  const navigate = useNavigate();
+  return (
+    <Button onClick={() => navigate('/register')} bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
+      Mulai Sekarang
+    </Button>
+  )
+}
 
 export function LandingPage() {
   return (
     <Box>
       {/* Navbar Start */}
-      <HStack
-        justifyContent={'space-between'}
-        position="fixed"
-        zIndex={10}
-        top={0}
-        left={0}
-        w="full"
-        bg="#fff"
-      >
-        <HStack justifyContent="space-between" w="full" h="fit" px="20" py="5">
-          <LogoIcon />
-          <HStack
-            gap="10"
-            fontSize="xl"
-            fontWeight="medium"
-            display={{ base: 'none', lg: 'flex' }}
-          >
-            <Link to={'/'}>
-              <Text color="gray.600" _hover={{ color: 'blue.600' }}>
-                Beranda
-              </Text>
-            </Link>
-            <Link to={'/tentang'}>
-              <Text color="gray.600" _hover={{ color: 'blue.600' }}>
-                Tentang
-              </Text>
-            </Link>
-            <Link to={'/pricing'}>
-              <Text color="gray.600" _hover={{ color: 'blue.600' }}>
-                Pricing
-              </Text>
-            </Link>
-          </HStack>
-          <Button bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
-            Mulai Sekarang
-          </Button>
-        </HStack>
-      </HStack>
+      <Navbar_Landing_page />
       {/* Navbar End */}
 
       {/* Hero Section Start */}
@@ -135,9 +107,7 @@ export function LandingPage() {
               Setiap kata, gambar, dan tawaran adalah pilihan Anda, bebas dari
               aturan orang lain, menciptakan pengalaman unik bagi pelanggan.
             </Text>
-            <Button bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
-              Mulai Sekarang
-            </Button>
+            <Button_MulaiSekarang />
           </VStack>
           <Box flex={1}>
             <Image
@@ -180,9 +150,7 @@ export function LandingPage() {
               kuat dan tak tergoyahkan. Pelanggan setia bukan sekadar transaksi,
               melainkan bagian dari perjalanan yang Anda jalani bersama mereka.
             </Text>
-            <Button bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
-              Mulai Sekarang
-            </Button>
+            <Button_MulaiSekarang />
           </VStack>
         </HStack>
       </section>
@@ -214,9 +182,7 @@ export function LandingPage() {
               keuntungan 100% milik Anda, dan kontrol sepenuhnya ada di tangan
               Anda. Simple, kan?, cuan coyyy cuan!!!!
             </Text>
-            <Button bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
-              Mulai Sekarang
-            </Button>
+            <Button_MulaiSekarang />
           </VStack>
           <Box flex={1}>
             <Image
@@ -373,9 +339,7 @@ export function LandingPage() {
               Di Lakoe cukup berlangganan perbulan, anda sudah bisa menikmati
               hasil penjualan dengan potongan yang Fix dan Keuntungan Maksimal
             </Text>
-            <Button bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
-              Mulai Sekarang
-            </Button>
+            <Button_MulaiSekarang />
           </VStack>
           <Text textAlign="end" maxW="md">
             Di Lakoe, kami percaya bahwa setiap keuntungan dari hasil kerja
@@ -387,95 +351,7 @@ export function LandingPage() {
       </section>
       {/* 8th section end */}
 
-      {/* 9th section start */}
-      <section className="w-full h-fit rounded-t-[200px] bg-blue-100">
-        <VStack
-          gap={5}
-          py="200px"
-          w="full"
-          maxW="2xl"
-          mx="auto"
-          textAlign="center"
-        >
-          <Heading
-            size="7xl"
-            fontWeight="semibold"
-            className="font-bricolage-grosteque"
-          >
-            Cuan, cuan, cuan
-          </Heading>
-          <Button bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
-            Mulai Sekarang
-          </Button>
-          <Text
-            className="font-darker-grotesque"
-            fontSize="4xl"
-            fontWeight="medium"
-            lineHeight="1"
-          >
-            Kalo gak sekarang kapan lagi, kalo bukan kamu, masa orang lain mulu,
-            masa kamu kesalip mulu sama kesuksesan orang, kuy buruan... cuan
-            coy... cuannn!!!
-          </Text>
-        </VStack>
-      </section>
-      {/* 9th section end */}
-
-      {/* footer start */}
-      <footer className="w-full h-fit bg-blue-100">
-        <Box
-          w="full"
-          h="fit"
-          bg="blue.500"
-          color="white"
-          py="100px"
-          px="5"
-          className="rounded-t-[120px]"
-        >
-          <HStack
-            mx="auto"
-            justifyContent="space-between"
-            py="10"
-            alignItems="start"
-            w="full"
-            maxW="5xl"
-            h="fit"
-            className="border-b-2"
-          >
-            <LogoIcon color="white" />
-            <HStack
-              w="full"
-              maxW="sm"
-              justifyContent="end"
-              alignItems="start"
-              gap="10"
-              h="fit"
-            >
-              <VStack alignItems="start">
-                <Heading size="2xl" mb="2" fontWeight="semibold">
-                  Ikuti Kami
-                </Heading>
-                <Link to="/">Instagram</Link>
-                <Link to="/">Twitter/x</Link>
-                <Link to="/">Facebook</Link>
-                <Link to="/">Youtube</Link>
-              </VStack>
-              <VStack alignItems="start">
-                <Heading size="2xl" mb="2" fontWeight="semibold">
-                  Menu
-                </Heading>
-                <Link to="/about">About</Link>
-                <Link to="/pricing">Pricing</Link>
-              </VStack>
-            </HStack>
-          </HStack>
-          <HStack justifyContent="center" gap="1" py="2">
-            <Copyright size="20px" />
-            <Text>Lakoe Team 2, 2025</Text>
-          </HStack>
-        </Box>
-      </footer>
-      {/* footer end */}
+      <Footer />
     </Box>
   );
 }
