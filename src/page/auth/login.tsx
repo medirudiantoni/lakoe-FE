@@ -47,7 +47,6 @@ export function Login() {
             color: '#1d1d1d',
             allowOutsideClick: true,
           }).then(() => {
-            console.log('test')
             navigate('/dashboard');
           });
         }

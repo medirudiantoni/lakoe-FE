@@ -14,29 +14,41 @@ import { Dashboard } from './page/dashboard-page/dashboard';
 import { AddProductContent } from './page/productpage/add-product-content';
 import { Product } from './page/productpage/component-product/product';
 import { Detailproduct } from './page/productpage/detail-product';
+import AboutPage from './page/landing-page/about-page';
+import PricingPage from './page/pricing/Pricing';
 
 
 function App() {
-  const user = useAuthStore((state) => state.user);
+  const user = useAuthStore((state: any) => state.user);
   const router = createBrowserRouter([
     {
       path: '/',
       Component: LandingPage,
       HydrateFallback: Fallback,
     },
-      {
-        path: '/login',
-        Component: Login,
-        HydrateFallback: Fallback,
-      },
-      {
-        path: '/register',
-        Component: Register,
-        HydrateFallback: Fallback,
-      },{
-        path: '/',
-        element: <PrivateRoute user={user} />,
-        children: [
+    {
+      path: '/tentang',
+      Component: AboutPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/pricing',
+      Component: PricingPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/login',
+      Component: Login,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/register',
+      Component: Register,
+      HydrateFallback: Fallback,
+    }, {
+      path: '/',
+      element: <PrivateRoute user={user} />,
+      children: [
         {
           path: '/dashboard',
           Component: Dashboard,
