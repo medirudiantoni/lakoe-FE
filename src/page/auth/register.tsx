@@ -72,7 +72,7 @@ export function Register() {
       display={'flex'}
       alignItems={'center'}
       // justifyContent={'center'}
-      pt="20"
+      pt={20}
       flexDirection={'column'}
       width={'100vw'}
       height={'100vh'}

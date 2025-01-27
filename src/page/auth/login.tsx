@@ -39,9 +39,12 @@ export function Login() {
           if (res.status === 200) {
             const data = res.data;
             setUser(data.user);
+            console.log('text', data)
             Cookies.set('token', data.token);
-            navigate('/dashboard');
+            data.user.stores ? navigate('/dashboard') : navigate('/register-store') 
+
             return data.message;
+          
           }
         })
         .catch((error) => {
@@ -70,7 +73,7 @@ export function Login() {
     <Box
       display={'flex'}
       alignItems={'center'}
-      pt="20"
+      pt={20}
       flexDirection={'column'}
       width={'100vw'}
       height={'100vh'}

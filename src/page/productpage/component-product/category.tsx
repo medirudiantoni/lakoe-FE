@@ -3,10 +3,8 @@ import {
   Box,
   Button,
   MenuContent,
-  MenuItem,
   MenuRoot,
-  MenuTrigger,
-  Text,
+  MenuTrigger
 } from "@chakra-ui/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
@@ -73,7 +71,7 @@ export default function Category() {
             </Checkbox>
           </Box>
           {categories.map((category) => (
-            <Box key={category}>
+            <Box key={category} fontWeight={'normal'}>
               <Checkbox
                 checked={selectedCategories.includes(category)}
                 onChange={() => toggleCategory(category)}

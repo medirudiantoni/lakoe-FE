@@ -17,6 +17,7 @@ import { Detailproduct } from './page/productpage/detail-product';
 import { Toaster } from 'react-hot-toast';
 import AboutPage from './page/landing-page/about-page';
 import PricingPage from './page/pricing/Pricing';
+import { RegisterStore } from './page/auth/register-store';
 import PaymentPage from './page/payment-page/PaymentPage';
 import { useEffect } from 'react';
 
@@ -54,6 +55,16 @@ function App() {
     {
       path: '/register',
       Component: Register,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/register-store',
+      Component: RegisterStore,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/',
+      Component: LandingPage,
       HydrateFallback: Fallback,
     },
     {
@@ -96,11 +107,7 @@ function App() {
           Component: AddProductContent,
           HydrateFallback: Fallback,
         },
-        {
-          path: '/landing-page',
-          Component: LandingPage,
-          HydrateFallback: Fallback,
-        },
+   
       ],
     },
   ]);
