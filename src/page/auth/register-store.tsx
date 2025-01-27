@@ -1,96 +1,110 @@
+
+import LogoIcon from "@/components/icons/logo";
 import { Field } from "@/components/ui/field";
 import {
-  FileUploadDropzone,
-  FileUploadList,
-  FileUploadRoot,
+    FileUploadDropzone,
+    FileUploadList,
+    FileUploadRoot,
 } from "@/components/ui/file-upload";
 import { useAuthStore } from "@/features/auth/auth-store/auth-store";
 import { fetchStore } from "@/features/store/services/store-service";
 import { StoreFormProps } from "@/features/store/types/store-types";
 import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  Input,
-  Stack,
-  Text,
-  Textarea,
+    Box,
+    Button,
+    Flex,
+    Input,
+    Stack,
+    Text,
+    Textarea
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
-export function InformationSetting() {
+export function RegisterStore() {
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<StoreFormProps>();
-
-  const {user} = useAuthStore()
-  useEffect(()=>{
-    console.log('user data:', user)
-  }, [user])
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const onSubmit = (data: StoreFormProps) => {
-    setIsLoading(true);
-    if (!user) {
-      toast.error('User not authenticated');
-      return;
-    }
-
-    const userId = user.id
-    toast.promise(
-      fetchStore(data, userId)
-        .then((res) => {
-          if (res.status === 201) {
-            return res.data.message;
-          } else {
-            throw new Error("Unexpected status code: " + res.status);
-          }
-        })
-        .catch((error) => {
-          throw error.message || "An error occurred while processing the request.";
-        })
-        .finally(() => {
-          setIsLoading(false);
-        }),
-      {
-        loading: "Submitting your information...",
-        success: (message) => `Success: ${message}`,
-        error: (err) => `Error: ${err}`,
-      },
-      {
-        position: "top-center",
-        style: {
-          background: "#FFFF",
-          color: "#1d1d1d",
-          fontWeight: "normal",
-        },
+      register,
+      handleSubmit,
+      formState: { errors },
+    } = useForm<StoreFormProps>();
+  
+    const {user} = useAuthStore()
+    useEffect(()=>{
+      console.log('user data:', user)
+    }, [user])
+  
+    const [isLoading, setIsLoading] = useState(false);
+  
+    const navigate = useNavigate()
+    const onSubmit = (data: StoreFormProps) => {
+      setIsLoading(true);
+      if (!user) {
+        toast.error('User not authenticated');
+        return;
       }
-    );
-  };
+  
+      const userId = user.id
+      toast.promise(
+        fetchStore(data, userId)
+          .then((res) => {
+            if (res.status === 201) {
+                navigate('/dashboard')
+              return res.data.message;
+ 
+            } else {
+              throw new Error("Unexpected status code: " + res.status);
+            }
 
+          })
+          .catch((error) => {
+            throw error.message || "An error occurred while processing the request.";
+          })
+          .finally(() => {
+            setIsLoading(false);
+          }),
+        {
+          loading: "Submitting your information...",
+          success: (message) => `Success: ${message}`,
+          error: (err) => `Error: ${err}`,
+        },
+        {
+          position: "top-center",
+          style: {
+            background: "#FFFF",
+            color: "#1d1d1d",
+            fontWeight: "normal",
+          },
+        }
+      );
+    };
   return (
-    <Box>
-      <Flex justifyContent={"space-between"} alignItems={"center"}>
-        <Text fontWeight={"semibold"} fontSize={"20px"}>
-          Informasi Pribadi
+    <Box
+      display={'flex'}
+      alignItems={'center'}
+    //   justifyContent={'center'}
+    pt={24}
+    
+      flexDirection={'column'}
+      width={'100vw'}
+      height={'100vh'}
+    >
+      <LogoIcon />
+      <Box width={'30%'} mt={5}>
+        <Text
+          py={'5'}
+          textAlign={'center'}
+          fontSize={'28px'}
+          fontWeight={'semibold'}
+        >
+          Daftarkan toko anda
         </Text>
-      </Flex>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-        <Grid
-          templateColumns={"repeat(2, 1fr)"}
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+        <Box
           gap={3}
-          borderBottom={"1px solid"}
-          borderColor={"gray.300"}
           py={"5"}
         >
-          <GridItem>
             <Box>
               <Stack gap="4" align="flex-start" width={"full"}>
                 <Field
@@ -117,17 +131,7 @@ export function InformationSetting() {
                     placeholder="Buat nama untuk toko"
                   />
                 </Field>
-                <Button
-                  colorPalette={"blue"}
-                  type="submit"
-                >
-                  Submit
-                </Button>
-              </Stack>
-            </Box>
-          </GridItem>
-          <GridItem>
-            <Field
+                <Field
               label="Deskripsi"
               invalid={!!errors.description}
               errorText={errors.description?.message}
@@ -144,11 +148,7 @@ export function InformationSetting() {
                 h={"124px"}
               />
             </Field>
-          </GridItem>
-          <GridItem>
-          </GridItem>
-        </Grid>
-        <Flex justifyContent={"space-between"} alignItems={"center"} my={5}>
+            <Flex justifyContent={"space-between"} alignItems={"center"} my={5}>
           <Text fontWeight={"semibold"} fontSize={"20px"}>
             Logo Toko
           </Text>
@@ -166,8 +166,20 @@ export function InformationSetting() {
             />
             <FileUploadList />
           </FileUploadRoot>
+          </Box>
+                <Button
+                  colorPalette={"blue"}
+                  type="submit"
+                >
+                  Submit
+                </Button>
+              </Stack>
+            </Box>
         </Box>
+
       </form>
+
+      </Box>
     </Box>
   );
 }

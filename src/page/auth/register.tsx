@@ -71,7 +71,8 @@ export function Register() {
     <Box
       display={'flex'}
       alignItems={'center'}
-      justifyContent={'center'}
+      // justifyContent={'center'}
+      pt={20}
       flexDirection={'column'}
       width={'100vw'}
       height={'100vh'}
