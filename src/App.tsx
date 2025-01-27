@@ -15,24 +15,25 @@ import { Dashboard } from './page/dashboard-page/dashboard';
 import { AddProductContent } from './page/productpage/add-product-content';
 import { Product } from './page/productpage/component-product/product';
 import { Detailproduct } from './page/productpage/detail-product';
-
+import { Toaster } from 'react-hot-toast'; // Import Toaster
 
 function App() {
   const user = useAuthStore((state) => state.user);
   const router = createBrowserRouter([
-      {
-        path: '/login',
-        Component: Login,
-        HydrateFallback: Fallback,
-      },
-      {
-        path: '/register',
-        Component: Register,
-        HydrateFallback: Fallback,
-      },{
-        path: '/',
-        element: <PrivateRoute user={user} />,
-        children: [
+    {
+      path: '/login',
+      Component: Login,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/register',
+      Component: Register,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/',
+      element: <PrivateRoute user={user} />,
+      children: [
         {
           path: '/dashboard',
           Component: Dashboard,
@@ -81,6 +82,7 @@ function App() {
   return (
     <div>
       <RouterProvider router={router} />
+      <Toaster />
     </div>
   );
 }

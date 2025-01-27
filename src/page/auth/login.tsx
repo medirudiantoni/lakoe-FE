@@ -1,15 +1,15 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
 import { fetchLogin } from '@/features/auth/services/auth-service';
-import { Box, Button, Input, Text } from '@chakra-ui/react';
+import { Box, Button, Input, Spinner, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
-import Swal from 'sweetalert2';
-import { z } from 'zod';
+import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
+import { z } from 'zod';
 import { useAuthStore } from '@/features/auth/auth-store/auth-store';
-
+import { useState } from 'react';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),
@@ -19,7 +19,8 @@ const loginSchema = z.object({
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export function Login() {
-    const { setUser } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useAuthStore();
   const navigate = useNavigate();
 
   const {
@@ -31,41 +32,40 @@ export function Login() {
   });
 
   const onSubmit = (data: LoginFormInputs) => {
-    fetchLogin(data)
-      .then((res) => {
-        const data = res.data;
-        setUser(data.user);
-    
-        Cookies.set('token', data.token);
-        if (res.status === 200) {
-          Swal.fire({
-            title: 'Success!',
-            text: data.message,
-            icon: 'success',
-            confirmButtonColor: 'blue',
-            background: '#FFFF',
-            color: '#1d1d1d',
-            allowOutsideClick: true,
-          }).then(() => {
-            console.log('test')
+    setIsLoading(true);
+    toast.promise(
+      fetchLogin(data) // Promise yang akan dijalankan
+        .then((res) => {
+          if (res.status === 200) {
+            const data = res.data;
+            setUser(data.user);
+            Cookies.set('token', data.token);
             navigate('/dashboard');
-          });
-        }
-      })
-      .catch((error) => {
-        Swal.fire({
-          title: 'Error',
-          text:
-            error.message ||
-            'An error occurred while logging in. Please try again later.',
-          icon: 'error',
-          confirmButtonColor: '#E53E3E',
+            return data.message;
+          }
+        })
+        .catch((error) => {
+          throw error.message || 'An error occurred while logging in.';
+        })
+        .finally(() => {
+          setIsLoading(false);
+        }),
+      {
+        loading: 'Logging in...',
+        success: (message) => <div>{message}</div>,
+        error: (err) => <div>{err}</div>,
+      },
+      {
+        position: 'top-center',
+        style: {
           background: '#FFFF',
           color: '#1d1d1d',
-          allowOutsideClick: false,
-        });
-      });
+          fontWeight: 'normal',
+        },
+      }
+    );
   };
+
   return (
     <Box
       display={'flex'}
@@ -87,46 +87,47 @@ export function Login() {
         </Text>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-        <Field label="Email" >
-          <Input placeholder="Masukan email" {...register('email')} />
-          {errors.email && (
-            <Text
-              color="red.500"
-              fontSize="xs"
-              textAlign={'left'}
-              marginTop="1.5"
-            >
-              {errors.email.message}
-            </Text>
-          )}
-        </Field>
-        <Field label="Password" mt={5} >
-          <Input placeholder="Masukan password" {...register('password')} />
-          {errors.password && (
-            <Text
-              color="red.500"
-              fontSize="xs"
-              textAlign={'left'}
-              marginTop="1.5"
-            >
-              {errors.password.message}
-            </Text>
-          )}
-        </Field>
-        <Text textAlign={'right'} mt={2} color={'blue.400'}>
-          Lupa password?
-        </Text>
+          <Field label="Email">
+            <Input placeholder="Masukan email" {...register('email')} />
+            {errors.email && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop="1.5"
+              >
+                {errors.email.message}
+              </Text>
+            )}
+          </Field>
+          <Field label="Password" mt={5}>
+            <Input placeholder="Masukan password" {...register('password')} />
+            {errors.password && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop="1.5"
+              >
+                {errors.password.message}
+              </Text>
+            )}
+          </Field>
+          <Text textAlign={'right'} mt={2} color={'blue.400'}>
+            Lupa password?
+          </Text>
           <Button
             colorPalette={'blue'}
             width={'full'}
             borderRadius={'7px'}
             mt={3}
-            type='submit'
+            type="submit"
+            disabled={isLoading}
           >
-            Masuk
+            {isLoading ? <Spinner size="sm" /> : 'Masuk'}
           </Button>
         </form>
-        
+
         <Text textAlign={'center'}>
           Belum punya akun? silakan{' '}
           <Link to={'/register'} className="text-blue-400">
