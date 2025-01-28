@@ -1,5 +1,5 @@
 import RippleButton from '@/components/Button/Ripple.button';
-import CurveSection from '@/components/curveSection/curveSection';
+import CurveSection from '@/components/curve-section/curve-section';
 import {
   Badge,
   Box,
@@ -20,11 +20,18 @@ import Footer from '@/components/landingPage/Footer';
 const Button_MulaiSekarang = () => {
   const navigate = useNavigate();
   return (
-    <Button onClick={() => navigate('/register')} bg="blue.600" borderRadius="xl" fontSize="md" py="5" px="8">
+    <Button
+      onClick={() => navigate('/register')}
+      bg="blue.600"
+      borderRadius="xl"
+      fontSize="md"
+      py="5"
+      px="8"
+    >
       Mulai Sekarang
     </Button>
-  )
-}
+  );
+};
 
 export function LandingPage() {
   return (

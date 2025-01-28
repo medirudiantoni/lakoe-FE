@@ -4,7 +4,7 @@ import { fetchLogin } from '@/features/auth/services/auth-service';
 import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate, Navigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
@@ -36,7 +36,7 @@ export function Login() {
   const onSubmit = (data: LoginFormInputs) => {
     setIsLoading(true);
     toast.promise(
-      fetchLogin(data) // Promise yang akan dijalankan
+      fetchLogin(data)
         .then((res) => {
           if (res.status === 200) {
             const data = res.data;
@@ -101,7 +101,7 @@ export function Login() {
       Cookies.set('token', params.token as string);
 
       const storeParse = JSON.parse(params.store);
-      
+      toast.success('success')
       if(storeParse){
         navigate('/dashboard')
       } else {
