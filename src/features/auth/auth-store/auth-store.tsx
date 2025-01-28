@@ -1,18 +1,12 @@
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
+import { StoreFormProps } from '@/features/store/types/store-types';
 
 export interface UserType {
   id: string;
   name: string;
   email: string;
-  stores: Store;
-}
-
-interface Store {
-  id: string;
-  name: string;
-  slogan: string;
-  description: string;
+  stores: StoreFormProps;
 }
 interface AuthState {
   user: UserType | null;

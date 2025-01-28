@@ -36,7 +36,7 @@ export function Login() {
   const onSubmit = (data: LoginFormInputs) => {
     setIsLoading(true);
     toast.promise(
-      fetchLogin(data) // Promise yang akan dijalankan
+      fetchLogin(data)
         .then((res) => {
           if (res.status === 200) {
             const data = res.data;
