@@ -4,7 +4,7 @@ import { fetchLogin } from '@/features/auth/services/auth-service';
 import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate, Navigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
