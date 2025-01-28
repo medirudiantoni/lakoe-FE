@@ -1,13 +1,15 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
 import { fetchRegister } from '@/features/auth/services/auth-service';
-import { Box, Button, Input, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
+import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+import { apiURL } from '@/utils/baseurl';
 
 const registerSchema = z.object({
   name: z.string().min(3, 'Full name is required'),
@@ -66,6 +68,14 @@ export function Register() {
       )
       .finally(() => setIsLoading(false));
   };
+
+  const onClickGoogle = () => {
+    setIsLoading(true);
+
+    // window.location.href = 'http://localhost:5000/api/v1/auth/google';
+    window.location.href = `${apiURL}auth/google`;
+  }
+
 
   return (
     <Box
@@ -167,6 +177,18 @@ export function Register() {
             disabled={isLoading}
           >
             {isLoading ? <Spinner size="sm" /> : 'Daftar'}
+          </Button>
+          <Button
+            bg="white"
+            color="black"
+            width={'full'}
+            borderRadius={'7px'}
+            mt={3}
+            type="button"
+            disabled={isLoading}
+            onClick={onClickGoogle}
+          >
+            <Image w="10" h="10" src='/google-icon.webp'></Image>
           </Button>
         </form>
         <Text textAlign={'center'} mt={'2'}>

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
 
-interface UserType {
+export interface UserType {
   id: string;
   name: string;
   email: string;

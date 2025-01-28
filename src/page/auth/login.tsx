@@ -1,15 +1,16 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
 import { fetchLogin } from '@/features/auth/services/auth-service';
-import { Box, Button, Input, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, Navigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
 import { useAuthStore } from '@/features/auth/auth-store/auth-store';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { apiURL } from '@/utils/baseurl';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),
@@ -20,6 +21,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [params, setParams] = useState<any | null>(null)
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
 
@@ -41,10 +43,10 @@ export function Login() {
             setUser(data.user);
             console.log('text', data)
             Cookies.set('token', data.token);
-            data.user.stores ? navigate('/dashboard') : navigate('/register-store') 
+            data.user.stores ? navigate('/dashboard') : navigate('/register-store')
 
             return data.message;
-          
+
           }
         })
         .catch((error) => {
@@ -68,6 +70,45 @@ export function Login() {
       }
     );
   };
+
+  const onClickGoogle = () => {
+    setIsLoading(true);
+    window.location.href = `${apiURL}auth/google`;
+  }
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.size == 0) {
+      setParams(null)
+    } else {
+      setParams({
+        token: searchParams.get('token'),
+        name: searchParams.get('name'),
+        email: searchParams.get('email'),
+        phone: searchParams.get('phone'),
+        role: searchParams.get('role'),
+        store: searchParams.get('store'),
+        updatedAt: searchParams.get('updatedAt'),
+        createdAt: searchParams.get('createdAt'),
+        id: searchParams.get('id'),
+      });
+    }
+  }, [window.location]);
+
+  useEffect(() => {
+    if (params !== null) {
+      setUser(params);
+      Cookies.set('token', params.token as string);
+
+      const storeParse = JSON.parse(params.store);
+      
+      if(storeParse){
+        navigate('/dashboard')
+      } else {
+        navigate('/register-store')
+      }
+    }
+  }, [params]);
 
   return (
     <Box
@@ -128,6 +169,18 @@ export function Login() {
             disabled={isLoading}
           >
             {isLoading ? <Spinner size="sm" /> : 'Masuk'}
+          </Button>
+          <Button
+            bg="white"
+            color="black"
+            width={'full'}
+            borderRadius={'7px'}
+            mt={3}
+            type="button"
+            disabled={isLoading}
+            onClick={onClickGoogle}
+          >
+            <Image w="10" h="10" src='/google-icon.webp'></Image>
           </Button>
         </form>
 
