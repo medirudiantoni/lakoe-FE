@@ -1,28 +1,90 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Product from './components/page/productpage/Product';
 import Fallback from './components/fallback/Fallback';
-import Dashboard from './components/page/dashboardpage/Dashboard';
-import Layout from './components/layout/Layout';
-import Order from './components/page/orderpage/Order';
-import Setting from './components/page/settingpage/Setting';
-import { AddProduct } from './components/page/productpage/add-product';
-import OrderDetail from './components/page/orderpage/order-detail';
+
+import { Login } from './page/auth/login';
+import { Register } from './page/auth/register';
+import { LandingPage } from './page/landing-page/landing-page';
+import { Order } from './page/orderpage/component-order/order';
+import { OrderDetail } from './page/orderpage/component-order/order-detail';
+import { Setting } from './page/settingpage/Setting';
+
+import { useAuthStore } from './features/auth/auth-store/auth-store';
+import PrivateRoute from './layouts/private-layout';
+import { Dashboard } from './page/dashboard-page/dashboard';
+import { AddProductContent } from './page/productpage/add-product-content';
+import { Product } from './page/productpage/component-product/product';
+import { Detailproduct } from './page/productpage/detail-product';
+import { Toaster } from 'react-hot-toast';
+import AboutPage from './page/landing-page/about-page';
+import PricingPage from './page/pricing/Pricing';
+import { RegisterStore } from './page/auth/register-store';
+import PaymentPage from './page/payment-page/PaymentPage';
+import { useEffect } from 'react';
 
 function App() {
+  // const user = useAuthStore((state: any) => state.user);
+  const { user }: any = useAuthStore();
+  useEffect(() => {
+    console.log('user from app.tsx: ', user);
+  }, [user]);
   const router = createBrowserRouter([
     {
       path: '/',
-      Component: Layout,
+      Component: LandingPage,
       HydrateFallback: Fallback,
+    },
+    {
+      path: '/tentang',
+      Component: AboutPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/pricing',
+      Component: PricingPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/payment',
+      Component: PaymentPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/login',
+      Component: Login,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/register',
+      Component: Register,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/register-store',
+      Component: RegisterStore,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/',
+      Component: LandingPage,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/',
+      element: <PrivateRoute user={user} />,
       children: [
         {
-          path: '/',
+          path: '/dashboard',
           Component: Dashboard,
           HydrateFallback: Fallback,
         },
         {
           path: '/product',
           Component: Product,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: '/product-detail/:id',
+          Component: Detailproduct,
           HydrateFallback: Fallback,
         },
         {
@@ -43,15 +105,18 @@ function App() {
         },
         {
           path: '/add-product',
-          Component: AddProduct,
+          Component: AddProductContent,
           HydrateFallback: Fallback,
         },
+   
       ],
     },
   ]);
+
   return (
     <div>
       <RouterProvider router={router} />
+      <Toaster />
     </div>
   );
 }

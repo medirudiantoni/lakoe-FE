@@ -1,0 +1,196 @@
+import LogoIcon from '@/components/icons/logo';
+import { Field } from '@/components/ui/field';
+import { fetchLogin } from '@/features/auth/services/auth-service';
+import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate, Navigate } from 'react-router';
+import { toast } from 'react-hot-toast';
+import Cookies from 'js-cookie';
+import { z } from 'zod';
+import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+import { useEffect, useState } from 'react';
+import { apiURL } from '@/utils/baseurl';
+
+const loginSchema = z.object({
+  email: z.string().min(1, 'Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
+
+export function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [params, setParams] = useState<any | null>(null)
+  const { setUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = (data: LoginFormInputs) => {
+    setIsLoading(true);
+    toast.promise(
+      fetchLogin(data) // Promise yang akan dijalankan
+        .then((res) => {
+          if (res.status === 200) {
+            const data = res.data;
+            setUser(data.user);
+            console.log('text', data)
+            Cookies.set('token', data.token);
+            data.user.stores ? navigate('/dashboard') : navigate('/register-store')
+
+            return data.message;
+
+          }
+        })
+        .catch((error) => {
+          throw error.message || 'An error occurred while logging in.';
+        })
+        .finally(() => {
+          setIsLoading(false);
+        }),
+      {
+        loading: 'Logging in...',
+        success: (message) => <div>{message}</div>,
+        error: (err) => <div>{err}</div>,
+      },
+      {
+        position: 'top-center',
+        style: {
+          background: '#FFFF',
+          color: '#1d1d1d',
+          fontWeight: 'normal',
+        },
+      }
+    );
+  };
+
+  const onClickGoogle = () => {
+    setIsLoading(true);
+    window.location.href = `${apiURL}auth/google`;
+  }
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.size == 0) {
+      setParams(null)
+    } else {
+      setParams({
+        token: searchParams.get('token'),
+        name: searchParams.get('name'),
+        email: searchParams.get('email'),
+        phone: searchParams.get('phone'),
+        role: searchParams.get('role'),
+        store: searchParams.get('store'),
+        updatedAt: searchParams.get('updatedAt'),
+        createdAt: searchParams.get('createdAt'),
+        id: searchParams.get('id'),
+      });
+    }
+  }, [window.location]);
+
+  useEffect(() => {
+    if (params !== null) {
+      setUser(params);
+      Cookies.set('token', params.token as string);
+
+      const storeParse = JSON.parse(params.store);
+      
+      if(storeParse){
+        navigate('/dashboard')
+      } else {
+        navigate('/register-store')
+      }
+    }
+  }, [params]);
+
+  return (
+    <Box
+      display={'flex'}
+      alignItems={'center'}
+      pt={20}
+      flexDirection={'column'}
+      width={'100vw'}
+      height={'100vh'}
+    >
+      <LogoIcon />
+      <Box width={'25%'} mt={5}>
+        <Text
+          py={'5'}
+          textAlign={'center'}
+          fontSize={'28px'}
+          fontWeight={'semibold'}
+        >
+          Login
+        </Text>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Field label="Email">
+            <Input placeholder="Masukan email" {...register('email')} />
+            {errors.email && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop="1.5"
+              >
+                {errors.email.message}
+              </Text>
+            )}
+          </Field>
+          <Field label="Password" mt={5}>
+            <Input placeholder="Masukan password" {...register('password')} />
+            {errors.password && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop="1.5"
+              >
+                {errors.password.message}
+              </Text>
+            )}
+          </Field>
+          <Text textAlign={'right'} mt={2} color={'blue.400'}>
+            Lupa password?
+          </Text>
+          <Button
+            colorPalette={'blue'}
+            width={'full'}
+            borderRadius={'7px'}
+            mt={3}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? <Spinner size="sm" /> : 'Masuk'}
+          </Button>
+          <Button
+            bg="white"
+            color="black"
+            width={'full'}
+            borderRadius={'7px'}
+            mt={3}
+            type="button"
+            disabled={isLoading}
+            onClick={onClickGoogle}
+          >
+            <Image w="10" h="10" src='/google-icon.webp'></Image>
+          </Button>
+        </form>
+
+        <Text textAlign={'center'}>
+          Belum punya akun? silakan{' '}
+          <Link to={'/register'} className="text-blue-400">
+            daftar di sini
+          </Link>
+        </Text>
+      </Box>
+    </Box>
+  );
+}
