@@ -1,18 +1,17 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
 import { useAuthStore } from '@/features/auth/auth-store/auth-store';
-import {
-  CreatedStore
-} from '@/features/store/services/store-service';
+import { CreatedStore } from '@/features/store/services/store-service';
 import { StoreFormProps } from '@/features/store/types/store-types';
 import {
   Box,
   Button,
   Image,
   Input,
+  Spinner,
   Stack,
   Text,
-  Textarea
+  Textarea,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -35,7 +34,7 @@ export function RegisterStore() {
   const [previewBannerUrl, setPreviewBannerUrl] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const {user, setUser} = useAuthStore()
+  const { user, setUser } = useAuthStore();
 
   const navigate = useNavigate();
   const handleFileLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,25 +42,27 @@ export function RegisterStore() {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
-        setLogoFile(file)
+        setLogoFile(file);
         setPreviewLogoUrl(URL.createObjectURL(file));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleFileBannerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileBannerChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
-        setBannerFile(file)
+        setBannerFile(file);
         setPreviewBannerUrl(URL.createObjectURL(file));
       };
       reader.readAsDataURL(file);
     }
   };
-  
+
   const onSubmit = (data: StoreFormProps) => {
     setIsLoading(true);
     if (!user) {
@@ -78,14 +79,13 @@ export function RegisterStore() {
     };
 
     toast.promise(
-      CreatedStore( updatedData, userId)
+      CreatedStore(updatedData, userId)
         .then((res) => {
           if (res.status === 201) {
-            
             const data = res.data;
-            console.log('data', data)
-        
-            setUser({...user, stores:data.store});
+            console.log('data', data);
+
+            setUser({ ...user, stores: data.store });
             navigate('/dashboard');
             return res.data.message;
           } else {
@@ -115,7 +115,6 @@ export function RegisterStore() {
       }
     );
   };
-
 
   return (
     <Box
@@ -184,7 +183,6 @@ export function RegisterStore() {
                 </Field>
                 <Field label="Banner Picture">
                   <Box
-                     
                     position="relative"
                     width="full"
                     height="150px"
@@ -194,11 +192,11 @@ export function RegisterStore() {
                     alignItems="center"
                     justifyContent="center"
                     cursor="pointer"
-                    border={previewBannerUrl ? 'none' : '2px dashed gray'} // Hapus border jika ada gambar
+                    border={previewBannerUrl ? 'none' : '2px dashed gray.200'}
                   >
                     {previewBannerUrl ? (
                       <Image
-                      {...register('logoAttachment')}
+                        {...register('logoAttachment')}
                         src={previewBannerUrl}
                         alt="Preview Logo"
                         objectFit="cover"
@@ -241,7 +239,7 @@ export function RegisterStore() {
                     alignItems="center"
                     justifyContent="center"
                     cursor="pointer"
-                    border={previewLogoUrl ? 'none' : '2px dashed gray'} // Hapus border jika ada gambar
+                    border={previewLogoUrl ? 'none' : '2px dashed gray.200'}
                   >
                     {previewLogoUrl ? (
                       <Image
@@ -276,8 +274,13 @@ export function RegisterStore() {
                     />
                   </Box>
                 </Field>
-                <Button colorPalette={'blue'} type="submit" w={'full'}>
-                  Buat toko
+                <Button
+                  colorPalette={'blue'}
+                  type="submit"
+                  w={'full'}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Spinner size="sm" /> : 'Buat toko'}
                 </Button>
               </Stack>
             </Box>

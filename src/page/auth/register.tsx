@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import { apiURL } from '@/utils/baseurl';
 
 const registerSchema = z.object({
@@ -71,11 +70,9 @@ export function Register() {
 
   const onClickGoogle = () => {
     setIsLoading(true);
-
     // window.location.href = 'http://localhost:5000/api/v1/auth/google';
     window.location.href = `${apiURL}auth/google`;
-  }
-
+  };
 
   return (
     <Box
@@ -188,7 +185,7 @@ export function Register() {
             disabled={isLoading}
             onClick={onClickGoogle}
           >
-            <Image w="10" h="10" src='/google-icon.webp'></Image>
+            <Image w="10" h="10" src="/google-icon.webp"></Image>
           </Button>
         </form>
         <Text textAlign={'center'} mt={'2'}>
