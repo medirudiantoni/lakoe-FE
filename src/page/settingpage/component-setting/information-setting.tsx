@@ -41,7 +41,7 @@ export function InformationSetting() {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
-  const storeId = user?.stores.id;
+  const storeId = user?.store.id;
 
   useEffect(() => {
     if (storeId) {
@@ -97,7 +97,7 @@ export function InformationSetting() {
         updateStore(formData, storeId)
           .then((response) => {
             setStoreData(response.data);
-            setUser({ ...user, stores: response.data });
+            setUser({ ...user, store: response.data });
             setIsEditing(false);
           })
           .catch((error) => {
