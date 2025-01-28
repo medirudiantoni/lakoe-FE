@@ -297,7 +297,7 @@ export function InformationSetting() {
                     type="file"
                     accept="image/*"
                     position="absolute"
-                    width="200px"
+                    width="full"
                     height="200px"
                     opacity="0"
                     cursor="pointer"
@@ -314,7 +314,7 @@ export function InformationSetting() {
             </Button>
             {isEditing && (
               <Button colorScheme="blue" type="submit" disabled={isLoading}>
-                {isLoading ? <Spinner size="sm" /> : 'Daftar'}
+                {isLoading ? <Spinner size="sm" /> : 'Perbarui'}
               </Button>
             )}
           </Box>

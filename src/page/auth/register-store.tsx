@@ -192,7 +192,8 @@ export function RegisterStore() {
                     alignItems="center"
                     justifyContent="center"
                     cursor="pointer"
-                    border={previewBannerUrl ? 'none' : '2px dashed gray.200'}
+                    border={previewBannerUrl ? 'none' : '2px dashed'}
+                    borderColor={previewBannerUrl ? 'none' : 'gray.200'}
                   >
                     {previewBannerUrl ? (
                       <Image
@@ -213,7 +214,7 @@ export function RegisterStore() {
                         justifyContent="center"
                         color="gray.500"
                       >
-                        Upload logo toko
+                        Upload banner toko
                       </Box>
                     )}
                     <Input
@@ -239,7 +240,8 @@ export function RegisterStore() {
                     alignItems="center"
                     justifyContent="center"
                     cursor="pointer"
-                    border={previewLogoUrl ? 'none' : '2px dashed gray.200'}
+                    border={previewLogoUrl ? 'none' : '2px dashed'}
+                    borderColor={previewLogoUrl ? 'none' : 'gray.200'}
                   >
                     {previewLogoUrl ? (
                       <Image

@@ -20,6 +20,7 @@ import PricingPage from './page/pricing/Pricing';
 import { RegisterStore } from './page/auth/register-store';
 import PaymentPage from './page/payment-page/PaymentPage';
 import { useEffect } from 'react';
+import { LoadingScreen } from './components/loading-screen/loading-screen';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -64,8 +65,13 @@ function App() {
       HydrateFallback: Fallback,
     },
     {
-      path: '/',
-      Component: LandingPage,
+      path: '/register-store',
+      Component: RegisterStore,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/loading-screen',
+      Component: LoadingScreen,
       HydrateFallback: Fallback,
     },
     {

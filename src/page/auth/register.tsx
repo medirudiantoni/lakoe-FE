@@ -35,7 +35,7 @@ export function Register() {
 
     toast
       .promise(
-        fetchRegister(data), // API call
+        fetchRegister(data),
         {
           loading: 'Registering your account...',
           success: (res) => {

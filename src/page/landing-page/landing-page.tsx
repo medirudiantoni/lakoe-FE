@@ -1,5 +1,5 @@
-import RippleButton from '@/components/Button/Ripple.button';
-import CurveSection from '@/components/curveSection/curveSection';
+import RippleButton from '@/components/button/Ripple.button';
+import CurveSection from '@/components/curve-section/curve-section';
 import {
   Badge,
   Box,
