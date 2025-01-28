@@ -101,7 +101,7 @@ export function Login() {
       Cookies.set('token', params.token as string);
 
       const storeParse = JSON.parse(params.store);
-      
+      toast.success('success')
       if(storeParse){
         navigate('/dashboard')
       } else {
