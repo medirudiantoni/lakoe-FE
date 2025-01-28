@@ -22,7 +22,8 @@ import PaymentPage from './page/payment-page/PaymentPage';
 import { useEffect } from 'react';
 
 function App() {
-  const { user } = useAuthStore();
+  // const user = useAuthStore((state: any) => state.user);
+  const { user }: any = useAuthStore();
   useEffect(() => {
     console.log('user from app.tsx: ', user);
   }, [user]);

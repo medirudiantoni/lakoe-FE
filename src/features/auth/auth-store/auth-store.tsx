@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import Cookies from 'js-cookie';
 import { StoreFormProps } from '@/features/store/types/store-types';
 
-interface UserType {
+export interface UserType {
   id: string;
   name: string;
   email: string;
