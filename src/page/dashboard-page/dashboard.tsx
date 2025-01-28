@@ -3,8 +3,15 @@ import { BoxIcon, CircleDollarSign, ShoppingCart, Users } from 'lucide-react';
 import banner from '../../assets/Banner.png';
 import { ChartComponent } from './chart';
 import { TableDemo } from './table';
+import { useEffect } from 'react';
+import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 
 export function Dashboard() {
+  const{user} = useAuthStore()
+  useEffect(()=>{
+
+    console.log('dashboardedsfsfrr:', user)
+  },[user])
   return (
     <Box>
       <Box position={'relative'} >
