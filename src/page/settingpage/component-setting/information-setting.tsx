@@ -41,9 +41,10 @@ export function InformationSetting() {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
-  const storeId = user?.store.id;
+  const storeId = user?.Stores.id;
 
   useEffect(() => {
+    console.log("storeId: ", storeId)
     if (storeId) {
       setIsFetching(true);
       fetchStore(storeId)
@@ -97,7 +98,7 @@ export function InformationSetting() {
         updateStore(formData, storeId)
           .then((response) => {
             setStoreData(response.data);
-            setUser({ ...user, store: response.data });
+            setUser({ ...user, Stores: response.data });
             setIsEditing(false);
           })
           .catch((error) => {

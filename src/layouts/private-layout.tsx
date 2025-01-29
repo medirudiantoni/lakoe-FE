@@ -1,23 +1,71 @@
 import Layout from '@/components/layout/Layout';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import { apiURL } from '@/utils/baseurl';
+import { Center, VStack } from '@chakra-ui/react';
+import LogoIcon from '@/components/icons/logo';
+import LoadingLottie from '@/components/icons/Loading';
+import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
+import toast from 'react-hot-toast';
 
 
-type UserTypes = {
-  id:number
-  name: string;
-  email: string;
-} | null;
+const PrivateRoute = () => {
+  const { setUser, user } = useAuthStore();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-interface PrivateRouteProps {
-  user: UserTypes;
-}
+  useEffect(() => {
+    if(user === null){
+      retrieveCurrentUser()
+    }
+  }, [user]);
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ user }) => {
-  if (!user || !user.name || !user.email) {
-    return <Navigate to="/login" />;
+  function retrieveCurrentUser(){
+    const token = Cookies.get("token");
+    fetchCurrentUserData(token!)
+      .then(res => {
+        setUser(res.user)
+      })
+      .catch((error) => {
+        console.log(error)
+        toast.error("Oops!, Something went wrong");
+      });
   }
-  return <Layout />;
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = Cookies.get('token');
+      if(!token){
+        setIsAuthenticated(false);
+        return;
+      }
+
+      try {
+        await axios.post(apiURL + 'auth/validate-token', { token });
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.log(error)
+        setIsAuthenticated(false);
+      }
+    };
+
+    validateToken();
+  }, []);
+
+  if( isAuthenticated === null ) {
+    return (
+      <Center w="100vw" h="100vh">
+        <VStack gap="10">
+          <LogoIcon />
+          <LoadingLottie />
+        </VStack>
+      </Center>
+    )
+  };
+
+  return isAuthenticated ? <Layout /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;
