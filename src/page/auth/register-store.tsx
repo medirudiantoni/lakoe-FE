@@ -85,7 +85,7 @@ export function RegisterStore() {
             const data = res.data;
             console.log('data', data);
 
-            setUser({ ...user, stores: data.store });
+            setUser({ ...user, Stores: data.store });
             navigate('/dashboard');
             return res.data.message;
           } else {

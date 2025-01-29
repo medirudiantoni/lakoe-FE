@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
 import { useAuthStore } from '@/features/auth/auth-store/auth-store';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { apiURL } from '@/utils/baseurl';
 import LoadingButtonLottie from '@/components/icons/loading-button';
 
@@ -22,7 +22,6 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 
 export function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const [params, setParams] = useState<any | null>(null)
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
 
@@ -76,40 +75,6 @@ export function Login() {
     setIsLoading(true);
     window.location.href = `${apiURL}auth/google`;
   }
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.size == 0) {
-      setParams(null)
-    } else {
-      setParams({
-        token: searchParams.get('token'),
-        name: searchParams.get('name'),
-        email: searchParams.get('email'),
-        phone: searchParams.get('phone'),
-        role: searchParams.get('role'),
-        store: searchParams.get('store'),
-        updatedAt: searchParams.get('updatedAt'),
-        createdAt: searchParams.get('createdAt'),
-        id: searchParams.get('id'),
-      });
-    }
-  }, [window.location]);
-
-  useEffect(() => {
-    if (params !== null) {
-      setUser(params);
-      Cookies.set('token', params.token as string);
-
-      const storeParse = JSON.parse(params.store);
-      toast.success('success')
-      if(storeParse){
-        navigate('/dashboard')
-      } else {
-        navigate('/register-store')
-      }
-    }
-  }, [params]);
 
   return (
     <Box
