@@ -7,7 +7,6 @@ import {
   Image,
   Input,
   Skeleton,
-  Spinner,
   Stack,
   Text,
   Textarea,
@@ -20,8 +19,9 @@ import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import {
   fetchStore,
   updateStore,
-} from '@/features/store/services/store-service';
-import { StoreFormProps } from '@/features/store/types/store-types';
+} from '@/features/auth/services/store-service';
+import { StoreFormProps } from '@/features/auth/types/store-types';
+import LoadingButtonLottie from '@/components/icons/loading-button';
 
 export function InformationSetting() {
   const {
@@ -34,7 +34,7 @@ export function InformationSetting() {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [storeData, setStoreData] = useState<StoreFormProps>();
-  const [isFetching, setIsFetching] = useState(true); // Untuk loading saat fetch data
+  const [isFetching, setIsFetching] = useState(true); 
   const { user, setUser } = useAuthStore();
   const [previewLogoUrl, setPreviewLogoUrl] = useState<string | null>(null);
   const [previewBannerUrl, setPreviewBannerUrl] = useState<string | null>(null);
@@ -297,7 +297,8 @@ export function InformationSetting() {
                     type="file"
                     accept="image/*"
                     position="absolute"
-                    width="full"
+                    width="80%"
+                    px={0}
                     height="200px"
                     opacity="0"
                     cursor="pointer"
@@ -309,12 +310,12 @@ export function InformationSetting() {
           </Grid>
 
           <Box textAlign="right" mt={10}>
-            <Button onClick={toggleEdit} colorScheme="blue">
+            <Button onClick={toggleEdit} colorPalette={isEditing ? 'red' : 'blue'}>
               {isEditing ? 'Batal' : 'Edit'}
             </Button>
             {isEditing && (
-              <Button colorScheme="blue" type="submit" disabled={isLoading}>
-                {isLoading ? <Spinner size="sm" /> : 'Perbarui'}
+              <Button colorPalette="blue" type="submit" disabled={isLoading}>
+                {isLoading ? <LoadingButtonLottie /> : 'Perbarui'}
               </Button>
             )}
           </Box>

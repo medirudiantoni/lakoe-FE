@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import { useEffect, useState } from 'react';
 import { apiURL } from '@/utils/baseurl';
+import LoadingButtonLottie from '@/components/icons/loading-button';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),
@@ -168,7 +169,7 @@ export function Login() {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? <Spinner size="sm" /> : 'Masuk'}
+            {isLoading ? <LoadingButtonLottie /> : 'Masuk'}
           </Button>
           <Button
             bg="white"
@@ -184,7 +185,7 @@ export function Login() {
           </Button>
         </form>
 
-        <Text textAlign={'center'}>
+        <Text textAlign={'center'} mt={2}>
           Belum punya akun? silakan{' '}
           <Link to={'/register'} className="text-blue-400">
             daftar di sini

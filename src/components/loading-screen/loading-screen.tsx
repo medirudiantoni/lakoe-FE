@@ -5,6 +5,8 @@ import { useAuthStore } from "@/features/auth/auth-store/auth-store";
 import { useNavigate } from "react-router";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import LoadingLottie from "../icons/Loading";
+
 
 export function LoadingScreen() {
     const [params, setParams] = useState<any | null>(null)
@@ -52,7 +54,7 @@ export function LoadingScreen() {
       h={"100vh"}
     >
       <LogoIcon />
-      <Spinner color="blue.500" borderWidth="4px" size={'xl'}  mt={4}/>
+        <LoadingLottie/>
     </Stack>
   );
 }

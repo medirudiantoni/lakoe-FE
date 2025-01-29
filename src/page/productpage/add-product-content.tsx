@@ -11,57 +11,129 @@ import {
   Group,
   Input,
   InputAddon,
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
   Text,
-  Textarea,
+  Textarea
 } from '@chakra-ui/react';
-import { ChevronDown, CirclePlus, NotebookPen } from 'lucide-react';
-import { Link } from 'react-router';
+
+import { CirclePlus, NotebookPen } from 'lucide-react';
+import { Link, useNavigate } from 'react-router';
+import CategoryDropdown from './component-product/category-detail-product';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import toast from 'react-hot-toast';
+import { addProduct } from '@/features/auth/services/product-service';
+import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+
+const addproductSchema = z.object({
+  name: z.string().min(3, 'Nama product harus diisi'),
+  description: z.string().min(50,'Deskripsi harus diisi'),
+  url: z.string().min(5, 'Url produk harus diisi'),
+  minimumOrder: z.string().min(1, 'Tentukan minimal pesanan'),
+  price: z.string().min(4, 'Harga produk harus diisi'),
+  sku: z.string().min(4, 'Stock Keeping Unit harus diisi'),
+  stock: z.string().transform((val) => Number(val)).refine((val) => val >= 1, {
+    message: 'Stock produk harus minimal 1',
+  }),
+  weight: z.string().transform((val) => Number(val)).refine((val) => val >= 1, {
+    message: 'Berat produk harus minimal 1 gram',
+  })
+
+})
+
+type ProductFormInputs =z.infer<typeof addproductSchema>
 
 export function AddProductContent() {
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const {user} = useAuthStore()
+
+  const {
+    register, 
+    handleSubmit,
+    formState: {errors},
+  } = useForm<ProductFormInputs>({
+    resolver:zodResolver(addproductSchema)
+  })
+
+  const onSubmit = (data: ProductFormInputs) => {
+    setIsLoading(true)
+
+    const storeId = user?.stores.id
+    const productData = {
+      ...data,
+      storeId: `"${storeId}"`,  
+      categoryId: "1",
+    };
+  
+
+    toast.promise(
+      addProduct(productData), 
+      {
+        loading:'Sedang menambahkan produk baru...',
+        success: (res) => {
+          const responseData = res.data;
+          navigate('/product')
+          return responseData.message || 'Menambahkan produk berhasil'
+        },
+        error: (error) => {
+          return (
+            error.message || "Coba ulang kembali..."
+          )
+        }
+      },
+      {
+        success: {
+          style: {
+            background: '#FFFF',
+            color: '#1d1d1d'
+          }
+        },
+        error:{
+          style: {
+            background: '#FFFF',
+            color:'1d1d1d'
+          }
+        }
+      }
+    )
+    .finally(()=> setIsLoading(false))
+  }
+
   return (
     <Box>
+      <form onSubmit={handleSubmit(onSubmit)}>
       <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
         <Text fontSize={'24px'} fontWeight={'bold'}>
           Informasi Produk
         </Text>
         <Box display={'flex'} flexDirection={'column'} gap={4} mt={5}>
-          <Field label="Nama Produk" required>
-            <Input placeholder="Masukan Nama Produk" />
+          <Field label="Nama Produk" >
+            <Input placeholder="Masukan Nama Produk" {...register('name')} />
+            {errors.name && (
+              <Text 
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.name.message}
+              </Text>
+            )}
           </Field>
-          <Field label="URL Halaman Checkout" required>
+          <Field label="URL Halaman Checkout" >
             <Group attached width={'full'}>
               <InputAddon>lakoe.store/</InputAddon>
-              <Input placeholder="nama-produk" />
+              <Input placeholder="nama-produk" {...register('url')}/>
+              {errors.url && (
+                <Text>
+                  {errors.url.message}
+                </Text>
+              )} 
             </Group>
           </Field>
-          <Field label="Kategori" required position={'relative'}>
-            <MenuRoot>
-              <MenuTrigger asChild>
-                <Button
-                  variant={'outline'}
-                  width={'100%'}
-                  display={'flex'}
-                  justifyContent={'space-between'}
-                  px={3}
-                >
-                  <span className="font-normal text-[#75757C]">
-                    Pilih kategori produk
-                  </span>
-                  <ChevronDown />
-                </Button>
-              </MenuTrigger>
-              <MenuContent position={'absolute'} width={'full'} top={'70px'}>
-                <MenuItem value="new-txt">New Text File</MenuItem>
-                <MenuItem value="new-file">New File...</MenuItem>
-                <MenuItem value="new-win">New Window</MenuItem>
-                <MenuItem value="open-file">Open File...</MenuItem>
-                <MenuItem value="export">Export</MenuItem>
-              </MenuContent>
-            </MenuRoot>
+          <Field label="Kategori"  position={'relative'}>
+            <CategoryDropdown/>
           </Field>
         </Box>
       </Box>
@@ -70,13 +142,24 @@ export function AddProductContent() {
           Detail Produk
         </Text>
         <Box display={'flex'} flexDirection={'column'} gap={4} mt={5}>
-          <Field label="Deskripsi" required>
+          <Field label="Deskripsi" >
             <Textarea
               placeholder="Masukan informasi lebih lengkap tentang produk kamu"
               h={40}
+              {...register('description')}
             />
+            {errors.description && (
+              <Text
+                color="red.500"
+                fontSize={"xs"}
+                textAlign={'left'}
+                marginTop={"1.5"}
+              >
+                {errors.description.message}
+              </Text>
+            )}
           </Field>
-          <Field label="Foto Produksi" required>
+          <Field label="Foto Produksi" >
             <Box display={'flex'} width={'full'} gap={3}>
               <FileUploadRoot maxW="4/12" alignItems="stretch" maxFiles={10}>
                 <FileUploadRoot
@@ -175,7 +258,7 @@ export function AddProductContent() {
           </Button>
         </Box>
 
-        <Field label="Warna" required mt={5}>
+        <Field label="Warna"  mt={5}>
           <Input placeholder="" />
         </Field>
 
@@ -214,21 +297,48 @@ export function AddProductContent() {
           <span>Aktif</span>
         </Box>
         <Box display={'flex'} gap={'3'}>
-          <Field label="Warna" required mt={5} width={'55%'}>
+          <Field label="Warna"  mt={5} width={'55%'}>
             <Group attached>
               <InputAddon>Rp</InputAddon>
-              <Input placeholder="Masukan harga barang" />
+              <Input placeholder="Masukan harga barang" {...register('price')}/>
+              {errors.price && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.price.message}
+              </Text>
+            )}
             </Group>
           </Field>
-          <Field label="Stock Produk" required mt={5} width={'45%'}>
-            <Input placeholder="Masukan jumlah stock" />
+          <Field label="Stock Produk"  mt={5} width={'45%'}>
+            <Input placeholder="Masukan jumlah stock" {...register('stock')} type="number" />
+            {errors.stock && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.stock.message}
+              </Text>
+            )}
           </Field>
         </Box>
         <Box display={'flex'} gap={'3'}>
-          <Field label="SKU(Stock Keeping)" required mt={5} width={'55%'}>
-            <Input placeholder="Masukan SKU" />
+          <Field label="SKU(Stock Keeping)"  mt={5} width={'55%'}>
+            <Input placeholder="Masukan SKU" {...register('sku')}/>
+            {errors.sku && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                  {errors.sku.message}
+              </Text>
+            )}
           </Field>
-          <Field label="Berat Produk" required mt={5} width={'45%'}>
+          <Field label="Berat Produk"  mt={5} width={'45%'}>
             <Group attached width={'full'}>
               <Input placeholder="Masukan berat produk" />
               <InputAddon>Gram</InputAddon>
@@ -247,16 +357,34 @@ export function AddProductContent() {
         <Text fontSize={'24px'} fontWeight={'bold'}>
           Harga
         </Text>
-        <Field label="Harga" required mt={5}>
+        <Field label="Harga"  mt={5}>
           <Group attached width={'full'}>
             <InputAddon>Rp</InputAddon>
-            <Input placeholder="Masukan harga satuan barang" />
+            <Input placeholder="Masukan harga satuan barang" {...register('price')} />
+            {errors.price && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.price.message}
+              </Text>
+            )}
           </Group>
         </Field>
 
-        <Field label="Minimal pembelian" required mt={3}>
+        <Field label="Minimal pembelian"  mt={3}>
           <Group attached width={'full'}>
-            <Input placeholder="1" />
+            <Input placeholder="1" {...register('minimumOrder')}/>
+            {errors.minimumOrder && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.minimumOrder.message}
+              </Text>
+            )}
             <InputAddon>Produk</InputAddon>
           </Group>
         </Field>
@@ -273,11 +401,20 @@ export function AddProductContent() {
           Pengelolaan Produk
         </Text>
         <Box display={'flex'} gap={3}>
-          <Field label="Stok Produk" required mt={5}>
+          <Field label="Stok Produk"  mt={5}>
             <Input placeholder="Masukan stok barang" />
           </Field>
-          <Field label="SKU (Stock Keeping Unit)" required mt={5}>
-            <Input placeholder="Masukan SKU" />
+          <Field label="SKU (Stock Keeping Unit)"   mt={5}>
+            <Input placeholder="Masukan SKU" {...register('sku')}/>
+            {errors.sku && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.sku.message}
+              </Text>
+            )}
           </Field>
         </Box>
       </Box>
@@ -292,14 +429,23 @@ export function AddProductContent() {
         <Text fontSize={'24px'} fontWeight={'bold'}>
           Berat dan Pengiriman
         </Text>
-        <Field label="Berat Produk" required mt={5}>
+        <Field label="Berat Produk"  mt={5}>
           <Group attached width={'full'}>
-            <Input placeholder="Masukan berat produk" />
+            <Input placeholder="Masukan berat produk" {...register('weight')} type='number'/>
+            {errors.weight && (
+              <Text
+              color={'red.500'}
+              fontSize={"xs"}
+              textAlign={'left'}
+              marginTop={'1.5'}>
+                {errors.weight.message}
+              </Text>
+            )}
             <InputAddon>gram</InputAddon>
           </Group>
         </Field>
         <Box display={'flex'} alignItems={'end'} gap={3} mt={3}>
-          <Field label="Ukuran Produk" required>
+          <Field label="Ukuran Produk" >
             <Group attached width={'full'}>
               <Input placeholder="Panjang" />
               <InputAddon>cm</InputAddon>
@@ -335,12 +481,13 @@ export function AddProductContent() {
             <Button variant="outline" borderRadius={'20px'}>
               Batal
             </Button>
-            <Button variant="solid" colorPalette={'blue'} borderRadius={'20px'}>
-              Simpan
+            <Button type='submit' variant="solid" colorPalette={'blue'} borderRadius={'20px'}>
+              Tambah produk
             </Button>
           </Box>
         </Box>
       </Box>
+      </form>
     </Box>
   );
 }
