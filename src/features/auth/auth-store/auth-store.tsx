@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
-import { StoreFormProps } from '@/features/store/types/store-types';
+import { StoreFormProps } from '@/features/auth/types/store-types';
 
 export interface UserType {
   id: string;

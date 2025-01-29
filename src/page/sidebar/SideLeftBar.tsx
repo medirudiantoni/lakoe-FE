@@ -131,7 +131,7 @@ const SideBar = () => {
                 <Link
                   to="/dashboard"
                   className={`flex items-center my-2 px-5 py-2 z-20 ${
-                    isActive(['/*'])
+                    isActive(['/'])
                       ? 'text-[#0086B4] bg-[#F8F8F8]'
                       : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
                   }`}
