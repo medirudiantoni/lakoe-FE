@@ -32,23 +32,21 @@ export function LoadingScreen() {
         email: String(searchParams.get('email')),
         phone: String(searchParams.get('phone')),
         role: String(searchParams.get('role')),
-        store: JSON.parse(store!),
+        Stores: JSON.parse(store!),
         updatedAt: String(searchParams.get('updatedAt')),
         createdAt: String(searchParams.get('createdAt')),
         id: String(searchParams.get('id')),
       });
     }
-  }, [window.location]);
+  }, []);
 
   useEffect(() => {
     if (params !== null) {
       setUser(params);
       Cookies.set('token', params.token as string);
 
-      console.log(params.store);
-      // const storeParse = JSON.parse(params.store);
       toast.success('success');
-      if (params.store) {
+      if (params.Stores) {
         navigate('/dashboard');
       } else {
         navigate('/register-store');
