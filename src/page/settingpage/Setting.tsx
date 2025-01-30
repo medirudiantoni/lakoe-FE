@@ -4,16 +4,16 @@ import { LocationSetting } from './component-setting/location-setting';
 import { TemplateSetting } from './component-setting/template-setting';
 import { useEffect, useState } from 'react';
 import { fetchStore } from '@/features/auth/services/store-service';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import toast from 'react-hot-toast';
 import { StoreFormProps } from '@/features/auth/types/store-types';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 
 
 export function Setting() {
     const [storeData, setStoreData] = useState<StoreFormProps>();
     const { user } = useAuthStore();
-    const storeId = user?.stores.id;
+    const storeId = user?.Stores.id;
   useEffect(() => {
     if (storeId) {
       fetchStore(storeId)

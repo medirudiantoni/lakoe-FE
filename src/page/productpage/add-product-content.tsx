@@ -18,13 +18,15 @@ import {
 import { CirclePlus, NotebookPen } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import CategoryDropdown from './component-product/category-detail-product';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { addProduct } from '@/features/auth/services/product-service';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+
+import { useCategoryStore } from '@/features/auth/store/category-store';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 const addproductSchema = z.object({
   name: z.string().min(3, 'Nama product harus diisi'),
@@ -48,7 +50,12 @@ export function AddProductContent() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const {user} = useAuthStore()
+  const { categories, fetchCategories, selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  
   const {
     register, 
     handleSubmit,
@@ -58,29 +65,53 @@ export function AddProductContent() {
   })
 
   const onSubmit = (data: ProductFormInputs) => {
-    setIsLoading(true)
+    setIsLoading(true);
+    console.log("Category ID sebelum submit:", selectedCategoryId); // Debugging
 
-    const storeId = user?.stores.id
+    if (!selectedCategoryId) {
+      console.error("Category ID is missing");
+      alert("Pilih kategori terlebih dahulu!");
+      return;
+    }
+
+
+    const storeId = user?.Stores?.id;
+    const categoryId = selectedCategoryId; // Ambil ID dengan aman
+  
+    console.log("Category ID sebelum submit:", categoryId); // Debugging
+  
+    // Validasi categoryId sebelum mengirim ke backend
+    if (!categoryId) {
+      console.error("Category ID is missing");
+      toast.error("Pilih kategori terlebih dahulu!");
+      setIsLoading(false);
+      return;
+    }
+  
+    if (typeof categoryId !== "string") {
+      console.error("categoryId bukan string:", categoryId);
+      throw new Error("categoryId harus berupa string!");
+    }
+  
     const productData = {
       ...data,
-      storeId: `"${storeId}"`,  
-      categoryId: "1",
+      storeId: storeId,  
+      categoryId: categoryId, 
     };
   
-
+    console.log("Product Data yang dikirim:", productData); // Debugging
+  
     toast.promise(
-      addProduct(productData), 
+      addProduct(productData),
       {
-        loading:'Sedang menambahkan produk baru...',
+        loading: 'Sedang menambahkan produk baru...',
         success: (res) => {
           const responseData = res.data;
-          navigate('/product')
-          return responseData.message || 'Menambahkan produk berhasil'
+          navigate('/product');
+          return responseData.message || 'Menambahkan produk berhasil';
         },
         error: (error) => {
-          return (
-            error.message || "Coba ulang kembali..."
-          )
+          return error.message || "Coba ulang kembali...";
         }
       },
       {
@@ -90,16 +121,16 @@ export function AddProductContent() {
             color: '#1d1d1d'
           }
         },
-        error:{
+        error: {
           style: {
             background: '#FFFF',
-            color:'1d1d1d'
+            color: '#1d1d1d'
           }
         }
       }
-    )
-    .finally(()=> setIsLoading(false))
-  }
+    ).finally(() => setIsLoading(false));
+  };
+  
 
   return (
     <Box>

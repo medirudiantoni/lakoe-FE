@@ -1,17 +1,17 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
 import { fetchLogin } from '@/features/auth/services/auth-service';
-import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, Image, Input,  Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import { useState } from 'react';
 import { apiURL } from '@/utils/baseurl';
 import LoadingButtonLottie from '@/components/icons/loading-button';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),

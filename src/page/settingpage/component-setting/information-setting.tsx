@@ -15,13 +15,14 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Field } from '@/components/ui/field';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+
 import {
   fetchStore,
   updateStore,
 } from '@/features/auth/services/store-service';
 import { StoreFormProps } from '@/features/auth/types/store-types';
 import LoadingButtonLottie from '@/components/icons/loading-button';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 export function InformationSetting() {
   const {

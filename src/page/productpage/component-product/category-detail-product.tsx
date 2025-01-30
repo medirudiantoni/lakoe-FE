@@ -12,7 +12,7 @@ import {
   Circle,
 } from "@chakra-ui/react";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { fetchCategory } from "@/features/auth/services/category-service";
+import { useCategoryStore } from "@/features/auth/store/category-store";
 
 
 type Category = {
@@ -22,36 +22,23 @@ type Category = {
 };
 
 const CategoryDropdown: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedPath, setSelectedPath] = useState<string>("");
+  const { categories, fetchCategories, selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
   const [openCategories, setOpenCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchCategory();
-        console.log("Fetched categories:", data); // Debugging
-        setCategories(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+    fetchCategories();
+  }, [fetchCategories]);
 
-    fetchData();
-  }, []);
-
-  const handleSelectCategory = (path: string) => {
-    setSelectedPath(path);
-    if (!openCategories.includes(path)) {
-      setOpenCategories((prev) => [...prev, path]);
+  const handleSelectCategory = (id: string, name: string) => {
+    setSelectedCategoryId(id);
+    if (!openCategories.includes(id)) {
+      setOpenCategories((prev) => [...prev, id]);
     }
   };
 
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (id: string) => {
     setOpenCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((item) => item !== category)
-        : [...prev, category]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
@@ -65,18 +52,18 @@ const CategoryDropdown: React.FC = () => {
       <VStack align="start" w="full">
         {items.map((item) => {
           const currentPath = path ? `${path} > ${item.name}` : item.name;
-          const isOpen = openCategories.includes(currentPath);
+          const isOpen = openCategories.includes(item.id);
           const isClickable = !item.children;
-          const isSelected = selectedPath.startsWith(currentPath);
+          const isSelected = selectedCategoryId === item.id;
 
           return (
             <Box key={item.id} w="full">
               {isClickable ? (
                 <MenuItem
-                  value="item"
+                value="item"
                   cursor="pointer"
                   bg={"white"}
-                  onClick={() => handleSelectCategory(currentPath)}
+                  onClick={() => handleSelectCategory(item.id, item.name)}
                   _hover={{ bg: "gray.200" }}
                 >
                   <HStack justify="space-between" w="full">
@@ -91,7 +78,7 @@ const CategoryDropdown: React.FC = () => {
                   w="full"
                   justify="space-between"
                   cursor="pointer"
-                  onClick={() => toggleCategory(currentPath)}
+                  onClick={() => toggleCategory(item.id)}
                   _hover={{ bg: "gray.100" }}
                 >
                   <HStack justify="space-between" w="full">
@@ -101,7 +88,7 @@ const CategoryDropdown: React.FC = () => {
                   {item.children && (
                     <ChevronRight
                       size={16}
-                      style={{ visibility: openCategories.includes(currentPath) ? "hidden" : "visible" }}
+                      style={{ visibility: openCategories.includes(item.id) ? "hidden" : "visible" }}
                     />
                   )}
                 </HStack>
@@ -131,7 +118,11 @@ const CategoryDropdown: React.FC = () => {
             py={4}
             borderRadius="md"
           >
-            <Text color="gray.600" fontWeight={'normal'}> {selectedPath || "Pilih kategori"}</Text>
+            <Text color="gray.600" fontWeight={'normal'}>
+            {selectedCategoryId
+      ? categories.find(c => c.id === selectedCategoryId)?.name || "Pilih kategori"
+      : "Pilih kategori"}
+            </Text>
             <ChevronDown size={18} />
           </Button>
         </MenuTrigger>

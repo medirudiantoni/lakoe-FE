@@ -1,7 +1,8 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+
 import { CreatedStore } from '@/features/auth/services/store-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 import { StoreFormProps } from '@/features/auth/types/store-types';
 import {
   Box,
