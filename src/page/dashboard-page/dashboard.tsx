@@ -4,7 +4,7 @@ import banner from '../../assets/Banner.png';
 import { ChartComponent } from './chart';
 import { TableDemo } from './table';
 import { useEffect } from 'react';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 export function Dashboard() {
   const{user} = useAuthStore()

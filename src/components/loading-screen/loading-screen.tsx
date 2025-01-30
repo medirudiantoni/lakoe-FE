@@ -1,11 +1,11 @@
 import { Stack } from '@chakra-ui/react';
 import LogoIcon from '../icons/logo';
 import { useEffect, useState } from 'react';
-import { useAuthStore, UserType } from '@/features/auth/auth-store/auth-store';
+import { useAuthStore, UserType } from '@/features/auth/store/auth-store';
 import { useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
-import LoadingLottie from '../icons/Loading';
+import LoadingLottie from '@/components/icons/Loading';
 
 interface ParamsType extends UserType {
   token: string;

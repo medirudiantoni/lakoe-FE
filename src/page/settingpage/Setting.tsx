@@ -1,16 +1,37 @@
 import { Box, Flex, Tabs, Text } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 import { InformationSetting } from './component-setting/information-setting';
 import { LocationSetting } from './component-setting/location-setting';
 import { TemplateSetting } from './component-setting/template-setting';
+import { useEffect, useState } from 'react';
+import { fetchStore } from '@/features/auth/services/store-service';
+import toast from 'react-hot-toast';
+import { StoreFormProps } from '@/features/auth/types/store-types';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 
 
 export function Setting() {
+    const [storeData, setStoreData] = useState<StoreFormProps>();
+    const { user } = useAuthStore();
+    const storeId = user?.Stores.id;
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (storeId) {
+      fetchStore(storeId, token!)
+        .then((data) => {
+          setStoreData(data);
+        })
+        .catch(() => {
+          toast.error('Gagal mengambil data toko.');
+        })
+    }
+  }, [storeId]);
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Text fontWeight={'semibold'} fontSize={'24px'}>
-          Toko Arya Abadi
+          {storeData?.name}
         </Text>
       </Flex>
       <Tabs.Root defaultValue="informasi" mt={5}>
