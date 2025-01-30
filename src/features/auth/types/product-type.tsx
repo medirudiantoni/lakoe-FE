@@ -1,7 +1,8 @@
 export type ProductType ={
+    id:string
     name: string
     description: string
-    attachments?: File | null
+    attachments?: File
     url: string
     sku?: string
     weight?: number
@@ -10,6 +11,7 @@ export type ProductType ={
     minimumOrder: string
     storeId?: string
     categoryId?:string
+    isActive: boolean
 }
 
 export type Variant ={
