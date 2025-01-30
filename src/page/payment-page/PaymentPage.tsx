@@ -1,18 +1,24 @@
 import LogoIcon from '@/components/icons/logo';
 import { useAuthStore } from '@/features/auth/store/auth-store';
-
+import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
+import { apiURL } from '@/utils/baseurl';
 import {
   Box,
   Button,
+  Center,
   Heading,
   HStack,
   Image,
   Text,
   VStack,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router';
+import toast from 'react-hot-toast';
+import { Navigate, useNavigate } from 'react-router';
+import Cookies from 'js-cookie';
+import LoadingLottie from '@/components/icons/Loading';
 
 const eWallets = [
   {
@@ -64,7 +70,47 @@ interface ParamsType {
 
 const PaymentPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { setUser, user } = useAuthStore();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if(user === null){
+      retrieveCurrentUser()
+    }
+  }, [user]);
+
+  function retrieveCurrentUser(){
+    const token = Cookies.get("token");
+    fetchCurrentUserData(token!)
+      .then(res => {
+        setUser(res.user)
+      })
+      .catch((error) => {
+        console.log(error)
+        toast.error("Oops!, Something went wrong");
+      });
+  }
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = Cookies.get('token');
+      if(!token){
+        setIsAuthenticated(false);
+        return;
+      }
+
+      try {
+        await axios.post(apiURL + 'auth/validate-token', { token });
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.log(error)
+        setIsAuthenticated(false);
+      }
+    };
+
+    validateToken();
+  }, []);
+
   const [params, setParams] = useState<ParamsType>({
     name: null,
     price: null,
@@ -80,11 +126,19 @@ const PaymentPage = () => {
     });
   }, []);
 
-  const [isPaymentMehtod, setIsPaymentMethod] = useState('');
-  if (!user || !user.name || !user.email) {
-    return <Navigate to="/register" />;
-  }
-  return (
+  const [isPaymentMethod, setIsPaymentMethod] = useState('');
+  
+  if( isAuthenticated === null ) {
+    return (
+      <Center w="100vw" h="100vh">
+        <VStack gap="10">
+          <LogoIcon />
+          <LoadingLottie />
+        </VStack>
+      </Center>
+    )
+  };
+  return isAuthenticated ? (
     <Box w="full" minH="100vh" pb="20" className="bg-slate-100">
       <VStack py="10" position="relative">
         <Button
@@ -188,7 +242,7 @@ const PaymentPage = () => {
                     borderWidth={2}
                     borderColor="gray.100"
                     _hover={{ bg: 'blue.100' }}
-                    bg={isPaymentMehtod === item.name ? 'blue.100' : 'gray.100'}
+                    bg={isPaymentMethod === item.name ? 'blue.100' : 'gray.100'}
                     borderRadius="xl"
                     aspectRatio="4/2"
                   >
@@ -219,7 +273,7 @@ const PaymentPage = () => {
                     borderWidth={2}
                     borderColor="gray.100"
                     _hover={{ bg: 'blue.100' }}
-                    bg={isPaymentMehtod === item.name ? 'blue.100' : 'gray.100'}
+                    bg={isPaymentMethod === item.name ? 'blue.100' : 'gray.100'}
                     borderRadius="xl"
                     aspectRatio="4/2"
                   >
@@ -264,7 +318,7 @@ const PaymentPage = () => {
               <Text>Rp 300.000,-</Text>
             </HStack>
             <Box px="4" w="full">
-              {!isPaymentMehtod ? (
+              {!isPaymentMethod ? (
                 <Button
                   w="full"
                   disabled
@@ -276,7 +330,7 @@ const PaymentPage = () => {
                 </Button>
               ) : (
                 <Button w="full" bg="blue.600" color="white" borderRadius="xl">
-                  Bayar dengan {isPaymentMehtod}
+                  Bayar dengan {isPaymentMethod}
                 </Button>
               )}
             </Box>
@@ -284,7 +338,7 @@ const PaymentPage = () => {
         </VStack>
       </VStack>
     </Box>
-  );
+  ) : <Navigate to="/login" replace />;
 };
 
 export default PaymentPage;

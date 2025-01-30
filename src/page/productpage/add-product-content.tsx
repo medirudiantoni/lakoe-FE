@@ -24,9 +24,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { addProduct } from '@/features/auth/services/product-service';
-
 import { useCategoryStore } from '@/features/auth/store/category-store';
 import { useAuthStore } from '@/features/auth/store/auth-store';
+import LoadingButtonLottie from '@/components/icons/loading-button';
 
 const addproductSchema = z.object({
   name: z.string().min(3, 'Nama product harus diisi'),
@@ -74,7 +74,6 @@ export function AddProductContent() {
       return;
     }
 
-
     const storeId = user?.Stores?.id;
     const categoryId = selectedCategoryId; // Ambil ID dengan aman
   
@@ -92,7 +91,7 @@ export function AddProductContent() {
       console.error("categoryId bukan string:", categoryId);
       throw new Error("categoryId harus berupa string!");
     }
-  
+ 
     const productData = {
       ...data,
       storeId: storeId,  
@@ -513,7 +512,7 @@ export function AddProductContent() {
               Batal
             </Button>
             <Button type='submit' variant="solid" colorPalette={'blue'} borderRadius={'20px'}>
-              Tambah produk
+              {isLoading ? <LoadingButtonLottie /> : "Tambah produk"}
             </Button>
           </Box>
         </Box>

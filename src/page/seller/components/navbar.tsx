@@ -4,10 +4,10 @@ import { Link } from "react-router"
 
 const SellerNavbar = () => {
     return (
-        <HStack position={"fixed"} w="full">
+        <HStack position={"fixed"} zIndex="10" w="full" className="backdrop-blur-md bg-white/60">
             <HStack justifyContent="space-between" w="full" maxW="7xl" mx="auto" py="5">
                 <HStack gap={2}>
-                    <Image src="/logo.png" h="8"></Image>
+                    {/* <Image src="/logo.png" h="8"></Image> */}
                     <Text fontSize="2xl" fontWeight="bold" className="font-poppins">Store Brand</Text>
                 </HStack>
                 <HStack>
