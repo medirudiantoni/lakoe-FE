@@ -1,7 +1,6 @@
-import { Box, Flex, Grid, Heading, HStack, Image, Input, Stack, Text, VStack } from "@chakra-ui/react"
+import { Box, Grid, Heading, HStack, Image, Input, Text, VStack } from "@chakra-ui/react"
 import SellerNavbar from "./components/navbar"
-import { ArrowDownUp, CopyrightIcon, Search, SlidersHorizontal } from "lucide-react"
-import SellerLogo from "./components/logo";
+import { ArrowDownUp, Search, SlidersHorizontal } from "lucide-react"
 import SellerFooter from "./components/footer";
 
 const url_banner_dummy = 'https://res.cloudinary.com/dbtcocjdk/image/fetch/f_auto,dpr_2.0,w_800/https:/storage.jukeboxprint.com/s/images/Graphic%20Design%20Trends%202024%20359.jpg';
