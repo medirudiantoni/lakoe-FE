@@ -50,9 +50,13 @@ export const updateStore = async (data: FormData, storeId: string) => {
   };
 
 
-export const fetchStore = async (storeId:string) => {
+export const fetchStore = async (storeId:string, token: string) => {
     try {
-      const res: AxiosResponse = await axios.get(apiURL + `store/${storeId}`)
+      const res: AxiosResponse = await axios.get(apiURL + `store/${storeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
   
       return res.data;
     } catch (error) {

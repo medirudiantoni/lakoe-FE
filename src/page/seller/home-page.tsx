@@ -1,6 +1,7 @@
 import { Box, Grid, Heading, HStack, Image, Input, Text, VStack } from "@chakra-ui/react"
 import SellerNavbar from "./components/navbar"
 import { ArrowDownUp, Search, SlidersHorizontal } from "lucide-react"
+import SellerFooter from "./components/footer";
 
 const url_banner_dummy = 'https://res.cloudinary.com/dbtcocjdk/image/fetch/f_auto,dpr_2.0,w_800/https:/storage.jukeboxprint.com/s/images/Graphic%20Design%20Trends%202024%20359.jpg';
 
@@ -35,9 +36,9 @@ const dummy_product = [
     },
 ]
 
-const SellerHomepage = () => {
+export default function SellerHomepage() {
     return (
-        <Box w="full" minH="100vh">
+        <Box w="full" h="fit" minH="100vh">
             <SellerNavbar />
 
             {/* Banner start */}
@@ -77,17 +78,26 @@ const SellerHomepage = () => {
             {/* Title, filter, & sort End */}
 
             {/* Products display Start */}
-            <Grid templateColumns="repeat(4, 1fr)" w="full" maxW="7xl" mx="auto">
+            <Grid templateColumns="repeat(4, 1fr)" gapX="16" gapY="10" w="full" h="fit" maxW="7xl" mx="auto" pb="200px">
                 {dummy_product.map(product => (
-                    <Box key={product.id} h="20" w="full" bg="purple.400">
-                        <Image w="full" aspectRatio="1/1" src={product.attachments[0]}></Image>
+                    <Box role="button" key={product.id} h="fit-content" p="3" w="full" _hover={{ bg: "gray.100" }}>
+                        <Image w="full" aspectRatio="1/1" mb="2" src={product.attachments[0]}></Image>
+                        <VStack alignItems="start" justifyContent="space-between" className="font-poppins">
+                            <Box mb="1">
+                                <Heading size="lg" fontWeight="semibold">{product.name}</Heading>
+                                <Text fontSize="xs" color="gray.600">{product.category}</Text>
+                            </Box>
+                            <Text fontSize="md" fontWeight="semibold">{product.price}</Text>
+                        </VStack>
                     </Box>
                 ))}
             </Grid>
             {/* Products display End */}
 
+            {/* Footer start */}
+            <SellerFooter />
+            {/* Footer end */}
+
         </Box>
     )
 }
-
-export default SellerHomepage

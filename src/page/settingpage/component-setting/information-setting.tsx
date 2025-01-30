@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
 import { Field } from '@/components/ui/field';
 import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import {
@@ -44,10 +45,11 @@ export function InformationSetting() {
   const storeId = user?.Stores.id;
 
   useEffect(() => {
+    const token = Cookies.get("token")
     console.log("storeId: ", storeId)
     if (storeId) {
       setIsFetching(true);
-      fetchStore(storeId)
+      fetchStore(storeId, token!)
         .then((data) => {
           setStoreData(data);
           setPreviewLogoUrl(data.logoAttachment || null);

@@ -1,4 +1,5 @@
 import { Box, Flex, Tabs, Text } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 import { InformationSetting } from './component-setting/information-setting';
 import { LocationSetting } from './component-setting/location-setting';
 import { TemplateSetting } from './component-setting/template-setting';
@@ -13,10 +14,11 @@ import { StoreFormProps } from '@/features/auth/types/store-types';
 export function Setting() {
     const [storeData, setStoreData] = useState<StoreFormProps>();
     const { user } = useAuthStore();
-    const storeId = user?.stores.id;
+    const storeId = user?.Stores.id;
   useEffect(() => {
+    const token = Cookies.get("token");
     if (storeId) {
-      fetchStore(storeId)
+      fetchStore(storeId, token!)
         .then((data) => {
           setStoreData(data);
         })
