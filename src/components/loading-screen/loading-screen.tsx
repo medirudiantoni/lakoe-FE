@@ -5,8 +5,7 @@ import { useAuthStore, UserType } from '@/features/auth/store/auth-store';
 import { useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
-import LoadingLottie from '../icons/loading';
-
+import LoadingLottie from '@/components/icons/Loading';
 
 interface ParamsType extends UserType {
   token: string;
@@ -62,7 +61,7 @@ export function LoadingScreen() {
       h={'100vh'}
     >
       <LogoIcon />
-      <LoadingLottie/>
+      <LoadingLottie />
     </Stack>
   );
 }

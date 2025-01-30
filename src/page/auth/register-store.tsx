@@ -14,10 +14,11 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
+import Cookies from 'js-cookie';
 
 export function RegisterStore() {
   const {
@@ -36,6 +37,10 @@ export function RegisterStore() {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const { user, setUser } = useAuthStore();
+
+  useEffect(() => {
+    console.log('reg store user: ', user);
+  }, [user]);
 
   const navigate = useNavigate();
   const handleFileLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +71,7 @@ export function RegisterStore() {
 
   const onSubmit = (data: StoreFormProps) => {
     setIsLoading(true);
+    const token = Cookies.get('token');
     if (!user) {
       toast.error('User not authenticated');
       return;
@@ -75,12 +81,12 @@ export function RegisterStore() {
     const updatedData = {
       ...data,
       userId,
-      logoAttachment: bannerFile ?? null,
-      bannerAttachment: logoFile ?? null,
+      logoAttachment: logoFile ?? null,
+      bannerAttachment: bannerFile ?? null,
     };
 
     toast.promise(
-      CreatedStore(updatedData, userId)
+      CreatedStore(updatedData, userId, token!)
         .then((res) => {
           if (res.status === 201) {
             const data = res.data;
