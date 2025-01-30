@@ -19,9 +19,10 @@ import PricingPage from './page/pricing/Pricing';
 import { RegisterStore } from './page/auth/register-store';
 import PaymentPage from './page/payment-page/PaymentPage';
 import { LoadingScreen } from './components/loading-screen/loading-screen';
-import SellerPage from './page/seller/seller';
-import SellerHomepage from './page/seller/home-page';
-import SellerDetailProduct from './page/seller/detail-product';
+import SellerPage from './page/seller/pages/seller-layout';
+import SellerHomepage from './page/seller/pages/home-page';
+import SellerDetailProduct from './page/seller/pages/detail-product';
+import SellerCartPage from './page/seller/pages/cart-page';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -85,6 +86,11 @@ function App() {
         {
           path: 'detail-product',
           Component: SellerDetailProduct,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: 'cart',
+          Component: SellerCartPage,
           HydrateFallback: Fallback,
         },
       ]
