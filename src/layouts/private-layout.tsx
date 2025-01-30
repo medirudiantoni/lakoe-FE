@@ -6,10 +6,11 @@ import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { Center, VStack } from '@chakra-ui/react';
 import LogoIcon from '@/components/icons/logo';
-import LoadingLottie from '@/components/icons/Loading';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+
+import { useAuthStore } from '@/features/auth/store/auth-store';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
 import toast from 'react-hot-toast';
+
 
 
 const PrivateRoute = () => {
@@ -59,7 +60,7 @@ const PrivateRoute = () => {
       <Center w="100vw" h="100vh">
         <VStack gap="10">
           <LogoIcon />
-          <LoadingLottie />
+          {/* <LoadingLottie /> */}
         </VStack>
       </Center>
     )

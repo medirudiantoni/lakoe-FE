@@ -1,5 +1,5 @@
 import LogoIcon from '@/components/icons/logo';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
 import { apiURL } from '@/utils/baseurl';
 import {

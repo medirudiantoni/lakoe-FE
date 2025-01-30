@@ -8,10 +8,10 @@ import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
-import { useAuthStore } from '@/features/auth/auth-store/auth-store';
 import { useState } from 'react';
 import { apiURL } from '@/utils/baseurl';
 import LoadingButtonLottie from '@/components/icons/loading-button';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),

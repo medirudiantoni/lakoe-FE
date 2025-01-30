@@ -8,6 +8,8 @@ export type ProductType ={
     stock?: number
     price?: string
     minimumOrder: string
+    storeId?: string
+    categoryId?:string
 }
 
 export type Variant ={
