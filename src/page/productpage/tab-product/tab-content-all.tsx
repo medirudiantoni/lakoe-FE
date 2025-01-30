@@ -10,9 +10,8 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react';
-import { Link2, PackageSearch } from 'lucide-react';
+import { Link2, PackageSearch, UndoIcon } from 'lucide-react';
 import CheckBox from '../component-product/checkbox';
-
 import products from '@/data-dummy/products.json';
 import { Link } from 'react-router';
 import Category from '../component-product/category';
@@ -21,8 +20,43 @@ import { DialogDelete } from '../dialog-product/dialog-delete';
 import { DialogNonaktif } from '../dialog-product/dialog-nonaktif';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { fetchLogin } from '@/features/auth/services/auth-service';
+import { fetchProduct } from '@/features/auth/services/product-service';
+import { StoreFormProps } from '@/features/auth/types/store-types';
+import toast from 'react-hot-toast';
+import { ProductType } from '@/features/auth/types/product-type';
 
-const TabContentAll = () => {
+export function TabContentAll()  {
+  const { user } = useAuthStore();
+  const [storeData, setStoreData] = useState<ProductType[] | null>(null); // Awalnya null
+  const [isFetching, setIsFetching] = useState(true); 
+  const storeId = user?.Stores.id;
+
+  useEffect(() => {
+    const token = Cookies.get('token');
+
+    if (storeId && token) {
+      fetchProduct(storeId, token)
+        .then((data) => {
+          setStoreData(data); 
+          console.log('cek:', data)
+        })
+        .catch(() => {
+          toast.error('Gagal mengambil data produk.');
+        })
+        .finally(() => {
+          setIsFetching(false); // Mengubah status fetching setelah selesai
+        });
+    }
+  }, [storeId]);
+
+  if (isFetching) {
+    return <Text>Loading...</Text>; // Tampilkan loading saat fetching
+  }
+
   return (
     <Box>
       <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2}>
@@ -46,15 +80,16 @@ const TabContentAll = () => {
         </GridItem>
       </Grid>
       <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
-        <Text color={'gray.400'}>{products.length} Produk</Text>
+        <Text color={'gray.400'}>{storeData?.length} Produk</Text>
         <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
           <DialogDelete />
           <DialogNonaktif />
           <CheckBox display="block" />
         </Box>
       </Flex>
-      {products.map((product, index) => (
+      {storeData?.map((product) => (
         <Box
+          key={product.id} // Tambahkan key untuk setiap item dalam list
           width="full"
           border="1px solid"
           borderColor="gray.200"
@@ -67,10 +102,10 @@ const TabContentAll = () => {
         >
           <Box display={'flex'} alignItems={'center'}>
             <Image
-              src={product.image}
+              src={String(product.attachments)}
               width={36}
               height={36}
-              borderRadius="md"
+              borderRadius="20px"
               p={3}
               mr={3}
             />
@@ -79,9 +114,9 @@ const TabContentAll = () => {
                 {product.name}
               </Text>
               <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                <Text fontWeight={'semibold'}>Harga: {product.harga} </Text>
+                <Text fontWeight={'semibold'}>Harga: {product.price} </Text>
                 <Text color={'gray.500'} ml={1}>
-                  • Stok: {product.stok} • SKU: {product.sku}
+                  • Stok: {product.stock} • SKU: {product.sku}
                 </Text>
               </Flex>
               <Box display={'flex'} gap={2}>
@@ -105,7 +140,7 @@ const TabContentAll = () => {
             <CheckBox display={'none'} />
             <Switch
               colorPalette={'blue'}
-              defaultChecked={product.status === 'defaultChecked'}
+              defaultChecked={product.isActive}
               size={'lg'}
             />
           </Box>
@@ -114,5 +149,3 @@ const TabContentAll = () => {
     </Box>
   );
 };
-
-export default TabContentAll;
