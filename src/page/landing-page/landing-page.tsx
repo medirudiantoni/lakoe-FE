@@ -1,4 +1,4 @@
-import RippleButton from '@/components/Button/Ripple.button';
+
 import CurveSection from '@/components/curve-section/curve-section';
 import {
   Badge,
@@ -16,6 +16,7 @@ import loyalitas from '@/assets/loyalitas.png';
 import Independensi from '@/assets/independensi.png';
 import Navbar_Landing_page from '@/components/landingPage/Navbar_Landing_page';
 import Footer from '@/components/landingPage/Footer';
+import RippleButton from '@/components/button/Ripple.button';
 
 const Button_MulaiSekarang = () => {
   const navigate = useNavigate();

@@ -82,7 +82,7 @@ const SideBar = () => {
               <Link
                 to="/product"
                 className={`flex items-center my-2 px-5 py-2 ${
-                  isActive(['/product/', '/add-product/'])
+                  isActive(['/product', '/add-product'])
                     ? 'text-[#0086B4] bg-[#F8F8F8]'
                     : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
                 }`}

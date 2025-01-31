@@ -32,7 +32,7 @@ const CategoryDropdown: React.FC = () => {
   const handleSelectCategory = (id: string, name: string) => {
     setSelectedCategoryId(id);
     if (!openCategories.includes(id)) {
-      setOpenCategories((prev) => [...prev, id]);
+      setOpenCategories((prev) => [...prev, id, name]);
     }
   };
 

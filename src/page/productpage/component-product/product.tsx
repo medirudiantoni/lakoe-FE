@@ -2,9 +2,11 @@ import { Box, Button, Flex, Tabs, Text } from '@chakra-ui/react';
 import { CirclePlus } from 'lucide-react';
 
 import { Link } from 'react-router';
-import TabContentNonActive from '../tab-product/tab-content-non-active';
-import TabContentActive from '../tab-product/tab-content-active';
-import TabContentAll from '../tab-product/tab-content-all';
+
+import { TabContentAll } from '../tab-product/tab-content-all';
+import { TabContentActive } from '../tab-product/tab-content-active';
+import { TabContentNonActive } from '../tab-product/tab-content-non-active';
+
 
 
 export function Product() {

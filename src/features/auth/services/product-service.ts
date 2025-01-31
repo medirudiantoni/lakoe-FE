@@ -1,13 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 
 import { apiURL } from '@/utils/baseurl';
-import { ProductType } from '../types/product-type';
 
-export const addProduct = async (data: ProductType) => {
+export const addProduct = async (data: FormData, token:string) => {
   try {
     const res: AxiosResponse = await axios.post(apiURL + 'product', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
       },
     });
 
@@ -22,3 +22,45 @@ export const addProduct = async (data: ProductType) => {
   }
 };
 
+export const fetchProduct = async (storeId: string, token: string) => {
+  try {
+    const res: AxiosResponse = await axios.get(apiURL + `store/${storeId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data.products;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
+
+export const toggleProductStatus = async (productId: string, token: string, newStatus: boolean) => {
+  try {
+    const res: AxiosResponse = await axios.patch(
+      `${apiURL}product/${productId}/toggle-active`,
+      { isActive: newStatus }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return res.data; 
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};

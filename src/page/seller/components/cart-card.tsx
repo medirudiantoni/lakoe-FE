@@ -56,7 +56,7 @@ const CartCard: React.FC<CartCardProps> = ({ imageUrl, productName, category, pr
                 </VStack>
                 <HStack w="60" h="full">
                     <Box flex={1} h="full" pt="1">
-                        <Text fontSize="lg" fontWeight="medium" color="gray.900">{isQuantity}x</Text>
+                        <Text fontSize="lg" fontWeight="medium" color="gray.900">{quantity}x</Text>
                     </Box>
                     <VStack alignItems="end" justifyContent="space-between" w="52" h="full">
                         <Heading size="xl" fontWeight="medium">{formatRupiah(isTotalPricePerItem)},-</Heading>
