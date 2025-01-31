@@ -100,7 +100,7 @@ export function TabContentAll() {
           <Box display={'flex'} alignItems={'center'}>
             <Image
               src={String(product.attachments)}
-              width={36}
+              width={40}
               height={36}
               borderRadius="20px"
               p={3}

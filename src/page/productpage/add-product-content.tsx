@@ -27,7 +27,7 @@ import CategoryDropdown from './component-product/category-detail-product';
 
 const addproductSchema = z.object({
   name: z.string().min(3, 'Nama product harus diisi'),
-  description: z.string().min(50, 'Deskripsi harus diisi'),
+  description: z.string().min(5, 'Deskripsi harus diisi'),
   url: z.string().min(5, 'Url produk harus diisi'),
   minimumOrder: z.string().min(1, 'Tentukan minimal pesanan'),
   price: z.string().min(4, 'Harga produk harus diisi'),
@@ -55,10 +55,7 @@ export function AddProductContent() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const {
-    fetchCategories,
-    selectedCategoryId,
-  } = useCategoryStore();
+  const { fetchCategories, selectedCategoryId } = useCategoryStore();
 
   const [previewImages, setPreviewImages] = useState<string[]>(
     Array(5).fill('')
@@ -155,7 +152,7 @@ export function AddProductContent() {
       formData.append('attachments', file);
     });
 
-    const token = Cookies.get('token')
+    const token = Cookies.get('token');
 
     toast
       .promise(
@@ -211,8 +208,17 @@ export function AddProductContent() {
               <Group attached width={'full'}>
                 <InputAddon>lakoe.store/</InputAddon>
                 <Input placeholder="nama-produk" {...register('url')} />
-                {errors.url && <Text>{errors.url.message}</Text>}
               </Group>
+              {errors.url && (
+                <Text
+                  color={'red.500'}
+                  fontSize={'xs'}
+                  textAlign={'left'}
+                  marginTop={'1.5'}
+                >
+                  {errors.url.message}
+                </Text>
+              )}
             </Field>
             <Field label="Kategori" position={'relative'}>
               <CategoryDropdown />
@@ -337,7 +343,7 @@ export function AddProductContent() {
               </Button>
             </Link>
           </Box>
-          
+
           {/* Variant */}
           {/* <Box display={'flex'} gap={3} mt={3}>
             <Button
@@ -471,7 +477,8 @@ export function AddProductContent() {
                 placeholder="Masukan harga satuan barang"
                 {...register('price')}
               />
-              {errors.price && (
+            </Group>
+            {errors.price && (
                 <Text
                   color={'red.500'}
                   fontSize={'xs'}
@@ -481,12 +488,13 @@ export function AddProductContent() {
                   {errors.price.message}
                 </Text>
               )}
-            </Group>
           </Field>
 
           <Field label="Minimal pembelian" mt={3}>
             <Group attached width={'full'}>
               <Input placeholder="1" {...register('minimumOrder')} />
+              <InputAddon>Produk</InputAddon>
+            </Group>
               {errors.minimumOrder && (
                 <Text
                   color={'red.500'}
@@ -497,8 +505,6 @@ export function AddProductContent() {
                   {errors.minimumOrder.message}
                 </Text>
               )}
-              <InputAddon>Produk</InputAddon>
-            </Group>
           </Field>
         </Box>
         <Box
@@ -514,13 +520,13 @@ export function AddProductContent() {
           </Text>
           <Box display={'flex'} gap={3}>
             <Field label="Stok Produk" mt={5}>
-              <Input placeholder="Masukan stok barang" {...register('stock')}/>
+              <Input placeholder="Masukan stok barang" {...register('stock')} />
               {errors.stock && (
                 <Text
-                color={'red.500'}
-                fontSize={'xs'}
-                textAlign={'left'}
-                marginTop={'1.5'}
+                  color={'red.500'}
+                  fontSize={'xs'}
+                  textAlign={'left'}
+                  marginTop={'1.5'}
                 >
                   {errors.stock.message}
                 </Text>
@@ -559,6 +565,8 @@ export function AddProductContent() {
                 {...register('weight')}
                 type="number"
               />
+              <InputAddon>gram</InputAddon>
+            </Group>
               {errors.weight && (
                 <Text
                   color={'red.500'}
@@ -569,8 +577,6 @@ export function AddProductContent() {
                   {errors.weight.message}
                 </Text>
               )}
-              <InputAddon>gram</InputAddon>
-            </Group>
           </Field>
           <Box display={'flex'} alignItems={'end'} gap={3} mt={3}>
             <Field label="Ukuran Produk">
