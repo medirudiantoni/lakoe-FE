@@ -1,23 +1,23 @@
-import { Box, Flex, Tabs, Text } from '@chakra-ui/react';
+import { fetchStore } from '@/features/auth/services/store-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { StoreFormProps } from '@/features/auth/types/store-types';
+import { Box, Flex, Skeleton, Tabs, Text } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { InformationSetting } from './component-setting/information-setting';
 import { LocationSetting } from './component-setting/location-setting';
 import { TemplateSetting } from './component-setting/template-setting';
-import { useEffect, useState } from 'react';
-import { fetchStore } from '@/features/auth/services/store-service';
-import toast from 'react-hot-toast';
-import { StoreFormProps } from '@/features/auth/types/store-types';
-import { useAuthStore } from '@/features/auth/store/auth-store';
-
-
 
 export function Setting() {
-    const [storeData, setStoreData] = useState<StoreFormProps>();
-    const { user } = useAuthStore();
-    const storeId = user?.Stores.id;
+  const [storeData, setStoreData] = useState<StoreFormProps>();
+  const [isFetching, setIsFetching] = useState(true); // Status fetching
+  const { user } = useAuthStore();
+  const storeId = user?.Stores.id;
+
   useEffect(() => {
     const token = Cookies.get("token");
-    if (storeId) {
+    if (storeId && token) {
       fetchStore(storeId, token!)
         .then((data) => {
           setStoreData(data);
@@ -25,8 +25,28 @@ export function Setting() {
         .catch(() => {
           toast.error('Gagal mengambil data toko.');
         })
+        .finally(() => {
+          setIsFetching(false);
+        });
     }
   }, [storeId]);
+
+  if (isFetching) {
+    return (
+      <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
+        <Flex justifyContent={'space-between'} alignItems={'center'}>
+          <Skeleton height="24px" width="200px" />
+        </Flex>
+        <Tabs.Root defaultValue="informasi" mt={5}>
+          <Tabs.List display={'flex'} gap={4}>
+            <Skeleton height="30px" width="100px" />
+            <Skeleton height="30px" width="100px" />
+            <Skeleton height="30px" width="100px" />
+          </Tabs.List>
+        </Tabs.Root>
+      </Box>
+    );
+  }
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
@@ -44,10 +64,10 @@ export function Setting() {
           <InformationSetting />
         </Tabs.Content>
         <Tabs.Content value="lokasi">
-            <LocationSetting/>
+          <LocationSetting />
         </Tabs.Content>
         <Tabs.Content value="template">
-            <TemplateSetting/>
+          <TemplateSetting />
         </Tabs.Content>
       </Tabs.Root>
     </Box>

@@ -40,3 +40,27 @@ export const fetchProduct = async (storeId: string, token: string) => {
     throw error;
   }
 };
+
+export const toggleProductStatus = async (productId: string, token: string, newStatus: boolean) => {
+  try {
+    const res: AxiosResponse = await axios.patch(
+      `${apiURL}product/${productId}/toggle-active`,
+      { isActive: newStatus }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return res.data; 
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};

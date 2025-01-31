@@ -21,7 +21,7 @@ const categories = [
 
 export default function Category() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const [isMenuOpen] = useState(false); 
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>

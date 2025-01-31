@@ -1,5 +1,7 @@
 import { InputGroup } from '@/components/ui/input-group';
-import { Switch } from '@/components/ui/switch';
+import { fetchProduct } from '@/features/auth/services/product-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
 import {
   Box,
   Button,
@@ -10,29 +12,22 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react';
-import { Link2, PackageSearch, UndoIcon } from 'lucide-react';
-import CheckBox from '../component-product/checkbox';
-import products from '@/data-dummy/products.json';
+import Cookies from 'js-cookie';
+import { Link2, PackageSearch } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import Category from '../component-product/category';
+import CheckBox from '../component-product/checkbox';
 import SortingDropdown from '../component-product/Sorting';
-import { DialogDelete } from '../dialog-product/dialog-delete';
-import { DialogNonaktif } from '../dialog-product/dialog-nonaktif';
+import ProductToggleSwitch from '../component-product/switch-status';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';
-import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import { useAuthStore } from '@/features/auth/store/auth-store';
-import { fetchLogin } from '@/features/auth/services/auth-service';
-import { fetchProduct } from '@/features/auth/services/product-service';
-import { StoreFormProps } from '@/features/auth/types/store-types';
-import toast from 'react-hot-toast';
-import { ProductType } from '@/features/auth/types/product-type';
 
-export function TabContentAll()  {
+export function TabContentAll() {
   const { user } = useAuthStore();
-  const [storeData, setStoreData] = useState<ProductType[] | null>(null); // Awalnya null
-  const [isFetching, setIsFetching] = useState(true); 
+  const [isFetching, setIsFetching] = useState(true);
+  const { products, setProducts, updateProductStatus } = useProductStore();
   const storeId = user?.Stores.id;
 
   useEffect(() => {
@@ -41,20 +36,21 @@ export function TabContentAll()  {
     if (storeId && token) {
       fetchProduct(storeId, token)
         .then((data) => {
-          setStoreData(data); 
-          console.log('cek:', data)
+          setProducts(data);
+          console.log('cek:', data);
         })
         .catch(() => {
           toast.error('Gagal mengambil data produk.');
         })
         .finally(() => {
-          setIsFetching(false); // Mengubah status fetching setelah selesai
+          setIsFetching(false);
         });
     }
-  }, [storeId]);
+  }, [storeId, setProducts]);
+
 
   if (isFetching) {
-    return <Text>Loading...</Text>; // Tampilkan loading saat fetching
+    return <Text>Loading...</Text>;
   }
 
   return (
@@ -80,25 +76,26 @@ export function TabContentAll()  {
         </GridItem>
       </Grid>
       <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
-        <Text color={'gray.400'}>{storeData?.length} Produk</Text>
+        <Text color={'gray.400'}>{products?.length} Produk</Text>
         <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
-          <DialogDelete />
-          <DialogNonaktif />
+          {/* <DialogDelete />
+          <DialogNonaktif /> */}
           <CheckBox display="block" />
         </Box>
       </Flex>
-      {storeData?.map((product) => (
+      {products?.map((product) => (
         <Box
-          key={product.id} // Tambahkan key untuk setiap item dalam list
+          key={product.id}
           width="full"
           border="1px solid"
           borderColor="gray.200"
-          height="150px"
+          height="170px"
           borderRadius="10px"
           mt={3}
           display="flex"
           justifyContent={'space-between'}
-          p={3}
+          px={3}
+          py={4}
         >
           <Box display={'flex'} alignItems={'center'}>
             <Image
@@ -110,7 +107,7 @@ export function TabContentAll()  {
               mr={3}
             />
             <Box>
-              <Text fontSize="20px" fontWeight="bold">
+              <Text fontSize="18px" fontWeight="bold">
                 {product.name}
               </Text>
               <Flex fontSize="14px" fontWeight="normal" mt={1}>
@@ -138,14 +135,15 @@ export function TabContentAll()  {
             alignItems={'end'}
           >
             <CheckBox display={'none'} />
-            <Switch
-              colorPalette={'blue'}
-              defaultChecked={product.isActive}
-              size={'lg'}
+            <ProductToggleSwitch
+              key={product.id}
+              productId={product.id}
+              initialStatus={product.isActive}
+              onStatusChange={updateProductStatus}
             />
           </Box>
         </Box>
       ))}
     </Box>
   );
-};
+}

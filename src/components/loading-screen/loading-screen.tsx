@@ -5,7 +5,8 @@ import { useAuthStore, UserType } from '@/features/auth/store/auth-store';
 import { useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
-import LoadingLottie from '@/components/icons/Loading';
+import LoadingLottie from '@/components/icons/loading';
+
 
 interface ParamsType extends UserType {
   token: string;
