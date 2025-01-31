@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Navigate, useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
-import LoadingLottie from '@/components/icons/Loading';
+import LoadingLottie from '@/components/icons/loading';
 
 const eWallets = [
   {

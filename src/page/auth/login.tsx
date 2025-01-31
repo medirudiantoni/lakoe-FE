@@ -43,7 +43,7 @@ export function Login() {
             setUser(data.user);
             console.log('text', data)
             Cookies.set('token', data.token);
-            data.user.stores ? navigate('/dashboard') : navigate('/register-store')
+            data.user.Stores ? navigate('/dashboard') : navigate('/register-store')
 
             return data.message;
 

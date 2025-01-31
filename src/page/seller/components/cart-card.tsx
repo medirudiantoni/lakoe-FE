@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Box, Center, Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { X } from "lucide-react";
@@ -16,7 +16,7 @@ interface CartCardProps {
 }
 
 const CartCard: React.FC<CartCardProps> = ({ imageUrl, productName, category, price, totalPrice, quantity, onPlus, onMinus, onX }) => {
-    const [isQuantity, setQuantity] = useState(quantity);
+    // const [isQuantity, setQuantity] = useState(quantity);
     
     return (
         <Flex py="5" gap="10" w="full" maxW="6xl">
@@ -36,7 +36,7 @@ const CartCard: React.FC<CartCardProps> = ({ imageUrl, productName, category, pr
                 </VStack>
                 <HStack w="60" h="full">
                     <Box flex={1} h="full" pt="1">
-                        <Text fontSize="lg" fontWeight="medium" color="gray.900">{isQuantity}x</Text>
+                        <Text fontSize="lg" fontWeight="medium" color="gray.900">{quantity}x</Text>
                     </Box>
                     <VStack alignItems="end" justifyContent="space-between" w="52" h="full">
                         <Heading size="xl" fontWeight="medium">Rp {totalPrice},-</Heading>

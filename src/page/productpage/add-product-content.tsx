@@ -1,11 +1,5 @@
 import { Field } from '@/components/ui/field';
 import {
-  FileUploadDropzone,
-  FileUploadList,
-  FileUploadRoot,
-} from '@/components/ui/file-upload';
-import { Switch } from '@/components/ui/switch';
-import {
   Box,
   Button,
   Group,
@@ -17,19 +11,19 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-import { CirclePlus, NotebookPen, X } from 'lucide-react';
-import { Link, useNavigate } from 'react-router';
-import CategoryDropdown from './component-product/category-detail-product';
+import LoadingButtonLottie from '@/components/icons/loading-button';
+import { addProduct } from '@/features/auth/services/product-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useCategoryStore } from '@/features/auth/store/category-store';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
+import { CirclePlus, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { addProduct } from '@/features/auth/services/product-service';
-import { useCategoryStore } from '@/features/auth/store/category-store';
-import { useAuthStore } from '@/features/auth/store/auth-store';
-import LoadingButtonLottie from '@/components/icons/loading-button';
-import Cookies from 'js-cookie';
+import { Link, useNavigate } from 'react-router';
+import { z } from 'zod';
+import CategoryDropdown from './component-product/category-detail-product';
 
 const addproductSchema = z.object({
   name: z.string().min(3, 'Nama product harus diisi'),
@@ -62,10 +56,8 @@ export function AddProductContent() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const {
-    categories,
     fetchCategories,
     selectedCategoryId,
-    setSelectedCategoryId,
   } = useCategoryStore();
 
   const [previewImages, setPreviewImages] = useState<string[]>(

@@ -1,4 +1,4 @@
-import { Center, HStack, Image, Text } from "@chakra-ui/react"
+import { Center, HStack, Text } from "@chakra-ui/react"
 import { Search, ShoppingBag, UserRound } from "lucide-react"
 import { Link } from "react-router"
 
