@@ -16,7 +16,7 @@ const SellerNavbar = () => {
                             <Search strokeWidth="2px" />
                         </Center>
                     </Link>
-                    <Link to="/seller">
+                    <Link to="/seller/cart">
                         <Center py={2} px={2} borderRadius="lg" _hover={{ bg: "gray.200" }} _active={{ bg: "blue", transform: "scale(0.95)" }}>
                             <ShoppingBag strokeWidth="2px" />
                         </Center>
