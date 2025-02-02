@@ -45,20 +45,23 @@ const addproductSchema = z.object({
       message: 'Berat produk harus minimal 1 gram',
     }),
   attachments: z
-    .array(z.instanceof(File)) // Cek apakah ini array of File
+    .array(z.instanceof(File))
     .min(1, 'Silakan unggah minimal satu foto produk!'),
+  size: z
+    .object({
+      length: z.number().min(1, 'Panjang harus minimal 1 cm'),
+      width: z.number().min(1, 'Lebar harus minimal 1 cm'),
+      height: z.number().min(1, 'Tinggi harus minimal 1 cm'),
+    })
+    .optional(), // Opsional, bisa diisi atau tidak
 });
-
 type ProductFormInputs = z.infer<typeof addproductSchema>;
 
 export function AddProductContent() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const {
-    fetchCategories,
-    selectedCategoryId,
-  } = useCategoryStore();
+  const { fetchCategories, selectedCategoryId } = useCategoryStore();
 
   const [previewImages, setPreviewImages] = useState<string[]>(
     Array(5).fill('')
@@ -136,7 +139,7 @@ export function AddProductContent() {
     const storeId = user?.Stores?.id;
     const categoryId = selectedCategoryId;
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('name', data.name);
     formData.append('description', data.description);
     formData.append('storeId', storeId || '');
@@ -148,6 +151,13 @@ export function AddProductContent() {
     formData.append('minimumOrder', data.minimumOrder);
     formData.append('url', data.url);
 
+    // Tambahkan size ke FormData
+    if (data.size) {
+      formData.append('size', JSON.stringify(data.size));
+    } else {
+      formData.append('size', JSON.stringify(null)); // Jika size tidak diisi
+    }
+
     console.log('Stock (before FormData):', typeof data.stock, data.stock);
     console.log('Weight (before FormData):', typeof data.weight, data.weight);
 
@@ -155,7 +165,7 @@ export function AddProductContent() {
       formData.append('attachments', file);
     });
 
-    const token = Cookies.get('token')
+    const token = Cookies.get('token');
 
     toast
       .promise(
@@ -185,7 +195,6 @@ export function AddProductContent() {
       )
       .finally(() => setIsLoading(false));
   };
-
   return (
     <Box>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -337,7 +346,7 @@ export function AddProductContent() {
               </Button>
             </Link>
           </Box>
-          
+
           {/* Variant */}
           {/* <Box display={'flex'} gap={3} mt={3}>
             <Button
@@ -514,13 +523,13 @@ export function AddProductContent() {
           </Text>
           <Box display={'flex'} gap={3}>
             <Field label="Stok Produk" mt={5}>
-              <Input placeholder="Masukan stok barang" {...register('stock')}/>
+              <Input placeholder="Masukan stok barang" {...register('stock')} />
               {errors.stock && (
                 <Text
-                color={'red.500'}
-                fontSize={'xs'}
-                textAlign={'left'}
-                marginTop={'1.5'}
+                  color={'red.500'}
+                  fontSize={'xs'}
+                  textAlign={'left'}
+                  marginTop={'1.5'}
                 >
                   {errors.stock.message}
                 </Text>
@@ -575,21 +584,63 @@ export function AddProductContent() {
           <Box display={'flex'} alignItems={'end'} gap={3} mt={3}>
             <Field label="Ukuran Produk">
               <Group attached width={'full'}>
-                <Input placeholder="Panjang" />
+                <Input
+                  placeholder="Panjang"
+                  type="number"
+                  {...register('size.length', { valueAsNumber: true })}
+                />
                 <InputAddon>cm</InputAddon>
               </Group>
+              {errors.size?.length && (
+                <Text
+                  color={'red.500'}
+                  fontSize={'xs'}
+                  textAlign={'left'}
+                  marginTop={'1.5'}
+                >
+                  {errors.size.length.message}
+                </Text>
+              )}
             </Field>
             <Field>
               <Group attached width={'full'}>
-                <Input placeholder="Lebar" />
+                <Input
+                  placeholder="Lebar"
+                  type="number"
+                  {...register('size.width', { valueAsNumber: true })}
+                />
                 <InputAddon>cm</InputAddon>
               </Group>
+              {errors.size?.width && (
+                <Text
+                  color={'red.500'}
+                  fontSize={'xs'}
+                  textAlign={'left'}
+                  marginTop={'1.5'}
+                >
+                  {errors.size.width.message}
+                </Text>
+              )}
             </Field>
             <Field>
               <Group attached width={'full'}>
-                <Input placeholder="Tinggi" />
+                <Input
+                  placeholder="Tinggi"
+                  type="number"
+                  {...register('size.height', { valueAsNumber: true })}
+                />
                 <InputAddon>cm</InputAddon>
               </Group>
+              {errors.size?.height && (
+                <Text
+                  color={'red.500'}
+                  fontSize={'xs'}
+                  textAlign={'left'}
+                  marginTop={'1.5'}
+                >
+                  {errors.size.height.message}
+                </Text>
+              )}
             </Field>
           </Box>
         </Box>
