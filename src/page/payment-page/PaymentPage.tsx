@@ -20,7 +20,7 @@ import { Navigate, useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
 import LoadingLottie from '@/components/icons/lottie';
 
-const eWallets = [
+export const eWallets = [
   {
     name: 'gopay',
     image: '/gopay.webp',
@@ -39,7 +39,7 @@ const eWallets = [
   },
 ];
 
-const virtualAccount = [
+export const virtualAccount = [
   {
     name: 'bca',
     image: '/bca.png',

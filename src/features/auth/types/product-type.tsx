@@ -7,7 +7,7 @@ export type ProductType ={
     sku?: string
     weight?: number
     stock?: number
-    price?: string
+    price?: number
     minimumOrder: string
     storeId?: string
     categoryId?:string
