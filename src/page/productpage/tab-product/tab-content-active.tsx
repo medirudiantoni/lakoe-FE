@@ -23,6 +23,7 @@ import SortingDropdown from '../component-product/Sorting';
 import ProductToggleSwitch from '../component-product/switch-status';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';
+import { formatRupiah } from '@/lib/rupiah';
 
 export function TabContentActive() {
   const { user } = useAuthStore();
@@ -83,7 +84,7 @@ export function TabContentActive() {
         <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
           {/* <DialogDelete />
           <DialogNonaktif /> */}
-          <CheckBox display="block" />
+        
         </Box>
       </Flex>
      
@@ -126,7 +127,7 @@ export function TabContentActive() {
           <Box display={'flex'} alignItems={'center'}>
             <Image
               src={String(product.attachments)}
-              width={36}
+              width={40}
               height={36}
               borderRadius="20px"
               p={3}
@@ -135,7 +136,7 @@ export function TabContentActive() {
             <Box>
               <Text fontSize="18px" fontWeight="bold">{product.name}</Text>
               <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                <Text fontWeight={'semibold'}>Harga: {product.price} </Text>
+                <Text fontWeight={'semibold'}>Harga: {formatRupiah(`${product.price}`)} </Text>
                 <Text color={'gray.500'} ml={1}>
                   • Stok: {product.stock} • SKU: {product.sku}
                 </Text>
@@ -158,7 +159,7 @@ export function TabContentActive() {
             justifyContent={'space-between'}
             alignItems={'end'}
           >
-            <CheckBox display={'none'} />
+          
             <ProductToggleSwitch
               key={product.id}
               productId={product.id}
