@@ -44,9 +44,7 @@ export function Login() {
             console.log('text', data)
             Cookies.set('token', data.token);
             data.user.Stores ? navigate('/dashboard') : navigate('/register-store')
-
             return data.message;
-
           }
         })
         .catch((error) => {

@@ -1,29 +1,30 @@
 import { Checkbox } from '@/components/ui/checkbox';
+import { useCheckboxStore} from '@/features/auth/store/product-store';
 import { Box, Text } from '@chakra-ui/react';
-import { useState } from 'react';
 
-interface Display {
-  display: string;
+
+interface Props {
+  allProductIds: string[]; // Semua ID produk dari database
 }
-const CheckBox: React.FC<Display> = ({ display }) => {
-  const [checked, setChecked] = useState(false);
+
+const SelectAllCheckbox: React.FC<Props> = ({ allProductIds }) => {
+  const { selectedProducts, toggleSelectAll } = useCheckboxStore();
+
   return (
-    <div>
-      <Box display={'flex'}>
-        <Text fontWeight={'normal'} mr={2} display={display}>
-          Pilih Semua
-        </Text>
-        <Checkbox
-          checked={checked}
-          onCheckedChange={(e) => setChecked(!!e.checked)}
-          cursor={'pointer'}
-          fontWeight={'normal'}
-          variant={'solid'}
-          colorPalette={'blue'}
-        ></Checkbox>
-      </Box>
-    </div>
+    <Box display="flex" py={2}>
+      <Text fontWeight="normal" mr={2}>
+        Pilih Semua
+      </Text>
+      <Checkbox
+        checked={selectedProducts.length === allProductIds.length}
+        onCheckedChange={() => toggleSelectAll(allProductIds)}
+        cursor="pointer"
+        fontWeight="normal"
+        variant="solid"
+        colorPalette="blue"
+      />
+    </Box>
   );
 };
 
-export default CheckBox;
+export default SelectAllCheckbox;

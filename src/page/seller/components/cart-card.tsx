@@ -2,22 +2,20 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Box, Center, Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { X } from "lucide-react";
+import { formatRupiah } from "@/lib/rupiah";
+import useCart from "@/hooks/cart-store";
 
 interface CartCardProps {
-    imageUrl: string;
+    id: string,
+    imageUrl?: string;
     productName: string;
     category: string;
-    price: string;
-    totalPrice: string;
+    price: number;
     quantity: number;
-    onPlus?: () => void;
-    onMinus?: () => void;
-    onX?: () => void;
 }
 
-const CartCard: React.FC<CartCardProps> = ({ imageUrl, productName, category, price, totalPrice, quantity, onPlus, onMinus, onX }) => {
-    // const [isQuantity, setQuantity] = useState(quantity);
-    
+const CartCard: React.FC<CartCardProps> = ({ id, imageUrl, productName, category, price, quantity }) => {
+    const { increase, decrease, removeCart } = useCart();
     return (
         <Flex py="5" gap="10" w="full" maxW="6xl">
             <Box w="40" h="40" bg="gray.300">
@@ -30,7 +28,7 @@ const CartCard: React.FC<CartCardProps> = ({ imageUrl, productName, category, pr
                         <Text fontSize="md" fontWeight="medium" color="gray.600">{category}</Text>
                     </Box>
                     <HStack alignItems="end" gap={0}>
-                        <Text fontSize="xl" fontWeight="medium" lineHeight={1.2}>Rp {price}</Text>
+                        <Text fontSize="xl" fontWeight="medium" lineHeight={1.2}>{formatRupiah(price)}</Text>
                         <Text fontSize="sm" fontWeight="medium">/Item</Text>
                     </HStack>
                 </VStack>
@@ -39,14 +37,14 @@ const CartCard: React.FC<CartCardProps> = ({ imageUrl, productName, category, pr
                         <Text fontSize="lg" fontWeight="medium" color="gray.900">{quantity}x</Text>
                     </Box>
                     <VStack alignItems="end" justifyContent="space-between" w="52" h="full">
-                        <Heading size="xl" fontWeight="medium">Rp {totalPrice},-</Heading>
+                        <Heading size="xl" fontWeight="medium">{formatRupiah(price * quantity)},-</Heading>
                         <HStack w="full" justifyContent="space-between">
                             <HStack gap="5">
-                                <Button onClick={onMinus}>-</Button>
-                                <Text fontSize="md" fontWeight="medium" color="gray.600">1</Text>
-                                <Button onClick={onPlus}>+</Button>
+                                <Button onClick={() => decrease(id)} _active={{ bg: "gray.700", transform: "scale(0.95)" }}>-</Button>
+                                <Text fontSize="md" fontWeight="medium" color="gray.600">{quantity}</Text>
+                                <Button onClick={() => increase(id)} _active={{ bg: "gray.700", transform: "scale(0.95)" }}>+</Button>
                             </HStack>
-                            <Center onClick={onX} role="button" cursor="pointer" bg="white" color="black" borderWidth={1} borderRadius="md" p={2}>
+                            <Center onClick={() => removeCart(id)} role="button" cursor="pointer" bg="white" color="black" borderWidth={1} borderRadius="md" p={2}>
                                 <X />
                             </Center>
                         </HStack>

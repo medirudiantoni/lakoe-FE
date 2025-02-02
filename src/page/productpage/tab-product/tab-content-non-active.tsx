@@ -18,16 +18,23 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import Category from '../component-product/category';
-import CheckBox from '../component-product/checkbox';
 import SortingDropdown from '../component-product/Sorting';
 import ProductToggleSwitch from '../component-product/switch-status';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';
+import { formatRupiah } from '@/lib/rupiah';
+import SelectAllCheckbox from '../component-product/checkbox';
+import CheckBox from '../component-product/checkbox-product';
+import { useCheckboxStore } from '@/features/auth/store/product-store';
+import { DialogDelete } from '../dialog-product/dialog-delete';
+import { DialogNonaktif } from '../dialog-product/dialog-nonaktif';
 export function TabContentNonActive() {
   const { user } = useAuthStore();
   const { products, setProducts, updateProductStatus } = useProductStore();
+  const { selectedProducts, toggleProductSelection } = useCheckboxStore();
   const [isFetching, setIsFetching] = useState(true);
   const storeId = user?.Stores.id;
+  const isAnyProductSelected = selectedProducts.length > 0;
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -45,9 +52,9 @@ export function TabContentNonActive() {
         });
     }
   }, [storeId, setProducts]);
-  
+
   if (isFetching) {
-    return <Text>Loading...</Text>; 
+    return <Text>Loading...</Text>;
   }
   const nonActiveProducts =
     products?.filter((product) => !product.isActive) || [];
@@ -74,14 +81,13 @@ export function TabContentNonActive() {
           </Box>
         </GridItem>
       </Grid>
-      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
-        <Text color={'gray.400'}>
-          {nonActiveProducts.length} Produk
-        </Text>
+      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3} >
+        <Text color={'gray.400'}>{nonActiveProducts.length} Produk</Text>
         <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
-          {/* <DialogDelete />
-          <DialogNonaktif /> */}
-          <CheckBox display="block" />
+          {isAnyProductSelected && (
+          <DialogDelete />
+          )}
+          <SelectAllCheckbox allProductIds={products?.map((p) => p.id) || []}/>
         </Box>
       </Flex>
       {nonActiveProducts.length === 0 ? (
@@ -131,8 +137,8 @@ export function TabContentNonActive() {
           >
             <Box display={'flex'} alignItems={'center'}>
               <Image
-                src={String(product.attachments)} 
-                width={36}
+                src={String(product.attachments)}
+                width={40}
                 height={36}
                 borderRadius="20px"
                 p={3}
@@ -143,7 +149,9 @@ export function TabContentNonActive() {
                   {product.name}
                 </Text>
                 <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                  <Text fontWeight={'semibold'}>Harga: {product.price} </Text>
+                  <Text fontWeight={'semibold'}>
+                    Harga: {formatRupiah(`${product.price}`)}{' '}
+                  </Text>
                   <Text color={'gray.500'} ml={1}>
                     • Stok: {product.stock} • SKU: {product.sku}
                   </Text>
@@ -166,11 +174,16 @@ export function TabContentNonActive() {
               justifyContent={'space-between'}
               alignItems={'end'}
             >
-              <CheckBox display={'none'} />
-              <ProductToggleSwitch   key={product.id}
-    productId={product.id} 
-    initialStatus={product.isActive} 
-    onStatusChange={updateProductStatus} />
+              <CheckBox
+                checked={selectedProducts.includes(product.id)}
+                onCheckedChange={() => toggleProductSelection(product.id)}
+              />
+              <ProductToggleSwitch
+                key={product.id}
+                productId={product.id}
+                initialStatus={product.isActive}
+                onStatusChange={updateProductStatus}
+              />
             </Box>
           </Box>
         ))
