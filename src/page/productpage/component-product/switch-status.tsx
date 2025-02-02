@@ -15,23 +15,30 @@ const ProductToggleSwitch: React.FC<ProductProps> = ({ productId, initialStatus,
   const [isActive, setIsActive] = useState<boolean>(initialStatus);
 
   useEffect(() => {
-    setIsActive(initialStatus); // Update state jika `initialStatus` berubah
+    setIsActive(initialStatus); 
   }, [initialStatus]);
 
   const handleToggleChange = async () => {
     const token = Cookies.get('token');
     const newStatus = !isActive;
-
+  
+    const togglePromise = toggleProductStatus(productId, token!, newStatus);
+  
+    toast.promise(togglePromise, {
+      loading: `Mengubah status menjadi ${newStatus ? 'aktif' : 'tidak aktif'}...`,
+      success: `Produk ${newStatus ? 'berhasil diaktifkan!' : 'berhasil dinonaktifkan!'}`,
+      error: 'Gagal mengubah status produk.',
+    });
+  
     try {
-      await toggleProductStatus(productId, token!, newStatus);
+      await togglePromise;
       setIsActive(newStatus);
       onStatusChange(productId, newStatus);
-      toast.success(`Produk ${newStatus ? 'diaktifkan' : 'dinonaktifkan'}!`);
     } catch (error) {
       console.error('Failed to toggle product status:', error);
-      toast.error('Gagal mengubah status produk.');
     }
   };
+
 
   return (
     <Box display="flex" alignItems="center" gap={2}>
