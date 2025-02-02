@@ -10,8 +10,7 @@ import LogoIcon from '@/components/icons/logo';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
 import toast from 'react-hot-toast';
-import LoadingLottie from '@/components/icons/loading';
-
+import LoadingLottie from '@/components/icons/lottie';
 
 const PrivateRoute = () => {
   const { setUser, user } = useAuthStore();

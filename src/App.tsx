@@ -23,6 +23,9 @@ import SellerPage from './page/seller/pages/seller-layout';
 import SellerHomepage from './page/seller/pages/home-page';
 import SellerDetailProduct from './page/seller/pages/detail-product';
 import SellerCartPage from './page/seller/pages/cart-page';
+import SellerCheckoutPage from './page/seller/pages/checkout-page';
+import SellerBillingPage from './page/seller/pages/billing-page';
+import BuyerLayout from './page/seller/pages/user/buyer-layout';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -84,7 +87,12 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
-          path: 'detail-product',
+          path: 'search',
+          Component: SellerHomepage,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: 'detail-product/:productId',
           Component: SellerDetailProduct,
           HydrateFallback: Fallback,
         },
@@ -93,6 +101,21 @@ function App() {
           Component: SellerCartPage,
           HydrateFallback: Fallback,
         },
+        {
+          path: 'checkout',
+          Component: SellerCheckoutPage,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: 'payment',
+          Component: SellerBillingPage,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: 'buyer',
+          Component: BuyerLayout,
+          HydrateFallback: Fallback,
+        }
       ]
     },
     {
