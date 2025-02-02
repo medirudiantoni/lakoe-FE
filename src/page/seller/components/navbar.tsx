@@ -43,7 +43,44 @@ const SellerNavbar: React.FC<SellerNavbarProps> = ({ onSearch }) => {
                 </HStack>
             </HStack>
         </HStack>
-    )
-}
+        <HStack>
+          <Link to="/seller">
+            <Center
+              py={2}
+              px={2}
+              borderRadius="lg"
+              _hover={{ bg: 'gray.200' }}
+              _active={{ bg: 'blue', transform: 'scale(0.95)' }}
+            >
+              <Search strokeWidth="2px" />
+            </Center>
+          </Link>
+          <Link to="/cart">
+            <Center
+              py={2}
+              px={2}
+              borderRadius="lg"
+              _hover={{ bg: 'gray.200' }}
+              _active={{ bg: 'blue', transform: 'scale(0.95)' }}
+            >
+              <ShoppingBag strokeWidth="2px" />
+            </Center>
+          </Link>
+          <Link to="/seller">
+            <Center
+              py={2}
+              px={2}
+              borderRadius="lg"
+              _hover={{ bg: 'gray.200' }}
+              _active={{ bg: 'blue', transform: 'scale(0.95)' }}
+            >
+              <UserRound strokeWidth="2px" />
+            </Center>
+          </Link>
+        </HStack>
+      </HStack>
+    </HStack>
+  );
+};
 
-export default SellerNavbar
+export default SellerNavbar;
