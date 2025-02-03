@@ -13,6 +13,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({ checked, onCheckedChange }) => {
       onChange={onCheckedChange}
       colorPalette={'blue'}
       size="md"
+      cursor={'pointer'}
     />
   );
 };

@@ -18,18 +18,24 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import Category from '../component-product/category';
-import CheckBox from '../component-product/checkbox';
+
 import SortingDropdown from '../component-product/Sorting';
 import ProductToggleSwitch from '../component-product/switch-status';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';
 import { formatRupiah } from '@/lib/rupiah';
+import { DialogDelete } from '../dialog-product/dialog-delete';
+import SelectAllCheckbox from '../component-product/checkbox';
+import { useCheckboxStore } from '@/features/auth/store/product-store';
+import CheckBox from '../component-product/checkbox-product';
 
 export function TabContentActive() {
   const { user } = useAuthStore();
   const { products, setProducts, updateProductStatus } = useProductStore();
+    const { selectedProducts, toggleProductSelection } = useCheckboxStore();
   const [isFetching, setIsFetching] = useState(true);
   const storeId = user?.Stores.id;
+  const isAnyProductSelected = selectedProducts.length > 0;
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -54,7 +60,6 @@ export function TabContentActive() {
     return <Text>Loading...</Text>; 
   }
 
-  // Filter produk yang aktif
   const activeProducts = products?.filter((product) => product.isActive) || [];
 
   return (
@@ -79,12 +84,13 @@ export function TabContentActive() {
           </Box>
         </GridItem>
       </Grid>
-      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
+      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3} >
         <Text color={'gray.400'}>{activeProducts.length} Produk</Text>
         <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
-          {/* <DialogDelete />
-          <DialogNonaktif /> */}
-        
+          {isAnyProductSelected && (
+          <DialogDelete />
+          )}
+          <SelectAllCheckbox allProductIds={products?.map((p) => p.id) || []}/>
         </Box>
       </Flex>
      
@@ -142,8 +148,8 @@ export function TabContentActive() {
                 </Text>
               </Flex>
               <Box display={'flex'} gap={2}>
-                <DialogPrice />
-                <DialogStock />
+                <DialogPrice productId={product.id} />
+                  <DialogStock productId={product.id}/>
                 <Link to={`/product-detail/${product.id}`}>
                   <Button variant={'outline'} mt={4} borderRadius={'20px'}>
                     <Link2 />
@@ -159,13 +165,16 @@ export function TabContentActive() {
             justifyContent={'space-between'}
             alignItems={'end'}
           >
-          
-            <ProductToggleSwitch
-              key={product.id}
-              productId={product.id}
-              initialStatus={product.isActive}
-              onStatusChange={updateProductStatus}
-            />
+          <CheckBox
+                checked={selectedProducts.includes(product.id)}
+                onCheckedChange={() => toggleProductSelection(product.id)}
+              />
+              <ProductToggleSwitch
+                key={product.id}
+                productId={product.id}
+                initialStatus={product.isActive}
+                onStatusChange={updateProductStatus}
+              />
           </Box>
         </Box>
       ))

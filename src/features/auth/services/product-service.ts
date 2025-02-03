@@ -11,8 +11,10 @@ export const addProduct = async (data: FormData, token:string) => {
         'Authorization': `Bearer ${token}`
       },
     });
+    console.log("📡 Response dari API:", res);
 
-    return res;
+    return res.data;
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -31,9 +33,7 @@ export const searchQuery = async (query: string, token: string): Promise<Product
       },
     });
 
-    console.log('Full Response:', res.data); // Debugging struktur data
-
-    // Pastikan struktur data benar
+    console.log('Full Response:', res.data); 
     if (!res.data) {
       throw new Error('Products not found in the response');
     }
@@ -79,6 +79,56 @@ export const deleteProduct = async (productId: string, token: string) => {
     });
 
     return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
+
+export const updateProductPrice = async (productId: string,price:number, token: string) => {
+  try {
+    const res: AxiosResponse = await axios.patch(
+      apiURL + `product/price/${productId}`,{price},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      }
+    );
+
+    console.log("📡 Response dari API:", res.data);
+    return res.data;
+    
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
+
+export const updateProductStock = async (productId: string, stock:number, token: string) => {
+  try {
+    const res: AxiosResponse = await axios.patch(
+      apiURL + `product/stock/${productId}`,{stock},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      }
+    );
+
+
+    return res.data;
+    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);

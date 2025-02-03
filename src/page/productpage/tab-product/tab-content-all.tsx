@@ -26,30 +26,31 @@ export function TabContentAll() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-  const storeId = user?.Stores.id;
+
+  const storeId = user?.Stores?.id;
   const isAnyProductSelected = selectedProducts.length > 0;
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    if (storeId && token) {
-      fetchProduct(storeId, token)
-        .then(setProducts)
-        .catch(() => toast.error('Gagal mengambil data produk.'))
-        .finally(() => setIsFetching(false));
-    }
+    const fetchInitialProducts = async () => {
+      try {
+        const token = Cookies.get('token');
+        if (!storeId || !token) return;
+
+        const fetchedProducts = await fetchProduct(storeId, token);
+        setProducts(fetchedProducts);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        toast.error('Gagal mengambil data produk.');
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchInitialProducts();
   }, [storeId, setProducts]);
 
   useEffect(() => {
-    if (!query) {
-      // Jika query kosong, ambil data awal
-      const token = Cookies.get('token');
-      if (storeId && token) {
-        fetchProduct(storeId, token)
-          .then(setProducts)
-          .catch(() => toast.error('Gagal mengambil data produk.'));
-      }
-      return;
-    }
+    if (!query) return;
 
     const delayDebounceFn = setTimeout(() => {
       handleSearch();
@@ -59,17 +60,16 @@ export function TabContentAll() {
   }, [query]);
 
   const handleSearch = async () => {
-    if (!query) return;
     setLoading(true);
-    
-    const token = Cookies.get('token');
-    if (!storeId || !token) return;
-  
+
     try {
-      const res = await searchQuery(query, token);
-      console.log('🔍 Search Results:', res);
-      setProducts(Array.isArray(res) ? res : []);
-    } catch (err:any) {
+      const token = Cookies.get('token');
+      if (!storeId || !token || !query) return;
+
+      const searchResults = await searchQuery(query, token);
+      setProducts(Array.isArray(searchResults) ? searchResults : []);
+    } catch (err: any) {
+      console.error('Search error:', err);
       toast.error(err.response?.data?.message || 'Error searching products.');
     } finally {
       setLoading(false);
@@ -80,7 +80,8 @@ export function TabContentAll() {
 
   return (
     <Box>
-      <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2}>
+      {/* Search, Category, and Sorting */}
+      <Grid templateColumns="repeat(3, 1fr)" width="100%" gap={2}>
         <GridItem position="relative">
           <InputGroup flex="1" width="100%">
             <Input
@@ -99,9 +100,10 @@ export function TabContentAll() {
         <GridItem><SortingDropdown /></GridItem>
       </Grid>
 
-      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
-        <Text color={'gray.400'}>{products?.length} Produk</Text>
-        <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
+      {/* Action Bar */}
+      <Flex justifyContent="space-between" alignItems="center" mt={3}>
+        <Text color="gray.400">{products?.length} Produk</Text>
+        <Box display="flex" alignItems="center" gap={2} color="#75757C">
           {isAnyProductSelected && <DialogDelete />}
           <SelectAllCheckbox allProductIds={products?.map((p) => p.id) || []} />
         </Box>
@@ -111,20 +113,39 @@ export function TabContentAll() {
         <Text>Searching...</Text>
       ) : (
         products?.map((product) => (
-          <Box key={product.id} width="full" border="1px solid" borderColor="gray.200" height="170px" borderRadius="10px" mt={3} display="flex" justifyContent={'space-between'} px={3} py={4}>
-            <Box display={'flex'} alignItems={'center'}>
-              <Image src={String(product.attachments)} width={40} height={36} borderRadius="20px" p={3} mr={3} />
+          <Box
+            key={product.id}
+            width="full"
+            border="1px solid"
+            borderColor="gray.200"
+            height="170px"
+            borderRadius="10px"
+            mt={3}
+            display="flex"
+            justifyContent="space-between"
+            px={3}
+            py={4}
+          >
+            <Box display="flex" alignItems="center">
+              <Image
+                src={String(product.attachments)}
+                width={40}
+                height={36}
+                borderRadius="20px"
+                p={3}
+                mr={3}
+              />
               <Box>
                 <Text fontSize="18px" fontWeight="bold">{product.name}</Text>
                 <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                  <Text fontWeight={'semibold'}>Harga: {formatRupiah(`${product.price}`)}</Text>
-                  <Text color={'gray.500'} ml={1}>• Stok: {product.stock} • SKU: {product.sku}</Text>
+                  <Text fontWeight="semibold">Harga: {formatRupiah(`${product.price}`)}</Text>
+                  <Text color="gray.500" ml={1}>• Stok: {product.stock} • SKU: {product.sku}</Text>
                 </Flex>
-                <Box display={'flex'} gap={2}>
-                  <DialogPrice />
-                  <DialogStock />
+                <Box display="flex" gap={2}>
+                  <DialogPrice productId={product.id} />
+                  <DialogStock productId={product.id}/>
                   <Link to={`/product-detail/${product.id}`}>
-                    <Button variant={'outline'} mt={4} borderRadius={'20px'}>
+                    <Button variant="outline" mt={4} borderRadius="20px">
                       <Link2 />
                       Lihat halaman
                     </Button>
@@ -132,9 +153,19 @@ export function TabContentAll() {
                 </Box>
               </Box>
             </Box>
-            <Box display={'flex'} flexDirection={'column'} justifyContent={'space-between'} alignItems={'end'}>
-              <CheckBox checked={selectedProducts.includes(product.id)} onCheckedChange={() => toggleProductSelection(product.id)} />
-              <ProductToggleSwitch key={product.id} productId={product.id} initialStatus={product.isActive} onStatusChange={updateProductStatus} />
+
+            {/* Actions */}
+            <Box display="flex" flexDirection="column" justifyContent="space-between" alignItems="end">
+              <CheckBox
+                checked={selectedProducts.includes(product.id)}
+                onCheckedChange={() => toggleProductSelection(product.id)}
+              />
+              <ProductToggleSwitch
+                key={product.id}
+                productId={product.id}
+                initialStatus={product.isActive}
+                onStatusChange={updateProductStatus}
+              />
             </Box>
           </Box>
         ))

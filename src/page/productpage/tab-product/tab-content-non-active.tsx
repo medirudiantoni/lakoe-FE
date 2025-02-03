@@ -27,7 +27,7 @@ import SelectAllCheckbox from '../component-product/checkbox';
 import CheckBox from '../component-product/checkbox-product';
 import { useCheckboxStore } from '@/features/auth/store/product-store';
 import { DialogDelete } from '../dialog-product/dialog-delete';
-import { DialogNonaktif } from '../dialog-product/dialog-nonaktif';
+
 export function TabContentNonActive() {
   const { user } = useAuthStore();
   const { products, setProducts, updateProductStatus } = useProductStore();
@@ -157,8 +157,8 @@ export function TabContentNonActive() {
                   </Text>
                 </Flex>
                 <Box display={'flex'} gap={2}>
-                  <DialogPrice />
-                  <DialogStock />
+                <DialogPrice productId={product.id} />
+                <DialogStock productId={product.id}/>
                   <Link to={`/product-detail/${product.id}`}>
                     <Button variant={'outline'} mt={4} borderRadius={'20px'}>
                       <Link2 />
