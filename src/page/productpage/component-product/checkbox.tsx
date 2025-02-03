@@ -4,7 +4,7 @@ import { Box, Text } from '@chakra-ui/react';
 
 
 interface Props {
-  allProductIds: string[]; // Semua ID produk dari database
+  allProductIds: string[]; 
 }
 
 const SelectAllCheckbox: React.FC<Props> = ({ allProductIds }) => {

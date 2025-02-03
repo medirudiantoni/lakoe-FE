@@ -9,46 +9,46 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useProductStore } from '@/features/auth/store/product-store';
 import { Box, Button, Text } from '@chakra-ui/react';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
+import { useCheckboxStore, useProductStore} from '@/features/auth/store/product-store';
+import toast from 'react-hot-toast';
 
 export function DialogDelete() {
   const [open, setOpen] = useState(false);
-  const { products, deleteProduct } = useProductStore();
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const { selectedProducts, setSelectedProducts } = useCheckboxStore();
+  const { deleteProduct } = useProductStore();
 
   const handleDelete = async () => {
-    if (selectedProduct) {
-      await deleteProduct(selectedProduct);
+    try {
+      await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
+      toast.success(`${selectedProducts.length} produk telah dihapus.`);
+      setSelectedProducts([]); 
       setOpen(false);
+    } catch (error) {
+      toast.error('Gagal menghapus produk.');
     }
   };
 
   return (
     <Box>
-      {products.map((product) => (
-        <Box
-          key={product.id}
-          border="1px solid"
-          p={2}
-          maxW="fit-content"
-          borderRadius="50px"
-          cursor="pointer"
-          onClick={() => {
-            setSelectedProduct(product.id);
-            setOpen(true);
-          }}
-        >
-          <Trash size="14px" />
-        </Box>
-      ))}
-
       <DialogRoot lazyMount open={open} onOpenChange={(details) => setOpen(details.open)}>
+        <DialogTrigger asChild>
+          <Box
+            border={'1px solid'}
+            p={2}
+            maxW={'fit-content'}
+            borderRadius={'50px'}
+            cursor={'pointer'}
+          >
+            <Trash size={'14px'} />
+          </Box>
+        </DialogTrigger>
+
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus Produk</DialogTitle>
+            <DialogTitle>Hapus {selectedProducts.length} Produk</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text>
@@ -58,13 +58,9 @@ export function DialogDelete() {
           </DialogBody>
           <DialogFooter>
             <DialogActionTrigger asChild>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             </DialogActionTrigger>
-            <Button colorPalette="red" onClick={handleDelete}>
-              Ya, Hapus
-            </Button>
+            <Button colorPalette={'red'} onClick={handleDelete}>Ya, Hapus</Button>
           </DialogFooter>
           <DialogCloseTrigger />
         </DialogContent>
