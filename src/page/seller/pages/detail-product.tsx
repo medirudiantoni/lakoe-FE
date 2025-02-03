@@ -8,6 +8,8 @@ import { formatRupiah } from "@/lib/rupiah";
 import useCart, { Cart } from "@/hooks/cart-store";
 import { LoadingScreen } from "@/components/loading-screen/loading-screen";
 import toast from "react-hot-toast";
+import { useSellerStore } from "@/hooks/store";
+import { ProductType } from "@/features/auth/types/prisma-types";
 
 // const imageLink = "https://i.pinimg.com/736x/d1/9d/84/d19d84c83abfaf4ce3c296a4910f1bfe.jpg"
 const clothesSize = ["SM", "M", "L", "XL"];
@@ -15,11 +17,16 @@ const clothesSize = ["SM", "M", "L", "XL"];
 const SellerDetailProduct = () => {
   const { productId } = useParams();
   const { addCart } = useCart();
-  const [product, setProduct] = useState<any | null>(null);
+  const { store } = useSellerStore();
+  const [product, setProduct] = useState<Cart | undefined>(undefined);
 
   useEffect(() => {
-    const theProduct = dummy_product.find((item) => item.id === productId);
-    setProduct(theProduct);
+    console.log("the product", product)
+  },[product])
+
+  useEffect(() => {
+    const theProduct = store?.products?.find((item) => item.id === productId);
+    setProduct(theProduct as Cart);
   }, [productId]);
 
   const handleAddCart = (product: Cart) => {
@@ -27,7 +34,7 @@ const SellerDetailProduct = () => {
     toast.success('Produk telah ditambahkan ke keranjang.')
   }
 
-  if(product === null){
+  if(product === undefined){
     return <LoadingScreen />
   }
   return (
@@ -38,13 +45,13 @@ const SellerDetailProduct = () => {
 
         <Flex w="full" gap="20" mb="10">
           <Box w="2/5" h="fit">
-            <Image w="full" aspectRatio="square" src={product.attachment[0]}></Image>
+            <Image w="full" aspectRatio="square" src={product?.attachments[0]}></Image>
           </Box>
           <VStack alignItems="stretch" justifyContent="space-between" flex="1">
             <Box w="full">
-              <Heading size="4xl" fontWeight="medium">{product.name}</Heading>
-              <Text fontSize="md" fontWeight="medium" color="gray.600">{product.category}</Text>
-              <Text fontSize="2xl" fontWeight="semibold" my="4">{formatRupiah(product.price)}</Text>
+              <Heading size="4xl" fontWeight="medium">{product?.name}</Heading>
+              <Text fontSize="md" fontWeight="medium" color="gray.600">{product?.category2}</Text>
+              <Text fontSize="2xl" fontWeight="semibold" my="4">{formatRupiah(product?.price!)}</Text>
               <Box w="full">
                 <Text fontWeight="semibold">Size</Text>
                 <HStack w="full">
@@ -56,7 +63,7 @@ const SellerDetailProduct = () => {
             </Box>
             <HStack w="full" py="5">
               <Button flex={1} bg="white" color="blue.600" borderColor="blue.600">Beli Langsung</Button>
-              <Button onClick={() => handleAddCart(product)} flex={1} className="bg-blue-700">+ Keranjang</Button>
+              <Button onClick={() => handleAddCart(product!)} flex={1} className="bg-blue-700">+ Keranjang</Button>
             </HStack>
           </VStack>
         </Flex>

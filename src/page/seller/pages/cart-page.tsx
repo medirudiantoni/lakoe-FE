@@ -6,16 +6,23 @@ import useCart from "@/hooks/cart-store";
 import { formatRupiah } from "@/lib/rupiah";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
+import { useSellerStore } from "@/hooks/store";
+import { useEffect } from "react";
 
 const SellerCartPage = () => {
     const navigate = useNavigate();
+    const { store } = useSellerStore();
     const { cart, totalPrice, totalQuantity } = useCart();
+
+    useEffect(() => {
+        console.log("cart: ", cart)
+    }, [cart]);
 
     const handleCheckout = () => {
         if(cart.length === 0){
             return toast.error("Kamu belum memilih produk")
         }
-        return navigate('/seller/checkout');
+        return navigate(`/${store?.name}/checkout`);
     }
 
     return (
@@ -42,8 +49,8 @@ const SellerCartPage = () => {
                         key={product.id}
                         id={product.id}
                         productName={product.name}
-                        category={product.category}
-                        imageUrl={product.attachment[0]}
+                        category={String(product.category)}
+                        imageUrl={product.attachments[0]}
                         price={product.price ? product.price : 0}
                         quantity={product.quantity}
                     />
