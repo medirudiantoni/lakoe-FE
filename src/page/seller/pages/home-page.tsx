@@ -5,13 +5,9 @@ import SellerFooter from "../components/footer";
 import ProductCard from "../components/product-cart";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { dummy_product } from "../dummies";
 import CategoryDropDown, { CategoryType } from "../components/category";
 import { useSellerStore } from "@/hooks/store";
 import { ProductType } from "@/features/auth/types/prisma-types";
-
-const url_banner_dummy =
-  'https://res.cloudinary.com/dbtcocjdk/image/fetch/f_auto,dpr_2.0,w_800/https:/storage.jukeboxprint.com/s/images/Graphic%20Design%20Trends%202024%20359.jpg';
 
 export default function SellerHomepage() {
   const { pathname } = useLocation();
@@ -29,7 +25,7 @@ export default function SellerHomepage() {
 
   useEffect(() => {
     setProducts(store?.products)
-  }, [])
+  }, [store])
 
   useEffect(() => {
     if (pathname.includes('/search')) {

@@ -5,6 +5,7 @@ import { apiURL } from "@/utils/baseurl"
 import { Box, Button, Center, Heading } from "@chakra-ui/react"
 import { useQuery } from '@tanstack/react-query'
 import axios from "axios"
+import { useEffect } from "react"
 import { useNavigate } from "react-router"
 
 const CobaTanstack = () => {
@@ -15,6 +16,10 @@ const CobaTanstack = () => {
             return response.data
         },
     });
+
+    useEffect(() => {
+        console.log("data: ", data)
+    }, [data])
 
     const navigate = useNavigate();
 
