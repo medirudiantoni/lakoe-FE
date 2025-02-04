@@ -3,6 +3,7 @@ import React from 'react'
 import { useNavigate } from 'react-router'
 
 interface ProductCardProps {
+    storeName: string;
     id: string;
     imgSrc: string;
     name: string;
@@ -10,11 +11,11 @@ interface ProductCardProps {
     price: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, imgSrc, name, category, price }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ storeName, id, imgSrc, name, category, price }) => {
     const navigate = useNavigate();
     return (
         <Box role="button"
-            onClick={() => navigate(`/seller/detail-product/${id}`)}
+            onClick={() => navigate(`/${storeName}/detail-product/${id}`)}
             key={id} h="fit-content" p="3" w="full" _hover={{ bg: "gray.100" }}>
             <Image w="full" aspectRatio="1/1" mb="2" src={imgSrc}></Image>
             <VStack alignItems="start" justifyContent="space-between" className="font-poppins">

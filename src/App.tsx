@@ -26,11 +26,24 @@ import SellerCartPage from './page/seller/pages/cart-page';
 import SellerCheckoutPage from './page/seller/pages/checkout-page';
 import SellerBillingPage from './page/seller/pages/billing-page';
 import BuyerLayout from './page/seller/pages/user/buyer-layout';
+import NotFound from './page/404/not-found';
+import CobaTanstack from './page/seller/pages/coba-tanstack';
+import CobaCache from './page/seller/pages/coba-cache';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
   
   const router = createBrowserRouter([
+    {
+      path: '/tanstack',
+      Component: CobaTanstack,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '/cache',
+      Component: CobaCache,
+      HydrateFallback: Fallback
+    },
     {
       path: '/',
       Component: LandingPage,
@@ -77,7 +90,7 @@ function App() {
       HydrateFallback: Fallback,
     },
     {
-      path: '/seller',
+      path: '/:storeName',
       Component: SellerPage,
       HydrateFallback: Fallback,
       children: [
@@ -161,6 +174,16 @@ function App() {
    
       ],
     },
+    {
+      path: '/not-found',
+      Component: NotFound,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '/*',
+      Component: NotFound,
+      HydrateFallback: Fallback
+    }
   ]);
 
   return (

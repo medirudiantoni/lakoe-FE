@@ -1,11 +1,11 @@
-import { ProductType } from '@/features/auth/types/product-type';
+// import { ProductType } from '@/features/auth/types/product-type';
+import { ProductType } from '@/features/auth/types/prisma-types';
 import { create } from 'zustand';
 
 export interface Cart extends ProductType {
-
   quantity: number;
   attachment: string[];
-  category: string
+  category2: string
 }
 
 interface CartStore {
