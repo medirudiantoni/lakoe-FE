@@ -47,7 +47,7 @@ export function DialogPrice({ productId }: { productId: string }) {
             <DialogTitle>Ubah harga untuk produk</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <Group>
+            <Group w={'full'}>
               <InputAddon>Rp</InputAddon>
               <Input
                 type="number"
@@ -64,7 +64,7 @@ export function DialogPrice({ productId }: { productId: string }) {
                 Cancel
               </Button>
             </DialogActionTrigger>
-            <Button colorScheme="blue" onClick={handleUpdatePrice}>
+            <Button colorPalette="blue" onClick={handleUpdatePrice}>
               Save
             </Button>
           </DialogFooter>

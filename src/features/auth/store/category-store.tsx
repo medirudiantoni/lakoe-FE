@@ -21,10 +21,9 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
     try {
       const categories = await fetchCategory();
       
-      // Pastikan setiap kategori memiliki `children` (meskipun kosong)
       const formattedCategories = categories.map((cat:any) => ({
         ...cat,
-        children: cat.children ?? [] // Jaga-jaga kalau API tidak mengembalikan `children`
+        children: cat.children ?? [] 
       }));
   
       set({ categories: formattedCategories });

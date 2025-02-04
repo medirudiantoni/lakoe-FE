@@ -148,7 +148,8 @@ export function Register() {
               </Text>
             )}
           </Field>
-          <Field label="Konfirmasi Password" mt={2}>
+          
+          {/* <Field label="Konfirmasi Password" mt={2}>
             <Input
               placeholder="Masukan ulang password"
               {...register('password')}
@@ -163,7 +164,7 @@ export function Register() {
                 {errors.password.message}
               </Text>
             )}
-          </Field>
+          </Field> */}
 
           <Button
             colorPalette={'blue'}

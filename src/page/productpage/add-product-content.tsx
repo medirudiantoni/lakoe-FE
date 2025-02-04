@@ -89,31 +89,28 @@ export function AddProductContent() {
   ) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      // Update preview images
       const newPreviewImages = [...previewImages];
-      newPreviewImages[index] = URL.createObjectURL(files[0]); // Preview gambar
+      newPreviewImages[index] = URL.createObjectURL(files[0]); 
       setPreviewImages(newPreviewImages);
 
-      // Update attachments
+      
       const currentAttachments = (watch('attachments') || []) as File[];
       const newAttachments = [...currentAttachments];
-      newAttachments[index] = files[0]; // Simpan file asli
-      setValue('attachments', newAttachments.filter(Boolean)); // Hapus undefined/null
-
+      newAttachments[index] = files[0];
+      setValue('attachments', newAttachments.filter(Boolean)); 
       console.log('Attachments setelah perubahan:', watch('attachments'));
     }
   };
   const handleRemoveImage = (index: number) => {
-    // Hapus preview image
+  
     const newPreviewImages = [...previewImages];
-    newPreviewImages.splice(index, 1); // Hapus foto pada posisi index
+    newPreviewImages.splice(index, 1); 
     setPreviewImages(newPreviewImages);
 
-    // Hapus attachment file
     const currentAttachments = (watch('attachments') || []) as File[];
     const newAttachments = [...currentAttachments];
-    newAttachments.splice(index, 1); // Hapus file pada posisi index
-    setValue('attachments', newAttachments); // Set array tanpa undefined
+    newAttachments.splice(index, 1); 
+    setValue('attachments', newAttachments); 
 
     console.log('Attachments setelah penghapusan:', watch('attachments'));
   };
@@ -151,15 +148,11 @@ export function AddProductContent() {
     formData.append('minimumOrder', data.minimumOrder);
     formData.append('url', data.url);
 
-    // Tambahkan size ke FormData
     if (data.size) {
       formData.append('size', JSON.stringify(data.size));
     } else {
-      formData.append('size', JSON.stringify(null)); // Jika size tidak diisi
+      formData.append('size', JSON.stringify(null)); 
     }
-
-    console.log('Stock (before FormData):', typeof data.stock, data.stock);
-    console.log('Weight (before FormData):', typeof data.weight, data.weight);
 
     data.attachments.forEach((file) => {
       formData.append('attachments', file);
@@ -174,6 +167,7 @@ export function AddProductContent() {
           loading: 'Sedang menambahkan produk baru...',
           success: (res) => {
             navigate('/product');
+            console.log('resp:', res)
             return res.data.message || 'Menambahkan produk berhasil';
           },
           error: (error) => error.message || 'Coba ulang kembali...',
@@ -195,6 +189,7 @@ export function AddProductContent() {
       )
       .finally(() => setIsLoading(false));
   };
+
   return (
     <Box>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -280,14 +275,12 @@ export function AddProductContent() {
                   >
                     {previewImages[index] ? (
                       <>
-                        {/* Tampilkan gambar */}
                         <Image
                           src={previewImages[index]}
                           alt={`Foto ${index + 1}`}
                           boxSize="full"
                           objectFit="cover"
                         />
-                        {/* Tombol hapus gambar */}
                         <Box
                           position="absolute"
                           top="2"

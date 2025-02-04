@@ -21,25 +21,16 @@ type Category = {
   children?: Category[];
 };
 
-type Props = {
-  selectedCategoryId?: string;
-  setSelectedCategoryId?: (name: "categoryId", value: string) => void;
-};
-
-const CategoryDropdown: React.FC<Props> = (props) => {
-  const { categories, fetchCategories, selectedCategoryId: storeSelectedCategoryId, setSelectedCategoryId: storeSetSelectedCategoryId } = useCategoryStore();
+const CategoryDropdown: React.FC = () => {
+  const { categories, fetchCategories, selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
   const [openCategories, setOpenCategories] = useState<string[]>([]);
-
-  // Gunakan props jika ada, kalau tidak pakai dari Zustand
-  const selectedCategoryId = props.selectedCategoryId ?? storeSelectedCategoryId;
-  const setSelectedCategoryId = props.setSelectedCategoryId ?? storeSetSelectedCategoryId;
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   const handleSelectCategory = (id: string, name: string) => {
-    setSelectedCategoryId("categoryId", id);
+    setSelectedCategoryId(id);
     if (!openCategories.includes(id)) {
       setOpenCategories((prev) => [...prev, id, name]);
     }
