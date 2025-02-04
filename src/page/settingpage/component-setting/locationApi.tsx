@@ -55,7 +55,6 @@ function MapComponent() {
     }
   };
 
-  // Ambil posisi saat ini ketika pertama kali komponen dimuat
   useEffect(() => {
     getCurrentLocation();
   }, []);

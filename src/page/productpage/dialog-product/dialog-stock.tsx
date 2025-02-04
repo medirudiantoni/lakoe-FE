@@ -61,7 +61,7 @@ export function DialogStock({ productId }: { productId: string }) {
                 Cancel
               </Button>
             </DialogActionTrigger>
-            <Button colorScheme="blue" onClick={handleUpdateStock}>
+            <Button colorPalette="blue" onClick={handleUpdateStock}>
               Save
             </Button>
           </DialogFooter>

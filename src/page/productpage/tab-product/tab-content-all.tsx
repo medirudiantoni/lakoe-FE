@@ -30,25 +30,36 @@ export function TabContentAll() {
   const storeId = user?.Stores?.id;
   const isAnyProductSelected = selectedProducts.length > 0;
 
+  // useEffect(() => {
+  //   const fetchInitialProducts = async () => {
+  //     try {
+  //       const token = Cookies.get('token');
+  //       if (!storeId || !token) return;
+
+  //       const fetchedProducts = await fetchProduct(storeId, token);
+  //       console.log('fetched:', fetchedProducts)
+  //       setProducts(fetchedProducts);
+  //     } catch (err) {
+  //       console.error('Error fetching products:', err);
+  //       toast.error('Gagal mengambil data produk.');
+  //     } finally {
+  //       setIsFetching(false);
+  //     }
+  //   };
+
+  //   fetchInitialProducts();
+  // }, [storeId, setProducts]);
+
   useEffect(() => {
-    const fetchInitialProducts = async () => {
-      try {
-        const token = Cookies.get('token');
-        if (!storeId || !token) return;
-
-        const fetchedProducts = await fetchProduct(storeId, token);
-        setProducts(fetchedProducts);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        toast.error('Gagal mengambil data produk.');
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
-    fetchInitialProducts();
-  }, [storeId, setProducts]);
-
+    const token = Cookies.get('token')
+    if(storeId && token) {
+      fetchProduct(storeId, token)
+      .then(setProducts)
+      .catch(()=> toast.error('Gagal mengambil data produk'))
+      .finally(()=> setIsFetching(false))
+    }
+  }, [storeId, setProducts])
+  
   useEffect(() => {
     if (!query) return;
 
@@ -154,7 +165,6 @@ export function TabContentAll() {
               </Box>
             </Box>
 
-            {/* Actions */}
             <Box display="flex" flexDirection="column" justifyContent="space-between" alignItems="end">
               <CheckBox
                 checked={selectedProducts.includes(product.id)}
