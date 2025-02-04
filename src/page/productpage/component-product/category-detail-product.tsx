@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   MenuRoot,
   MenuItem,
@@ -10,10 +10,9 @@ import {
   VStack,
   HStack,
   Circle,
-} from "@chakra-ui/react";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { useCategoryStore } from "@/features/auth/store/category-store";
-
+} from '@chakra-ui/react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useCategoryStore } from '@/features/auth/store/category-store';
 
 type Category = {
   id: string;
@@ -23,23 +22,32 @@ type Category = {
 
 type Props = {
   selectedCategoryId?: string;
-  setSelectedCategoryId?: (name: "categoryId", value: string) => void;
+  setSelectedCategoryId?: (name: 'categoryId', value: string) => void;
 };
 
 const CategoryDropdown: React.FC<Props> = (props) => {
-  const { categories, fetchCategories, selectedCategoryId: storeSelectedCategoryId, setSelectedCategoryId: storeSetSelectedCategoryId } = useCategoryStore();
+  const {
+    categories,
+    fetchCategories,
+    selectedCategoryId: storeSelectedCategoryId,
+    setSelectedCategoryId: storeSetSelectedCategoryId,
+  } = useCategoryStore();
   const [openCategories, setOpenCategories] = useState<string[]>([]);
 
   // Gunakan props jika ada, kalau tidak pakai dari Zustand
-  const selectedCategoryId = props.selectedCategoryId ?? storeSelectedCategoryId;
-  const setSelectedCategoryId = props.setSelectedCategoryId ?? storeSetSelectedCategoryId;
+  const selectedCategoryId =
+    props.selectedCategoryId ?? storeSelectedCategoryId;
+  const setSelectedCategoryId =
+    props.setSelectedCategoryId ?? storeSetSelectedCategoryId;
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   const handleSelectCategory = (id: string, name: string) => {
-    setSelectedCategoryId("categoryId", id);
+    console.log('ini cat: ', { id, name });
+    if (props.setSelectedCategoryId) setSelectedCategoryId('categoryId', id);
+    storeSetSelectedCategoryId(id);
     if (!openCategories.includes(id)) {
       setOpenCategories((prev) => [...prev, id, name]);
     }
@@ -50,26 +58,31 @@ const CategoryDropdown: React.FC<Props> = (props) => {
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
-  const findCategoryPath = (categories: Category[], id: string, path: string[] = []): string | null => {
+  const findCategoryPath = (
+    categories: Category[],
+    id: string,
+    path: string[] = []
+  ): string | null => {
     for (const category of categories) {
       if (category.id === id) {
-        return [...path, category.name].join(" > "); 
+        return [...path, category.name].join(' > ');
       }
       if (category.children) {
-        const foundPath = findCategoryPath(category.children, id, [...path, category.name]);
+        const foundPath = findCategoryPath(category.children, id, [
+          ...path,
+          category.name,
+        ]);
         if (foundPath) return foundPath;
       }
     }
     return null;
   };
 
-  const renderMenu = (items: Category[], path: string = "") => {
+  const renderMenu = (items: Category[], path: string = '') => {
     if (!Array.isArray(items)) {
-      console.error("Expected an array but got:", items);
+      console.error('Expected an array but got:', items);
       return null;
     }
-
-  
 
     return (
       <VStack align="start" w="full">
@@ -83,14 +96,16 @@ const CategoryDropdown: React.FC<Props> = (props) => {
             <Box key={item.id} w="full">
               {isClickable ? (
                 <MenuItem
-                value="item"
+                  value="item"
                   cursor="pointer"
-                  bg={"white"}
+                  bg={'white'}
                   onClick={() => handleSelectCategory(item.id, item.name)}
-                  _hover={{ bg: "gray.200" }}
+                  _hover={{ bg: 'gray.200' }}
                 >
                   <HStack justify="space-between" w="full">
-                    <Text ml={'1'} fontSize="md">{item.name}</Text>
+                    <Text ml={'1'} fontSize="md">
+                      {item.name}
+                    </Text>
                     {isSelected && <Circle size={2} bg="blue.500" mr={7} />}
                   </HStack>
                 </MenuItem>
@@ -102,7 +117,7 @@ const CategoryDropdown: React.FC<Props> = (props) => {
                   justify="space-between"
                   cursor="pointer"
                   onClick={() => toggleCategory(item.id)}
-                  _hover={{ bg: "gray.100" }}
+                  _hover={{ bg: 'gray.100' }}
                 >
                   <HStack justify="space-between" w="full">
                     <Text fontSize="md">{item.name}</Text>
@@ -111,7 +126,11 @@ const CategoryDropdown: React.FC<Props> = (props) => {
                   {item.children && (
                     <ChevronRight
                       size={16}
-                      style={{ visibility: openCategories.includes(item.id) ? "hidden" : "visible" }}
+                      style={{
+                        visibility: openCategories.includes(item.id)
+                          ? 'hidden'
+                          : 'visible',
+                      }}
                     />
                   )}
                 </HStack>
@@ -141,11 +160,12 @@ const CategoryDropdown: React.FC<Props> = (props) => {
             py={4}
             borderRadius="md"
           >
-              <Text color="gray.600" fontWeight={'normal'}>
-    {selectedCategoryId
-      ? findCategoryPath(categories, selectedCategoryId) || "Pilih kategori"
-      : "Pilih kategori"}
-  </Text>
+            <Text color="gray.600" fontWeight={'normal'}>
+              {selectedCategoryId
+                ? findCategoryPath(categories, selectedCategoryId) ||
+                  'Pilih kategori'
+                : 'Pilih kategori'}
+            </Text>
             <ChevronDown size={18} />
           </Button>
         </MenuTrigger>

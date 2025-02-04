@@ -4,18 +4,18 @@ import Cookies from 'js-cookie';
 import { apiURL } from '@/utils/baseurl';
 import { ProductType } from '../types/product-type';
 
-export const addProduct = async (data: FormData, token:string) => {
+export const addProduct = async (data: FormData, token: string) => {
   try {
+    console.log('form data: ', data);
     const res: AxiosResponse = await axios.post(apiURL + 'product', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
-    console.log("📡 Response dari API:", res);
+    console.log('📡 Response dari API:', res);
 
     return res.data;
-
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -26,15 +26,21 @@ export const addProduct = async (data: FormData, token:string) => {
   }
 };
 
-export const searchQuery = async (query: string, token: string): Promise<ProductType[]> => {
+export const searchQuery = async (
+  query: string,
+  token: string
+): Promise<ProductType[]> => {
   try {
-    const res: AxiosResponse = await axios.get(apiURL + `product/product/search?query=${query}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const res: AxiosResponse = await axios.get(
+      apiURL + `product/product/search?query=${query}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    console.log('Full Response:', res.data); 
+    console.log('Full Response:', res.data);
     if (!res.data) {
       throw new Error('Products not found in the response');
     }
@@ -50,15 +56,16 @@ export const searchQuery = async (query: string, token: string): Promise<Product
   }
 };
 
-
-
 export const fetchProduct = async (storeId: string, token: string) => {
   try {
-    const res: AxiosResponse = await axios.get(apiURL + `product/store/${storeId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res: AxiosResponse = await axios.get(
+      apiURL + `product/store/${storeId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     return res.data.products;
   } catch (error) {
@@ -73,11 +80,14 @@ export const fetchProduct = async (storeId: string, token: string) => {
 
 export const deleteProduct = async (productId: string, token: string) => {
   try {
-    const res: AxiosResponse = await axios.delete(apiURL + `product/${productId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res: AxiosResponse = await axios.delete(
+      apiURL + `product/${productId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     return res.data;
   } catch (error) {
@@ -90,22 +100,22 @@ export const deleteProduct = async (productId: string, token: string) => {
   }
 };
 
-export const updateProduct = async (data:FormData, productId: string) => {
-  const token = Cookies.get('token')
+export const updateProduct = async (data: FormData, productId: string) => {
+  const token = Cookies.get('token');
   try {
     const res: AxiosResponse = await axios.put(
-      apiURL + `product/${productId}`, data,
+      apiURL + `product/${productId}`,
+      data,
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    console.log("Response dari API:", res.data);
+    console.log('Response dari API:', res.data);
     return res.data;
-    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -116,21 +126,25 @@ export const updateProduct = async (data:FormData, productId: string) => {
   }
 };
 
-export const updateProductPrice = async (productId: string,price:number, token: string) => {
+export const updateProductPrice = async (
+  productId: string,
+  price: number,
+  token: string
+) => {
   try {
     const res: AxiosResponse = await axios.patch(
-      apiURL + `product/price/${productId}`,{price},
+      apiURL + `product/price/${productId}`,
+      { price },
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    console.log("Response dari API:", res.data);
+    console.log('Response dari API:', res.data);
     return res.data;
-    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -141,21 +155,24 @@ export const updateProductPrice = async (productId: string,price:number, token: 
   }
 };
 
-export const updateProductStock = async (productId: string, stock:number, token: string) => {
+export const updateProductStock = async (
+  productId: string,
+  stock: number,
+  token: string
+) => {
   try {
     const res: AxiosResponse = await axios.patch(
-      apiURL + `product/stock/${productId}`,{stock},
+      apiURL + `product/stock/${productId}`,
+      { stock },
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
-
     return res.data;
-    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -166,11 +183,15 @@ export const updateProductStock = async (productId: string, stock:number, token:
   }
 };
 
-export const toggleProductStatus = async (productId: string, token: string, newStatus: boolean) => {
+export const toggleProductStatus = async (
+  productId: string,
+  token: string,
+  newStatus: boolean
+) => {
   try {
     const res: AxiosResponse = await axios.patch(
       `${apiURL}product/${productId}/toggle-active`,
-      { isActive: newStatus }, 
+      { isActive: newStatus },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -179,7 +200,7 @@ export const toggleProductStatus = async (productId: string, token: string, newS
       }
     );
 
-    return res.data.products; 
+    return res.data.products;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);

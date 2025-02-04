@@ -17,13 +17,19 @@ import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useCategoryStore } from '@/features/auth/store/category-store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Cookies from 'js-cookie';
-import { CirclePlus, X } from 'lucide-react';
+import { CirclePlus, NotebookPen, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
 import CategoryDropdown from './component-product/category-detail-product';
+import {
+  FileUploadDropzone,
+  FileUploadList,
+  FileUploadRoot,
+} from '@/components/ui/file-upload';
+import { Switch } from '@/components/ui/switch';
 
 const addproductSchema = z.object({
   name: z.string().min(3, 'Nama product harus diisi'),
@@ -90,27 +96,25 @@ export function AddProductContent() {
     const files = event.target.files;
     if (files && files.length > 0) {
       const newPreviewImages = [...previewImages];
-      newPreviewImages[index] = URL.createObjectURL(files[0]); 
+      newPreviewImages[index] = URL.createObjectURL(files[0]);
       setPreviewImages(newPreviewImages);
 
-      
       const currentAttachments = (watch('attachments') || []) as File[];
       const newAttachments = [...currentAttachments];
       newAttachments[index] = files[0];
-      setValue('attachments', newAttachments.filter(Boolean)); 
+      setValue('attachments', newAttachments.filter(Boolean));
       console.log('Attachments setelah perubahan:', watch('attachments'));
     }
   };
   const handleRemoveImage = (index: number) => {
-  
     const newPreviewImages = [...previewImages];
-    newPreviewImages.splice(index, 1); 
+    newPreviewImages.splice(index, 1);
     setPreviewImages(newPreviewImages);
 
     const currentAttachments = (watch('attachments') || []) as File[];
     const newAttachments = [...currentAttachments];
-    newAttachments.splice(index, 1); 
-    setValue('attachments', newAttachments); 
+    newAttachments.splice(index, 1);
+    setValue('attachments', newAttachments);
 
     console.log('Attachments setelah penghapusan:', watch('attachments'));
   };
@@ -151,7 +155,7 @@ export function AddProductContent() {
     if (data.size) {
       formData.append('size', JSON.stringify(data.size));
     } else {
-      formData.append('size', JSON.stringify(null)); 
+      formData.append('size', JSON.stringify(null));
     }
 
     data.attachments.forEach((file) => {
@@ -167,7 +171,7 @@ export function AddProductContent() {
           loading: 'Sedang menambahkan produk baru...',
           success: (res) => {
             navigate('/product');
-            console.log("cek ini: ", res)
+            console.log('cek ini: ', res);
             // return res.data.message || 'Menambahkan produk berhasil';
             return 'Menambahkan produk berhasil';
           },
@@ -351,7 +355,7 @@ export function AddProductContent() {
           </Box>
 
           {/* Variant */}
-          {/* <Box display={'flex'} gap={3} mt={3}>
+          <Box display={'flex'} gap={3} mt={3}>
             <Button
               colorPalette={'cyan'}
               variant="surface"
@@ -417,11 +421,7 @@ export function AddProductContent() {
             <Field label="Warna" mt={5} width={'55%'}>
               <Group attached>
                 <InputAddon>Rp</InputAddon>
-                <Input
-                  placeholder="Masukan harga barang"
-              
-                />
-          
+                <Input placeholder="Masukan harga barang" />
               </Group>
             </Field>
             <Field label="Stock Produk" mt={5} width={'45%'}>
@@ -462,7 +462,7 @@ export function AddProductContent() {
                 <InputAddon>Gram</InputAddon>
               </Group>
             </Field>
-          </Box> */}
+          </Box>
           {/* Variant  */}
         </Box>
         <Box
@@ -485,15 +485,15 @@ export function AddProductContent() {
               />
             </Group>
             {errors.price && (
-                <Text
-                  color={'red.500'}
-                  fontSize={'xs'}
-                  textAlign={'left'}
-                  marginTop={'1.5'}
-                >
-                  {errors.price.message}
-                </Text>
-              )}
+              <Text
+                color={'red.500'}
+                fontSize={'xs'}
+                textAlign={'left'}
+                marginTop={'1.5'}
+              >
+                {errors.price.message}
+              </Text>
+            )}
           </Field>
 
           <Field label="Minimal pembelian" mt={3}>
@@ -501,16 +501,16 @@ export function AddProductContent() {
               <Input placeholder="1" {...register('minimumOrder')} />
               <InputAddon>Produk</InputAddon>
             </Group>
-              {errors.minimumOrder && (
-                <Text
-                  color={'red.500'}
-                  fontSize={'xs'}
-                  textAlign={'left'}
-                  marginTop={'1.5'}
-                >
-                  {errors.minimumOrder.message}
-                </Text>
-              )}
+            {errors.minimumOrder && (
+              <Text
+                color={'red.500'}
+                fontSize={'xs'}
+                textAlign={'left'}
+                marginTop={'1.5'}
+              >
+                {errors.minimumOrder.message}
+              </Text>
+            )}
           </Field>
         </Box>
         <Box
@@ -573,16 +573,16 @@ export function AddProductContent() {
               />
               <InputAddon>gram</InputAddon>
             </Group>
-              {errors.weight && (
-                <Text
-                  color={'red.500'}
-                  fontSize={'xs'}
-                  textAlign={'left'}
-                  marginTop={'1.5'}
-                >
-                  {errors.weight.message}
-                </Text>
-              )}
+            {errors.weight && (
+              <Text
+                color={'red.500'}
+                fontSize={'xs'}
+                textAlign={'left'}
+                marginTop={'1.5'}
+              >
+                {errors.weight.message}
+              </Text>
+            )}
           </Field>
           <Box display={'flex'} alignItems={'end'} gap={3} mt={3}>
             <Field label="Ukuran Produk">
