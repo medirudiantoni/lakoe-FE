@@ -4,9 +4,11 @@ import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { ClipboardIconButton } from "@/components/ui/clipboard";
 import { useEffect } from "react";
+import { useSellerStore } from "@/hooks/store";
 // import Countdown from "../components/countDown";
 
 const SellerBillingPage = () => {
+    const { store } = useSellerStore();
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "instant" });
@@ -68,8 +70,8 @@ const SellerBillingPage = () => {
                         </Table.Body>
                     </Table.Root>
                     <HStack>
-                        <Button flex={1} onClick={() => navigate('/seller')} variant="outline" borderWidth={1} borderColor="gray.600">Lanjut Belanja</Button>
-                        <Button flex={1} onClick={() => navigate('/seller/buyer')}>Lihat Pesanan</Button>
+                        <Button flex={1} onClick={() => navigate(`${store?.name}`)} variant="outline" borderWidth={1} borderColor="gray.600">Lanjut Belanja</Button>
+                        <Button flex={1} onClick={() => navigate(`/${store?.name}/buyer`)}>Lihat Pesanan</Button>
                     </HStack>
                 </Box>
 

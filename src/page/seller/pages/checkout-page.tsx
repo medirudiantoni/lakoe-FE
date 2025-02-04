@@ -7,16 +7,18 @@ import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import LoadingButtonLottie from "@/components/icons/loading-button";
 import toast from "react-hot-toast";
+import { useSellerStore } from "@/hooks/store";
 
 const SellerCheckoutPage = () => {
     const navigate = useNavigate();
+    const { store } = useSellerStore();
     const [isPaymentMethod, setIsPaymentMethod] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handlePlaceOrder = () => {
         setLoading(true)
         setTimeout(() => {
-            navigate('/seller/payment');
+            navigate(`/${store?.name}/payment`);
             setLoading(false);
             toast.success('Pesanan anda telah dibuat');
         }, 2000);

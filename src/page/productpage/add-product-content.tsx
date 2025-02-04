@@ -174,7 +174,9 @@ export function AddProductContent() {
           loading: 'Sedang menambahkan produk baru...',
           success: (res) => {
             navigate('/product');
-            return res.data.message || 'Menambahkan produk berhasil';
+            console.log("cek ini: ", res)
+            // return res.data.message || 'Menambahkan produk berhasil';
+            return 'Menambahkan produk berhasil';
           },
           error: (error) => error.message || 'Coba ulang kembali...',
         },
