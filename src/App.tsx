@@ -11,7 +11,7 @@ import { Setting } from './page/settingpage/Setting';
 import PrivateRoute from './layouts/private-layout';
 import { Dashboard } from './page/dashboard-page/dashboard';
 import { AddProductContent } from './page/productpage/add-product-content';
-import { Product } from './page/productpage/component-product/product';
+import { Product } from './page/productpage/product';
 import { Detailproduct } from './page/productpage/detail-product';
 import { Toaster } from 'react-hot-toast';
 import AboutPage from './page/landing-page/about-page';
@@ -29,6 +29,8 @@ import BuyerLayout from './page/seller/pages/user/buyer-layout';
 import NotFound from './page/404/not-found';
 import CobaTanstack from './page/seller/pages/coba-tanstack';
 import CobaCache from './page/seller/pages/coba-cache';
+import "leaflet/dist/leaflet.css";
+import SearchArea from './page/settingpage/data-territory/test';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -148,6 +150,11 @@ function App() {
         {
           path: '/product-detail/:id',
           Component: Detailproduct,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: '/test',
+          Component: SearchArea,
           HydrateFallback: Fallback,
         },
         {

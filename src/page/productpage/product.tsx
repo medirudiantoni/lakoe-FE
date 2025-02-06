@@ -3,9 +3,9 @@ import { CirclePlus } from 'lucide-react';
 
 import { Link } from 'react-router';
 
-import { TabContentAll } from '../tab-product/tab-content-all';
-import { TabContentActive } from '../tab-product/tab-content-active';
-import { TabContentNonActive } from '../tab-product/tab-content-non-active';
+import { TabContentAll } from './tab-product/tab-content-all';
+import { TabContentActive } from './tab-product/tab-content-active';
+import { TabContentNonActive } from './tab-product/tab-content-non-active';
 
 
 
