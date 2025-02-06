@@ -30,6 +30,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router';
 import CategoryDropdown from './component-product/category-detail-product';
+import { Variant } from './add-product-component/sub-variant';
 export function Detailproduct() {
   const {
     register,
@@ -112,60 +113,178 @@ export function Detailproduct() {
     console.log('Product:', product);
   }, [products, id, product]);
 
-  const onSubmit = async (data: ProductType) => {
-    if (!product) {
-      toast.error('Product ID tidak ditemukan');
-      return;
-    }
+  // const onSubmit = async (data: ProductType) => {
+  //   if (!product) {
+  //     toast.error('Product ID tidak ditemukan');
+  //     return;
+  //   }
+  
+  //   setIsLoading(true);
+  //   const storeId = user?.Stores?.id;
+  //   const categoryId = selectedCategoryId;
+  
+  //   const formData = new FormData();
+  //   formData.append('name', data.name);
+  //   formData.append('url', data.url);
+  //   formData.append('description', data.description);
+  //   formData.append('price', data.price!.toString());
+  //   formData.append('stock', data.stock!.toString());
+  //   formData.append('sku', data.sku!.toString());
+  //   formData.append('weight', data.weight!.toString());
+  //   formData.append('minimumOrder', data.minimumOrder!.toString());
+  
+  //   if (storeId) {
+  //     formData.append('storeId', storeId);
+  //   }
+  //   if (categoryId) {
+  //     formData.append('categoryId', categoryId);
+  //   }
+  
+  //   console.log('Selected Files sebelum submit:', selectedFiles);
+  //   let allAttachments: (File | string)[] = [];
 
-    setIsLoading(true);
-    const storeId = user?.Stores?.id;
-    const categoryId = selectedCategoryId;
+  //   // Pastikan product.attachments tidak undefined/null
+  //   if (product.attachments && Array.isArray(product.attachments)) {
+  //     allAttachments = [...product.attachments];
+  //   }
+    
+  //   // Pastikan selectedFiles tidak null sebelum spread
+  //   if (selectedFiles && selectedFiles.length > 0) {
+  //     allAttachments = [...selectedFiles];
+  //   }
+    
+  //   // Pastikan attachments tetap ada jika tidak ada file baru
+  //   allAttachments.forEach((attachment) => {
+  //     if (attachment instanceof File) {
+  //       formData.append('attachments', attachment);
+  //     } else {
+  //       formData.append('existingAttachments', attachment); // Kirim URL gambar lama ke backend
+  //     }
+  //   });
+    
+  
+  //   toast
+  //     .promise(
+  //       updateProduct(formData, product.id)
+  //         .then((response) => {
+  //           setProducts(response.data);
+  //           navigate('/product');
+  //         })
+  //         .catch((error) => {
+  //           throw error;
+  //         }),
+  //       {
+  //         loading: 'Memperbarui Produk...',
+  //         success: 'Produk berhasil diperbarui',
+  //         error: 'Gagal memperbarui produk',
+  //       }
+  //     )
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
+  
 
-    const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('url', data.url);
-    formData.append('description', data.url);
-    formData.append('price', data.price!.toString());
-    formData.append('stock', data.stock!.toString());
-    formData.append('sku', data.sku!.toString());
-    formData.append('weight', data.weight!.toString());
-    formData.append('minimumOrder', data.minimumOrder!.toString());
+  // const handleFileChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   index: number
+  // ) => {
+  //   const files = event.target.files;
+  //   if (files && files.length > 0) {
+  //     const newFile = files[0];
 
-    if (storeId) {
-      formData.append('storeId', storeId);
-    }
-    if (categoryId) {
-      formData.append('categoryId', categoryId);
-    }
+  //     const newPreviewImages = [...previewImages];
+  //     newPreviewImages[index] = URL.createObjectURL(newFile);
+  //     setPreviewImages(newPreviewImages);
 
-    if (selectedFiles) {
-      selectedFiles.forEach((file, index) => {
-        if (file) {
-          formData.append(`attachments[${index}]`, file);
-        }
-      });
+  //     const newFiles = selectedFiles ? [...selectedFiles] : [];
+  //     newFiles[index] = newFile;
+  //     setSelectedFiles(newFiles);
+  //   }
+  // };
+
+  // const handleRemoveImage = (index: number) => {
+  //   const newPreviewImages = [...previewImages];
+  //   newPreviewImages[index] = '';
+  //   setPreviewImages(newPreviewImages);
+
+  //   if (selectedFiles) {
+  //     const newFiles = [...selectedFiles];
+  //     newFiles.splice(index, 1);
+  //     setSelectedFiles(newFiles);
+  //   }
+  // };
+
+const onSubmit = async (data: ProductType) => {
+  if (!product) {
+    toast.error('Product ID tidak ditemukan');
+    return;
+  }
+
+  setIsLoading(true);
+  const storeId = user?.Stores?.id;
+  const categoryId = selectedCategoryId;
+
+  const formData = new FormData();
+  formData.append('name', data.name);
+  formData.append('url', data.url);
+  formData.append('description', data.description);
+  formData.append('price', data.price!.toString());
+  formData.append('stock', data.stock!.toString());
+  formData.append('sku', data.sku!.toString());
+  formData.append('weight', data.weight!.toString());
+  formData.append('minimumOrder', data.minimumOrder!.toString());
+
+  if (storeId) {
+    formData.append('storeId', storeId);
+  }
+  if (categoryId) {
+    formData.append('categoryId', categoryId);
+  }
+
+  console.log('Selected Files sebelum submit:', selectedFiles);
+  let allAttachments: (File | string)[] = [];
+
+  // Gabungkan gambar lama
+  if (product.attachments && Array.isArray(product.attachments)) {
+    allAttachments = [...product.attachments];
+  }
+
+  // Gabungkan gambar baru jika ada
+  if (selectedFiles && selectedFiles.length > 0) {
+    allAttachments = [...allAttachments, ...selectedFiles]; // Gabungkan dengan gambar baru
+  }
+
+  // Tambahkan ke formData
+  allAttachments.forEach((attachments) => {
+    if (attachments instanceof File) {
+      formData.append('attachments', attachments); // Tambahkan gambar baru
+    } else {
+      formData.append('existingAttachments', attachments); // Kirim URL gambar lama ke backend
     }
-    toast
-      .promise(
-        updateProduct(formData, product.id)
-          .then((response) => {
-            setProducts(response.data);
-            navigate('/product');
-          })
-          .catch((error) => {
-            throw error;
-          }),
-        {
-          loading: 'Memperbarui Produk...',
-          success: 'Produk berhasil diperbarui',
-          error: 'Gagal memperbarui produk',
-        }
-      )
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  });
+
+  console.log('allattachments:', allAttachments)
+  toast
+    .promise(
+      updateProduct(formData, product.id)
+        .then((response) => {
+          setProducts(response.data);
+          navigate('/product');
+        })
+        .catch((error) => {
+          throw error;
+        }),
+      {
+        loading: 'Memperbarui Produk...',
+        success: 'Produk berhasil diperbarui',
+        error: 'Gagal memperbarui produk',
+      }
+    )
+    .finally(() => {
+      setIsLoading(false);
+    });
+};
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -174,29 +293,29 @@ export function Detailproduct() {
     const files = event.target.files;
     if (files && files.length > 0) {
       const newFile = files[0];
-
+  
       const newPreviewImages = [...previewImages];
       newPreviewImages[index] = URL.createObjectURL(newFile);
       setPreviewImages(newPreviewImages);
-
+  
       const newFiles = selectedFiles ? [...selectedFiles] : [];
       newFiles[index] = newFile;
       setSelectedFiles(newFiles);
     }
   };
-
+  
   const handleRemoveImage = (index: number) => {
     const newPreviewImages = [...previewImages];
     newPreviewImages[index] = '';
     setPreviewImages(newPreviewImages);
-
+  
     if (selectedFiles) {
       const newFiles = [...selectedFiles];
       newFiles.splice(index, 1);
       setSelectedFiles(newFiles);
     }
   };
-
+  
   return (
     <Box>
       <BreadcrumbRoot p={3} m={4} pb={0}>
@@ -367,82 +486,7 @@ export function Detailproduct() {
               </Button>
             </Link>
           </Box>
-          {/* <Box display={'flex'} gap={3} mt={3}>
-          <Button colorPalette={'cyan'} variant="surface" borderRadius={'20px'}>
-            Warna
-          </Button>
-          <Button variant="outline" borderRadius={'20px'}>
-            Ukuran
-          </Button>
-          <Button variant="outline" borderRadius={'20px'}>
-            Ukuran Kemasan
-          </Button>
-          <Button variant="outline" borderRadius={'20px'}>
-            <CirclePlus />
-            Buat Tipe Varian
-          </Button>
-        </Box>
-
-        <Field label="Warna"  mt={5}>
-          <Input placeholder="" />
-        </Field>
-
-        <Box mt={5}>
-          <Switch colorPalette={'blue'} defaultChecked size={'lg'} mr={3} />
-          <span>Gunakan Foto</span>
-        </Box>
-        <FileUploadRoot maxW="xs" alignItems="stretch" maxFiles={10} mt={3}>
-          <FileUploadDropzone
-            label="Drag and drop here to upload"
-            description="Foto Varian"
-          />
-          <FileUploadList />
-        </FileUploadRoot>
-
-        <Box
-          display={'flex'}
-          justifyContent={'space-between'}
-          alignItems={'center'}
-          mt={5}
-        >
-          <Box>
-            <Text fontSize={'24px'} fontWeight={'bold'}>
-              Daftar Varian
-            </Text>
-            <Text>Kamu dapat mengatur harga, stok dan SKU sekaligus</Text>
-          </Box>
-          <Button variant={'solid'} colorPalette={'blue'} borderRadius={'50px'}>
-            <NotebookPen />
-            <span className="ms-2">Atur Sekaligus</span>
-          </Button>
-        </Box>
-        <Box display={'flex'} gap={3} alignItems={'center'} mt={5}>
-          <span className="font-medium">Sage</span>
-          <Switch size={'lg'} colorPalette={'blue'} />
-          <span>Aktif</span>
-        </Box>
-        <Box display={'flex'} gap={'3'}>
-          <Field label="Harga"  mt={5} width={'full'}>
-            <Group attached>
-              <InputAddon>Rp</InputAddon>
-              <Input placeholder="Masukan harga barang" />
-            </Group>
-          </Field>
-          <Field label="Stock Produk"  mt={5} width={'45%'}>
-            <Input placeholder="Masukan jumlah stock" />
-          </Field>
-        </Box>
-        <Box display={'flex'} gap={'3'}>
-          <Field label="SKU(Stock Keeping)"  mt={5} width={'55%'}>
-            <Input placeholder="Masukan SKU" />
-          </Field>
-          <Field label="Berat Produk"  mt={5} width={'45%'}>
-            <Group attached width={'full'}>
-              <Input placeholder="Masukan berat produk" />
-              <InputAddon>Gram</InputAddon>
-            </Group>
-          </Field>
-        </Box> */}
+        <Variant/>
         </Box>
         <Box
           p={3}

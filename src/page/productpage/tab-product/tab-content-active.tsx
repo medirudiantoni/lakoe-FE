@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import Category from '../component-product/category';
 
-import SortingDropdown from '../component-product/Sorting';
+import SortingDropdown from '../component-product/sorting';
 import ProductToggleSwitch from '../component-product/switch-status';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';

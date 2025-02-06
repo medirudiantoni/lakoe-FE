@@ -108,7 +108,7 @@ export const updateProduct = async (data: FormData, productId: string) => {
       data,
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       }

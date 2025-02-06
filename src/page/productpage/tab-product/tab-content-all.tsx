@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import Category from '../component-product/category';
-import SortingDropdown from '../component-product/Sorting';
+import SortingDropdown from '../component-product/sorting';
 import ProductToggleSwitch from '../component-product/switch-status';
 import { DialogPrice } from '../dialog-product/dialog-price';
 import { DialogStock } from '../dialog-product/dialog-stock';
@@ -30,35 +30,27 @@ export function TabContentAll() {
   const storeId = user?.Stores?.id;
   const isAnyProductSelected = selectedProducts.length > 0;
 
-  // useEffect(() => {
-  //   const fetchInitialProducts = async () => {
-  //     try {
-  //       const token = Cookies.get('token');
-  //       if (!storeId || !token) return;
-
-  //       const fetchedProducts = await fetchProduct(storeId, token);
-  //       console.log('fetched:', fetchedProducts)
-  //       setProducts(fetchedProducts);
-  //     } catch (err) {
-  //       console.error('Error fetching products:', err);
-  //       toast.error('Gagal mengambil data produk.');
-  //     } finally {
-  //       setIsFetching(false);
-  //     }
-  //   };
-
-  //   fetchInitialProducts();
-  // }, [storeId, setProducts]);
-
   useEffect(() => {
-    const token = Cookies.get('token')
-    if(storeId && token) {
-      fetchProduct(storeId, token)
-      .then(setProducts)
-      .catch(()=> toast.error('Gagal mengambil data produk'))
-      .finally(()=> setIsFetching(false))
-    }
-  }, [storeId, setProducts])
+    const token = Cookies.get('token');
+
+    const fetchData = async () => {
+      if (!storeId || !token) return;
+
+      try {
+        setIsFetching(true); 
+        const products = await fetchProduct(storeId, token);
+
+        setProducts(products); 
+        console.log('product ni bosssss', products)
+      } catch (error) {
+        toast.error('Gagal mengambil data produk');
+      } finally {
+        setIsFetching(false); // Selesai loading
+      }
+    };
+
+    fetchData();
+  }, [storeId]); 
   
   useEffect(() => {
     if (!query) return;
@@ -91,7 +83,6 @@ export function TabContentAll() {
 
   return (
     <Box>
-      {/* Search, Category, and Sorting */}
       <Grid templateColumns="repeat(3, 1fr)" width="100%" gap={2}>
         <GridItem position="relative">
           <InputGroup flex="1" width="100%">
@@ -110,8 +101,6 @@ export function TabContentAll() {
         <GridItem><Category /></GridItem>
         <GridItem><SortingDropdown /></GridItem>
       </Grid>
-
-      {/* Action Bar */}
       <Flex justifyContent="space-between" alignItems="center" mt={3}>
         <Text color="gray.400">{products?.length} Produk</Text>
         <Box display="flex" alignItems="center" gap={2} color="#75757C">

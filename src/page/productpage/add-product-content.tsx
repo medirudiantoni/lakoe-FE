@@ -24,12 +24,7 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
 import CategoryDropdown from './component-product/category-detail-product';
-import {
-  FileUploadDropzone,
-  FileUploadList,
-  FileUploadRoot,
-} from '@/components/ui/file-upload';
-import { Switch } from '@/components/ui/switch';
+import { Variant } from './add-product-component/sub-variant';
 
 const addproductSchema = z.object({
   name: z.string().min(3, 'Nama product harus diisi'),
@@ -59,7 +54,7 @@ const addproductSchema = z.object({
       width: z.number().min(1, 'Lebar harus minimal 1 cm'),
       height: z.number().min(1, 'Tinggi harus minimal 1 cm'),
     })
-    .optional(), // Opsional, bisa diisi atau tidak
+    .optional(),
 });
 type ProductFormInputs = z.infer<typeof addproductSchema>;
 
@@ -118,7 +113,6 @@ export function AddProductContent() {
 
     console.log('Attachments setelah penghapusan:', watch('attachments'));
   };
-
   const onSubmit = async (data: ProductFormInputs) => {
     setIsLoading(true);
 
@@ -276,7 +270,7 @@ export function AddProductContent() {
                     cursor="pointer"
                     onClick={() =>
                       document.getElementById(`file-upload-${index}`)?.click()
-                    } // Klik untuk upload
+                    }
                   >
                     {previewImages[index] ? (
                       <>
@@ -303,7 +297,7 @@ export function AddProductContent() {
                           _hover={{ bg: 'red.600' }}
                           p={1}
                           onClick={(e) => {
-                            e.stopPropagation(); // Mencegah trigger upload saat tombol hapus diklik
+                            e.stopPropagation();
                             handleRemoveImage(index);
                           }}
                         >
@@ -311,12 +305,11 @@ export function AddProductContent() {
                         </Box>
                       </>
                     ) : (
-                      <>
-                        {/* Placeholder untuk upload */}
+                      <Box>
                         <Text fontSize="sm" color="gray.500">
                           {index === 0 ? 'Foto Utama' : `Foto ${index + 1}`}
                         </Text>
-                      </>
+                      </Box>
                     )}
                     <Input
                       id={`file-upload-${index}`}
@@ -353,118 +346,8 @@ export function AddProductContent() {
               </Button>
             </Link>
           </Box>
-
-          {/* Variant */}
-          <Box display={'flex'} gap={3} mt={3}>
-            <Button
-              colorPalette={'cyan'}
-              variant="surface"
-              borderRadius={'20px'}
-            >
-              Warna
-            </Button>
-            <Button variant="outline" borderRadius={'20px'}>
-              Ukuran
-            </Button>
-            <Button variant="outline" borderRadius={'20px'}>
-              Ukuran Kemasan
-            </Button>
-            <Button variant="outline" borderRadius={'20px'}>
-              <CirclePlus />
-              Buat Tipe Varian
-            </Button>
-          </Box>
-
-          <Field label="Warna" mt={5}>
-            <Input placeholder="" />
-          </Field>
-
-          <Box mt={5}>
-            <Switch colorPalette={'blue'} defaultChecked size={'lg'} mr={3} />
-            <span>Gunakan Foto</span>
-          </Box>
-          <FileUploadRoot maxW="xs" alignItems="stretch" maxFiles={10} mt={3}>
-            <FileUploadDropzone
-              label="Drag and drop here to upload"
-              description="Foto Varian"
-            />
-            <FileUploadList />
-          </FileUploadRoot>
-
-          <Box
-            display={'flex'}
-            justifyContent={'space-between'}
-            alignItems={'center'}
-            mt={5}
-          >
-            <Box>
-              <Text fontSize={'24px'} fontWeight={'bold'}>
-                Daftar Varian
-              </Text>
-              <Text>Kamu dapat mengatur harga, stok dan SKU sekaligus</Text>
-            </Box>
-            <Button
-              variant={'solid'}
-              colorPalette={'blue'}
-              borderRadius={'50px'}
-            >
-              <NotebookPen />
-              <span className="ms-2">Atur Sekaligus</span>
-            </Button>
-          </Box>
-          <Box display={'flex'} gap={3} alignItems={'center'} mt={5}>
-            <span className="font-medium">Sage</span>
-            <Switch size={'lg'} colorPalette={'blue'} />
-            <span>Aktif</span>
-          </Box>
-          <Box display={'flex'} gap={'3'}>
-            <Field label="Warna" mt={5} width={'55%'}>
-              <Group attached>
-                <InputAddon>Rp</InputAddon>
-                <Input placeholder="Masukan harga barang" />
-              </Group>
-            </Field>
-            <Field label="Stock Produk" mt={5} width={'45%'}>
-              <Input
-                placeholder="Masukan jumlah stock"
-                {...register('stock')}
-                type="number"
-              />
-              {errors.stock && (
-                <Text
-                  color={'red.500'}
-                  fontSize={'xs'}
-                  textAlign={'left'}
-                  marginTop={'1.5'}
-                >
-                  {errors.stock.message}
-                </Text>
-              )}
-            </Field>
-          </Box>
-          <Box display={'flex'} gap={'3'}>
-            <Field label="SKU(Stock Keeping)" mt={5} width={'55%'}>
-              <Input placeholder="Masukan SKU" {...register('sku')} />
-              {errors.sku && (
-                <Text
-                  color={'red.500'}
-                  fontSize={'xs'}
-                  textAlign={'left'}
-                  marginTop={'1.5'}
-                >
-                  {errors.sku.message}
-                </Text>
-              )}
-            </Field>
-            <Field label="Berat Produk" mt={5} width={'45%'}>
-              <Group attached width={'full'}>
-                <Input placeholder="Masukan berat produk" />
-                <InputAddon>Gram</InputAddon>
-              </Group>
-            </Field>
-          </Box>
-          {/* Variant  */}
         </Box>
+        <Variant/>
         <Box
           p={3}
           m={4}
