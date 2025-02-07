@@ -164,6 +164,7 @@ export function AddProductContent() {
         {
           loading: 'Sedang menambahkan produk baru...',
           success: (res) => {
+            
             navigate('/product');
             console.log('cek ini: ', res);
             // return res.data.message || 'Menambahkan produk berhasil';

@@ -41,8 +41,8 @@ export default function MapComponent({ setCoordinates }: { setCoordinates: (coor
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
-          setCoordinates([latitude, longitude]); // Kirim ke parent
-          setSelectedCoordinates([latitude, longitude]); // Simpan di lokal state
+          setCoordinates([latitude, longitude]); 
+          setSelectedCoordinates([latitude, longitude]); 
         },
         (error) => {
           console.error("Error obtaining location:", error);

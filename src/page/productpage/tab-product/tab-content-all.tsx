@@ -1,8 +1,20 @@
 import { InputGroup } from '@/components/ui/input-group';
-import { fetchProduct, searchQuery } from '@/features/auth/services/product-service';
+import {
+  fetchProduct,
+  searchQuery,
+} from '@/features/auth/services/product-service';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
-import { Box, Button, Flex, Grid, GridItem, Image, Input, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Image,
+  Input,
+  Text,
+} from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 import { Link2, PackageSearch } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -37,11 +49,11 @@ export function TabContentAll() {
       if (!storeId || !token) return;
 
       try {
-        setIsFetching(true); 
+        setIsFetching(true);
         const products = await fetchProduct(storeId, token);
 
-        setProducts(products); 
-        console.log('product ni bosssss', products)
+        setProducts(products);
+        console.log('product ni bosssss', products);
       } catch (error) {
         toast.error('Gagal mengambil data produk');
       } finally {
@@ -50,8 +62,8 @@ export function TabContentAll() {
     };
 
     fetchData();
-  }, [storeId]); 
-  
+  }, [storeId]);
+
   useEffect(() => {
     if (!query) return;
 
@@ -98,8 +110,12 @@ export function TabContentAll() {
             <PackageSearch color="#75757C" />
           </Box>
         </GridItem>
-        <GridItem><Category /></GridItem>
-        <GridItem><SortingDropdown /></GridItem>
+        <GridItem>
+          <Category />
+        </GridItem>
+        <GridItem>
+          <SortingDropdown />
+        </GridItem>
       </Grid>
       <Flex justifyContent="space-between" alignItems="center" mt={3}>
         <Text color="gray.400">{products?.length} Produk</Text>
@@ -128,22 +144,37 @@ export function TabContentAll() {
           >
             <Box display="flex" alignItems="center">
               <Image
-                src={String(product.attachments)}
+                src={
+                  typeof product?.attachments === 'string'
+                    ? product.attachments
+                    : Array.isArray(product?.attachments)
+                      ? product.attachments[0]
+                      : product?.attachments instanceof File
+                        ? URL.createObjectURL(product.attachments)
+                        : undefined
+                }
                 width={40}
                 height={36}
                 borderRadius="20px"
                 p={3}
                 mr={3}
               />
+
               <Box>
-                <Text fontSize="18px" fontWeight="bold">{product.name}</Text>
+                <Text fontSize="18px" fontWeight="bold">
+                  {product.name}
+                </Text>
                 <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                  <Text fontWeight="semibold">Harga: {formatRupiah(`${product.price}`)}</Text>
-                  <Text color="gray.500" ml={1}>• Stok: {product.stock} • SKU: {product.sku}</Text>
+                  <Text fontWeight="semibold">
+                    Harga: {formatRupiah(`${product.price}`)}
+                  </Text>
+                  <Text color="gray.500" ml={1}>
+                    • Stok: {product.stock} • SKU: {product.sku}
+                  </Text>
                 </Flex>
                 <Box display="flex" gap={2}>
                   <DialogPrice productId={product.id} />
-                  <DialogStock productId={product.id}/>
+                  <DialogStock productId={product.id} />
                   <Link to={`/product-detail/${product.id}`}>
                     <Button variant="outline" mt={4} borderRadius="20px">
                       <Link2 />
@@ -154,7 +185,12 @@ export function TabContentAll() {
               </Box>
             </Box>
 
-            <Box display="flex" flexDirection="column" justifyContent="space-between" alignItems="end">
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              alignItems="end"
+            >
               <CheckBox
                 checked={selectedProducts.includes(product.id)}
                 onCheckedChange={() => toggleProductSelection(product.id)}
