@@ -8,6 +8,7 @@ export const fetchLocationById = async (locationId:string, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    
     console.log("res Data:", res.data);
 
     return res.data;

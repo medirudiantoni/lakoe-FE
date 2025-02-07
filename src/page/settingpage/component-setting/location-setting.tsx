@@ -36,6 +36,7 @@ import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import { LocationSelector } from '../data-territory/province';
 import MapComponent from './locationApi';
+import { Link } from 'react-router';
 
 interface Location {
   id: string;
@@ -167,12 +168,22 @@ export function LocationSetting() {
       const formData = new FormData();
       formData.append('address', editAddress);
       formData.append('name', editName);
-      formData.append('cityDistrict', editCityDistrict);
-      formData.append('postalCode', editPostalCode);
+      const cityDistrict = `${selectedProvince?.name || ''}, ${selectedCity?.name || ''}, ${selectedDistrict?.name || ''}`;
+      formData.append('cityDistrict', cityDistrict);
+      formData.append('postalCode', selectedVillage?.postal_code || '');
       if (editCoordinates) {
         formData.append('latitude', editCoordinates[0].toString());
         formData.append('longitude', editCoordinates[1].toString());
       }
+
+      console.log('Form Data:', {
+        address: editAddress,
+        name: editName,
+        cityDistrict: editCityDistrict,
+        postalCode: editPostalCode,
+        latitude: editCoordinates?.[0],
+        longitude: editCoordinates?.[1],
+      });
 
       return updateLocation(formData, editLocationId, token);
     },
@@ -187,19 +198,30 @@ export function LocationSetting() {
     },
   });
 
-  // Fungsi untuk menangani pembukaan dialog edit
   const handleOpenEdit = (location: Location) => {
     setEditLocationId(location.id);
     setEditAddress(location.address);
     setEditName(location.name);
-    setEditCityDistrict(location.cityDistrict);
-    setEditPostalCode(location.postalCode);
+
+    // Split 'cityDistrict' jadi [province, city, district]
+    const [province, city, district] = location.cityDistrict
+      .split(',')
+      .map((item) => item.trim());
+
+    // Set nilai dropdown berdasarkan hasil split
+    setSelectedProvince({ id: '', name: province });
+    setSelectedCity({ id: '', name: city });
+    setSelectedDistrict({ id: '', name: district });
+
+    setSelectedVillage({ id: '', name: '', postal_code: location.postalCode });
     setEditCoordinates([
       parseFloat(location.latitude),
       parseFloat(location.longitude),
     ]);
+
     setOpenDialogUpdate(true);
   };
+
   return (
     <Box>
       <Box
@@ -215,7 +237,6 @@ export function LocationSetting() {
         >
           Tambahkan Lokasi
         </Button>
-
         <DialogRoot lazyMount open={open} onOpenChange={(e) => setOpen(e.open)}>
           <DialogContent>
             <DialogHeader>
@@ -269,7 +290,6 @@ export function LocationSetting() {
                 </Button>
               </DialogFooter>
             </form>
-
             <DialogCloseTrigger />
           </DialogContent>
         </DialogRoot>
@@ -292,9 +312,11 @@ export function LocationSetting() {
             <Grid
               key={location.id}
               templateColumns="1fr 2fr 1fr"
-              p={3}
-              borderBottom="1px solid "
+              p={5}
+              border="1px solid "
+              borderRadius={'10px'}
               borderColor={'gray.200'}
+              mb={2}
             >
               <GridItem display="flex" flexDirection="column" gap={3}>
                 <Text>Nama Lokasi</Text>
@@ -308,27 +330,37 @@ export function LocationSetting() {
                 <Text>{location.address}</Text>
                 <Text>{location.cityDistrict}</Text>
                 <Text>{location.postalCode}</Text>
-                <Box display="flex" color="blue.400">
-                  <MapPin />
-                  <Text color="blue.400">Lihat di peta</Text>
+                <Box display="flex" color="blue.400" alignItems={'center'}>
+                  <Link
+                    to={`https://www.google.com/maps?q=${location.latitude},${location.longitude}`}
+                    target="_blank"
+                    className='flex items-center gap-1'
+                  >
+                    <MapPin size={'20px'} />
+                    <Text
+                      color="blue.400"
+                      // _hover={{ textDecoration: 'underline' }}
+                    >
+                      Lihat di peta
+                    </Text>
+                  </Link>
                 </Box>
               </GridItem>
               <GridItem>
                 <Box display="flex" justifyContent="flex-end" gap={2}>
                   <Box>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleOpenEdit(location)}
-                    >
-                      <NotebookPen/>
-                    </Button>
-
                     <DialogRoot
                       lazyMount
                       open={openDialogUpdate}
                       onOpenChange={(e) => setOpenDialogUpdate(e.open)}
                     >
+                      <DialogTrigger
+                        asChild
+                        cursor={'pointer'}
+                        onClick={() => handleOpenEdit(location)}
+                      >
+                        <NotebookPen color="#75757C" size={'16px'} />
+                      </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Edit Lokasi</DialogTitle>
@@ -369,7 +401,7 @@ export function LocationSetting() {
                               <Button variant="outline">Cancel</Button>
                             </DialogActionTrigger>
                             <Button
-                              colorScheme="blue"
+                              colorPalette="blue"
                               disabled={updateMutation.isPending}
                               type="submit"
                             >
@@ -388,7 +420,7 @@ export function LocationSetting() {
                     open={openDialogDelete}
                     onOpenChange={(e) => setOpenDialogDelete(e.open)}
                   >
-                    <DialogTrigger asChild>
+                    <DialogTrigger asChild cursor={'pointer'}>
                       <Trash color="#75757C" size={'16px'} />
                     </DialogTrigger>
                     <DialogContent>

@@ -132,7 +132,15 @@ export function TabContentActive() {
         >
           <Box display={'flex'} alignItems={'center'}>
             <Image
-              src={String(product.attachments)}
+              src={
+                typeof product?.attachments === 'string'
+                  ? product.attachments
+                  : Array.isArray(product?.attachments)
+                    ? product.attachments[0]
+                    : product?.attachments instanceof File
+                      ? URL.createObjectURL(product.attachments)
+                      : undefined
+              }
               width={40}
               height={36}
               borderRadius="20px"
