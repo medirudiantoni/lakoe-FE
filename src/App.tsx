@@ -31,6 +31,7 @@ import CobaTanstack from './page/seller/pages/coba-tanstack';
 import CobaCache from './page/seller/pages/coba-cache';
 import "leaflet/dist/leaflet.css";
 import SearchArea from './page/settingpage/data-territory/test';
+import { Profile } from './page/profile-page/profile';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -179,6 +180,11 @@ function App() {
           HydrateFallback: Fallback,
         },
    
+        {
+          path: '/profile',
+          Component: Profile,
+          HydrateFallback: Fallback,
+        }
       ],
     },
     {

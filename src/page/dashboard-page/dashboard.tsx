@@ -7,16 +7,15 @@ import { useEffect } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 
 export function Dashboard() {
-  const{user} = useAuthStore()
-  useEffect(()=>{
-
-    console.log('dashboardedsfsfrr:', user)
-  },[user])
+  const { user } = useAuthStore();
+  useEffect(() => {
+    console.log('dashboardedsfsfrr:', user);
+  }, [user]);
   return (
     <Box>
-      <Box position={'relative'} >
-      <Image src={banner} p={5} width={'full'} />
-      {/* <Button position={'absolute'} top={'220px'} left={'505px'} colorPalette={'gray'} variant={'solid'}>Klik untuk berlangganan</Button> */}
+      <Box position={'relative'}>
+        <Image src={banner} p={5} width={'full'} />
+        {/* <Button position={'absolute'} top={'220px'} left={'505px'} colorPalette={'gray'} variant={'solid'}>Klik untuk berlangganan</Button> */}
       </Box>
       <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
         <Flex justifyContent={'space-between'} alignItems={'center'}>
@@ -62,11 +61,7 @@ export function Dashboard() {
         </Grid>
         <Grid templateColumns="repeat(2, 1fr)" gap={4} mt={5}>
           <Box>
-            <Grid
-              templateColumns="repeat(2, 1fr)"
-              gap={4}
-              height="100%" 
-            >
+            <Grid templateColumns="repeat(2, 1fr)" gap={4} height="100%">
               <GridItem
                 backgroundColor="#F8F8F8"
                 p={5}
@@ -74,8 +69,13 @@ export function Dashboard() {
                 flexDirection="column"
                 justifyContent="space-between"
               >
-                <Box backgroundColor={'#DBEAFE'} maxW={'fit-content'} p={3} borderRadius={'10px'}>
-                <CircleDollarSign color="#2563EB" size={'30px'} />
+                <Box
+                  backgroundColor={'#DBEAFE'}
+                  maxW={'fit-content'}
+                  p={3}
+                  borderRadius={'10px'}
+                >
+                  <CircleDollarSign color="#2563EB" size={'30px'} />
                 </Box>
 
                 <Box mt={3} fontSize={'24px'}>
@@ -90,8 +90,13 @@ export function Dashboard() {
                 flexDirection="column"
                 justifyContent="space-between"
               >
-                 <Box backgroundColor={'#DBEAFE'} maxW={'fit-content'} p={3} borderRadius={'10px'}>
-                <ShoppingCart color="#2563EB"  size={'30px'} />
+                <Box
+                  backgroundColor={'#DBEAFE'}
+                  maxW={'fit-content'}
+                  p={3}
+                  borderRadius={'10px'}
+                >
+                  <ShoppingCart color="#2563EB" size={'30px'} />
                 </Box>
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Total Order</Text>
@@ -105,8 +110,13 @@ export function Dashboard() {
                 flexDirection="column"
                 justifyContent="space-between"
               >
-                 <Box backgroundColor={'#DBEAFE'} maxW={'fit-content'} p={3} borderRadius={'10px'}>
-                <BoxIcon color="#2563EB"  size={'30px'} />
+                <Box
+                  backgroundColor={'#DBEAFE'}
+                  maxW={'fit-content'}
+                  p={3}
+                  borderRadius={'10px'}
+                >
+                  <BoxIcon color="#2563EB" size={'30px'} />
                 </Box>
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Produk terjual</Text>
@@ -120,8 +130,13 @@ export function Dashboard() {
                 flexDirection="column"
                 justifyContent="space-between"
               >
-                 <Box backgroundColor={'#DBEAFE'} maxW={'fit-content'} p={3} borderRadius={'10px'}>
-                <Users color="#2563EB"  size={'30px'}/>
+                <Box
+                  backgroundColor={'#DBEAFE'}
+                  maxW={'fit-content'}
+                  p={3}
+                  borderRadius={'10px'}
+                >
+                  <Users color="#2563EB" size={'30px'} />
                 </Box>
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Pelanggan Aktif</Text>

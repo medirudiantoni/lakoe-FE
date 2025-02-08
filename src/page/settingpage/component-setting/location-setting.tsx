@@ -13,6 +13,7 @@ import { Field } from '@/components/ui/field';
 import {
   Box,
   Button,
+  createListCollection,
   Grid,
   GridItem,
   Spinner,
@@ -37,6 +38,13 @@ import toast from 'react-hot-toast';
 import { LocationSelector } from '../data-territory/province';
 import MapComponent from './locationApi';
 import { Link } from 'react-router';
+import {
+  SelectContent,
+  SelectItem,
+  SelectRoot,
+  SelectTrigger,
+  SelectValueText,
+} from '@/components/ui/select';
 
 interface Location {
   id: string;
@@ -46,6 +54,7 @@ interface Location {
   postalCode: string;
   latitude: string;
   longitude: string;
+  type: string;
 }
 
 export function LocationSetting() {
@@ -80,6 +89,7 @@ export function LocationSetting() {
     [number, number] | null
   >(null);
 
+  const [type, setType] = useState('');
   const [address, setAddress] = useState('');
   const [name, setName] = useState('');
   const queryClient = useQueryClient();
@@ -126,6 +136,7 @@ export function LocationSetting() {
         formData.append('latitude', coordinates[0].toString());
         formData.append('longitude', coordinates[1].toString());
       }
+      formData.append('type', type);
 
       return createLocation(formData, token);
     },
@@ -139,7 +150,6 @@ export function LocationSetting() {
     },
   });
 
-  // Mutasi untuk menghapus lokasi
   const deleteMutation = useMutation({
     mutationFn: async (locationId: string) => {
       if (!token) throw new Error('Unauthorized');
@@ -155,7 +165,6 @@ export function LocationSetting() {
     },
   });
 
-  // Fungsi untuk menghapus lokasi
   const handleDelete = (locationId: string) => {
     deleteMutation.mutate(locationId);
   };
@@ -202,13 +211,10 @@ export function LocationSetting() {
     setEditLocationId(location.id);
     setEditAddress(location.address);
     setEditName(location.name);
-
-    // Split 'cityDistrict' jadi [province, city, district]
     const [province, city, district] = location.cityDistrict
       .split(',')
       .map((item) => item.trim());
 
-    // Set nilai dropdown berdasarkan hasil split
     setSelectedProvince({ id: '', name: province });
     setSelectedCity({ id: '', name: city });
     setSelectedDistrict({ id: '', name: district });
@@ -221,6 +227,13 @@ export function LocationSetting() {
 
     setOpenDialogUpdate(true);
   };
+
+  const locationTypes = createListCollection({
+    items: [
+      { value: 'origin', label: 'Origin' },
+      { value: 'destination', label: 'Destination' },
+    ],
+  });
 
   return (
     <Box>
@@ -256,7 +269,7 @@ export function LocationSetting() {
                     placeholder="Masukan alamat"
                   />
                 </Field>
-                <Field label="Nama Lokasi" required>
+                <Field label="Nama Lokasi" required my={3}>
                   <Textarea
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -273,6 +286,25 @@ export function LocationSetting() {
                   selectedVillage={selectedVillage}
                   setSelectedVillage={setSelectedVillage}
                 />
+
+                <Field label="Tipe Lokasi" required my={3}>
+                  <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1px solid #ccc',
+                      fontSize: '16px',
+                    }}
+                  >
+                    <option value="">Pilih Tipe</option>
+                    <option value="origin">Origin</option>
+                    <option value="destination">Destination</option>
+                  </select>
+                </Field>
+
                 <MapComponent setCoordinates={setCoordinates} />
               </DialogBody>
               <DialogFooter>
@@ -282,7 +314,7 @@ export function LocationSetting() {
                   </Button>
                 </DialogActionTrigger>
                 <Button
-                  colorScheme="blue"
+                  colorPalette="blue"
                   disabled={addLocationMutation.isPending}
                   type="submit"
                 >
@@ -334,7 +366,7 @@ export function LocationSetting() {
                   <Link
                     to={`https://www.google.com/maps?q=${location.latitude},${location.longitude}`}
                     target="_blank"
-                    className='flex items-center gap-1'
+                    className="flex items-center gap-1"
                   >
                     <MapPin size={'20px'} />
                     <Text
@@ -378,7 +410,7 @@ export function LocationSetting() {
                                 onChange={(e) => setEditAddress(e.target.value)}
                               />
                             </Field>
-                            <Field label="Nama Lokasi" required>
+                            <Field label="Nama Lokasi" required my={4}>
                               <Textarea
                                 value={editName}
                                 onChange={(e) => setEditName(e.target.value)}
