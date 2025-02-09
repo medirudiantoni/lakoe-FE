@@ -152,7 +152,7 @@ export function TemplateSetting() {
                 </Button>
               </Box>
               <Box>
-                <Text mb={2}>Isi Pesan</Text>
+                <Text my={3}>Isi Pesan</Text>
                 <Textarea
                   value={isiPesan}
                   onChange={(e) => setIsiPesan(e.target.value)}

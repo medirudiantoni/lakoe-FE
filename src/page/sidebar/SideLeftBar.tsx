@@ -14,6 +14,7 @@ import {
   Button,
   Flex,
   MenuContent,
+  MenuItem,
   MenuRoot,
   MenuTrigger,
   Text,
@@ -25,6 +26,7 @@ import {
   LogOut,
   Settings,
   ShoppingBag,
+  User,
 } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
@@ -127,7 +129,7 @@ const SideBar = () => {
 
           <Box position={'relative'}>
             <MenuRoot positioning={{ placement: 'top-start' }}>
-              <MenuTrigger asChild>
+              <MenuTrigger asChild outline={'none'}>
                 <Link
                   to="/dashboard"
                   className={`flex items-center my-2 px-5 py-2 z-20 ${
@@ -142,15 +144,30 @@ const SideBar = () => {
                   </Flex>
                 </Link>
               </MenuTrigger>
-              <MenuContent position={'absolute'} top={'-16'} w={'full'}>
+              <MenuContent position={'absolute'} top={'-32'} w={'full'}>
+              <Box cursor={'pointer'} border={'none'} outline={'none'} >
+                  <Link to={'/profile'}>
+                  <Box
+                    px={3}
+                    py={3}
+                    gap={3}
+                   display={'flex'} alignItems={'center'}
+                   _hover={{ bg: 'gray.200' }}>
+                       <User/>
+                       Profile
+                  </Box>
+                 
+                  </Link>
+                </Box>
+                
+                {/* <MenuItem value='logout'  cursor={'pointer'} > */}
                 <DialogRoot>
                   <DialogTrigger asChild>
                     <Box
                       display={'flex'}
                       alignItems={'center'}
-                      my={2}
+                      py={3}
                       px={3}
-                      py={2}
                       gap={3}
                       cursor={'pointer'}
                       color="fg.error"
@@ -180,6 +197,7 @@ const SideBar = () => {
                     <DialogCloseTrigger />
                   </DialogContent>
                 </DialogRoot>
+                {/* </MenuItem> */}
               </MenuContent>
             </MenuRoot>
           </Box>

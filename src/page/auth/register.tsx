@@ -13,6 +13,7 @@ import { apiURL } from '@/utils/baseurl';
 const registerSchema = z.object({
   name: z.string().min(3, 'Full name is required'),
   email: z.string().email('Invalid email address'),
+  phone: z.string().min(12, 'Invalid phone number'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -137,6 +138,19 @@ export function Register() {
           </Field>
           <Field label="Password" mt={2}>
             <Input placeholder="Masukan password" {...register('password')} />
+            {errors.password && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop={1.5}
+              >
+                {errors.password.message}
+              </Text>
+            )}
+          </Field>
+          <Field label="Phone" mt={2}>
+            <Input placeholder="Masukan no telepon" {...register('phone')} />
             {errors.password && (
               <Text
                 color="red.500"
