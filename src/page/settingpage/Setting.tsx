@@ -1,7 +1,7 @@
 import { fetchStore } from '@/features/auth/services/store-service';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { StoreFormProps } from '@/features/auth/types/store-types';
-import { Box, Flex, Skeleton, Tabs, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Skeleton, Stack, Tabs, Text } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -16,7 +16,7 @@ export function Setting() {
   const storeId = user?.Stores.id;
 
   useEffect(() => {
-    const token = Cookies.get("token");
+    const token = Cookies.get('token');
     if (storeId && token) {
       fetchStore(storeId, token!)
         .then((data) => {
@@ -44,6 +44,35 @@ export function Setting() {
             <Skeleton height="30px" width="100px" />
           </Tabs.List>
         </Tabs.Root>
+        <Grid templateColumns={'repeat(2, 1fr)'} gap={3} py={'5'}>
+          <GridItem>
+            <Box>
+              <Stack gap="4" align="flex-start" width={'full'}>
+                <Skeleton height="25px" width={'full'} />
+                <Skeleton height="25px" width={'full'} />
+              </Stack>
+            </Box>
+          </GridItem>
+          <GridItem>
+            <Skeleton height="66px" width={'full'} />
+          </GridItem>
+        </Grid>
+        <Grid templateColumns={'1fr 4fr'}>
+          <GridItem>
+            <Skeleton height="25px" width={'120px'} />
+            <Box display={'flex'} width={'full'} gap={3} mt={3}>
+              <Skeleton height="185px" width={'90%'} />
+            </Box>
+          </GridItem>
+          <GridItem>
+            <GridItem>
+              <Skeleton height="25px" width={'140px'} />
+              <Box display={'flex'} width={'full'} gap={3} mt={3}>
+                <Skeleton height="185px" width={'full'} />
+              </Box>
+            </GridItem>
+          </GridItem>
+        </Grid>
       </Box>
     );
   }

@@ -136,7 +136,7 @@ export function LocationSetting() {
         formData.append('latitude', coordinates[0].toString());
         formData.append('longitude', coordinates[1].toString());
       }
-      formData.append('type', type);
+      formData.append('type', 'origin');
 
       return createLocation(formData, token);
     },
@@ -287,7 +287,7 @@ export function LocationSetting() {
                   setSelectedVillage={setSelectedVillage}
                 />
 
-                <Field label="Tipe Lokasi" required my={3}>
+                {/* <Field label="Tipe Lokasi" required my={3}>
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
@@ -303,7 +303,7 @@ export function LocationSetting() {
                     <option value="origin">Origin</option>
                     <option value="destination">Destination</option>
                   </select>
-                </Field>
+                </Field> */}
 
                 <MapComponent setCoordinates={setCoordinates} />
               </DialogBody>

@@ -32,6 +32,9 @@ import CobaCache from './page/seller/pages/coba-cache';
 import "leaflet/dist/leaflet.css";
 import SearchArea from './page/settingpage/data-territory/test';
 import { Profile } from './page/profile-page/profile';
+import { LoginBuyer } from './page/seller/pages/login-page';
+import { RegisterBuyer } from './page/seller/pages/register-page';
+import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-buyer';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -93,6 +96,12 @@ function App() {
       HydrateFallback: Fallback,
     },
     {
+      path: 'loading-screen-buyer',
+      Component: LoadingScreenBuyer,
+      HydrateFallback: Fallback,
+    },
+
+    {
       path: '/:storeName',
       Component: SellerPage,
       HydrateFallback: Fallback,
@@ -131,7 +140,19 @@ function App() {
           path: 'buyer',
           Component: BuyerLayout,
           HydrateFallback: Fallback,
-        }
+        },
+        {
+          path: 'login-buyer',
+          Component: LoginBuyer,
+          HydrateFallback:Fallback,
+        },
+        {
+          path: 'register-buyer',
+          Component: RegisterBuyer,
+          HydrateFallback:Fallback,
+        },
+
+    
       ]
     },
     {

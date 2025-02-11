@@ -28,22 +28,24 @@ import {
   ShoppingBag,
   User,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import LogoutButton from '../auth/logout';
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [isActiveButton, setIsActiveButton] = useState(false)
 
-  // Cek apakah path saat ini aktif (dengan `startsWith`)
   const isActive = (paths: string[]) => {
     return paths.some(
       (path) =>
-        currentPath === path || // Path persis cocok
-        (path !== '/' && currentPath.startsWith(path)) // Path lain selain "/" cocok
+        currentPath === path || 
+        (path !== '/' && currentPath.startsWith(path))
     );
   };
+
+  
 
   useEffect(() => {
     console.log('Current Path:', currentPath);
@@ -129,21 +131,19 @@ const SideBar = () => {
 
           <Box position={'relative'}>
             <MenuRoot positioning={{ placement: 'top-start' }}>
-              <MenuTrigger asChild outline={'none'}>
-                <Link
-                  to="/dashboard"
-                  className={`flex items-center my-2 px-5 py-2 z-20 ${
-                    isActive(['/'])
-                      ? 'text-[#0086B4] bg-[#F8F8F8]'
-                      : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
-                  }`}
-                >
-                  <Flex gap={2}>
-                    <CircleUser />
-                    <span>Profile</span>
-                  </Flex>
-                </Link>
-              </MenuTrigger>
+            <MenuTrigger asChild outline={'none'}>
+          <Box
+            onClick={() => setIsActiveButton((prev) => !prev)}
+            className={`flex items-center my-2 px-5 py-2 z-20 cursor-pointer ${
+              isActiveButton ? 'text-[#0086B4] bg-[#F8F8F8]' : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
+            }`}
+          >
+            <Flex gap={2}>
+              <CircleUser />
+              <span>Profile</span>
+            </Flex>
+          </Box>
+        </MenuTrigger>
               <MenuContent position={'absolute'} top={'-32'} w={'full'}>
               <Box cursor={'pointer'} border={'none'} outline={'none'} >
                   <Link to={'/profile'}>
