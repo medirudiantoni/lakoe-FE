@@ -205,6 +205,7 @@ export type UserType = {
     isActive: boolean;
     url: string;
     minimumOrder: number;
+    size?: string;
     price: number;
     sku: string;
     stock: number;
@@ -213,7 +214,7 @@ export type UserType = {
     stores?: StoreType;
     categoryId?: string;
     category?: CategoryType;
-    variant?: VariantType;
+    variant?: VariantType[];
   };
   
   export type CategoryType = {
@@ -226,7 +227,7 @@ export type UserType = {
   };
   
   export type VariantType = {
-    id: string;
+    id?: string;
     name: string;
     isActive: boolean;
     productId?: string;
@@ -235,16 +236,16 @@ export type UserType = {
   };
   
   export type VariantOptionType = {
-    id: string;
+    id?: string;
     name: string;
     variantId?: string;
     variant?: VariantType;
     variantOptionValuesId?: string;
-    variantOptionValue?: VariantOptionValueType;
+    variantOptionValues?: VariantOptionValueType[];
   };
   
   export type VariantOptionValueType = {
-    id: string;
+    id?: string;
     sku: string;
     weight: number;
     stock: number;

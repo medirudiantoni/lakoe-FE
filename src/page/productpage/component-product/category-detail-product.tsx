@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  MenuRoot,
-  MenuItem,
-  MenuContent,
-  Box,
-  Text,
-  Button,
-  MenuTrigger,
-  VStack,
-  HStack,
-  Circle,
-} from '@chakra-ui/react';
+import { MenuRoot, MenuItem, MenuContent, Box, Text, Button, MenuTrigger, VStack, HStack, Circle } from '@chakra-ui/react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useCategoryStore } from '@/features/auth/store/category-store';
 
@@ -45,7 +34,6 @@ const CategoryDropdown: React.FC<Props> = (props) => {
   }, [fetchCategories]);
 
   const handleSelectCategory = (id: string, name: string) => {
-    console.log('ini cat: ', { id, name });
     if (props.setSelectedCategoryId) setSelectedCategoryId('categoryId', id);
     storeSetSelectedCategoryId(id);
     if (!openCategories.includes(id)) {

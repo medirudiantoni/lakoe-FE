@@ -7,8 +7,6 @@ import { TabContentAll } from './tab-product/tab-content-all';
 import { TabContentActive } from './tab-product/tab-content-active';
 import { TabContentNonActive } from './tab-product/tab-content-non-active';
 
-
-
 export function Product() {
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
