@@ -10,7 +10,6 @@ import { Setting } from './page/settingpage/Setting';
 
 import PrivateRoute from './layouts/private-layout';
 import { Dashboard } from './page/dashboard-page/dashboard';
-import { AddProductContent } from './page/productpage/add-product-content';
 import { Product } from './page/productpage/product';
 import { Detailproduct } from './page/productpage/detail-product';
 import { Toaster } from 'react-hot-toast';
@@ -32,6 +31,7 @@ import CobaCache from './page/seller/pages/coba-cache';
 import "leaflet/dist/leaflet.css";
 import SearchArea from './page/settingpage/data-territory/test';
 import { Profile } from './page/profile-page/profile';
+import AddProductForm from './page/productpage/add-product';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -176,7 +176,12 @@ function App() {
         },
         {
           path: '/add-product',
-          Component: AddProductContent,
+          Component: AddProductForm,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: '/edit-product/:productId',
+          Component: AddProductForm,
           HydrateFallback: Fallback,
         },
    

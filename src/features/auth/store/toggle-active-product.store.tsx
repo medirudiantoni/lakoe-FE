@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { ProductType } from '../types/product-type';
+import { ProductType } from '../types/prisma-types';
+// import { ProductType } from '../types/product-type';
 
 interface ProductStore {
   products: ProductType[] | null;

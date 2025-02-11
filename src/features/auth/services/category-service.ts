@@ -6,7 +6,6 @@ export const fetchCategory = async () => {
     try {
       const res: AxiosResponse = await axios.get(apiURL + `category`)
   
-      console.log('response',res)
       return res.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
