@@ -38,11 +38,11 @@ export function Register() {
       .promise(
         fetchRegister(data),
         {
-          loading: 'Registering your account...',
+          loading: 'Sedang mendaftarkan akun',
           success: (res) => {
             const responseData = res.data;
             navigate('/login');
-            return responseData.message || 'Registration successful!';
+            return responseData.message;
           },
           error: (error) => {
             return (

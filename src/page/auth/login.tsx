@@ -54,7 +54,7 @@ export function Login() {
           setIsLoading(false);
         }),
       {
-        loading: 'Logging in...',
+        loading: 'Sedang login...',
         success: (message) => <div>{message}</div>,
         error: (err) => <div>{err}</div>,
       },
