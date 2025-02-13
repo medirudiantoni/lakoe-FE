@@ -13,7 +13,7 @@ export function Setting() {
   const [storeData, setStoreData] = useState<StoreFormProps>();
   const [isFetching, setIsFetching] = useState(true); // Status fetching
   const { user } = useAuthStore();
-  const storeId = user?.Stores.id;
+  const storeId = user?.Stores?.id;
 
   useEffect(() => {
     const token = Cookies.get('token');

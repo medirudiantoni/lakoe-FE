@@ -174,7 +174,7 @@ const AddProductForm = () => {
     const onSubmit = async (data: ProductFormInputs) => {
         console.log("executed");
         const filteredImageUpdateCase = previewImages.filter(e => e.includes("blob") ? false : e);
-        const storeId = user?.Stores.id;
+        const storeId = user?.Stores?.id;
         handleSubmitAddProduct(theVariants, data, String(selectedCategoryId), setIsLoading, setError, String(storeId), navigate, productId, filteredImageUpdateCase);
     }
 

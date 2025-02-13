@@ -50,11 +50,12 @@ export const addProduct = async (data: FormData, token: string) => {
 
 export const searchQuery = async (
   query: string,
-  token: string
+  token: string,
+  storeId: string
 ): Promise<ProductType[]> => {
   try {
     const res: AxiosResponse = await axios.get(
-      apiURL + `product/product/search?query=${query}`,
+      apiURL + `product/product/search?query=${query}&storeId=${storeId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,7 +68,32 @@ export const searchQuery = async (
       throw new Error('Products not found in the response');
     }
 
-    return res.data;
+    return res.data.products;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
+
+export const sortQuery = async (
+  query: string,
+  storeId: string
+): Promise<ProductType[]> => {
+  try {
+    const res: AxiosResponse = await axios.get(
+      apiURL + `product/sort/${storeId}?sort=${query}`
+    );
+
+    console.log('Full Response:', res.data);
+    if (!res.data) {
+      throw new Error('Products not found in the response');
+    }
+
+    return res.data.products;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -121,6 +147,27 @@ export const fetchProductById = async (productId: string, token: string) => {
     throw error;
   }
 };
+
+
+export const fetchProductsBySelectedCategory = async (data: string[], storeId: string) => {
+  try {
+    const res: AxiosResponse = await axios.post(apiURL + `product/category/selected/${storeId}`, { selectedCategories: data }, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
+
 
 export const deleteProduct = async (productId: string, token: string) => {
   try {

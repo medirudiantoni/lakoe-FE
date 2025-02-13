@@ -1,13 +1,16 @@
 import { InputGroup } from '@/components/ui/input-group';
 import {
   fetchProduct,
+  fetchProductsBySelectedCategory,
   searchQuery,
+  sortQuery,
 } from '@/features/auth/services/product-service';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useCheckboxStore } from '@/features/auth/store/product-store';
 import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
 import {
   Box,
+  Center,
   Flex,
   Grid,
   GridItem,
@@ -23,6 +26,7 @@ import SelectAllCheckbox from '../component-product/checkbox';
 import ProductCardDashboard from '../component-product/product-card-dashboard';
 import { DialogDelete } from '../dialog-product/dialog-delete';
 import SortingDropdown from '../component-product/sorting';
+import { ProductType } from '@/features/auth/types/prisma-types';
 
 export function TabContentAll() {
   const { user } = useAuthStore();
@@ -31,6 +35,45 @@ export function TabContentAll() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const [productsToDisplay, setProductsToDisplay] = useState<ProductType[]>([]);
+  const [sortValue, setSortValue] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    restoreProductAfterSearch();
+  }, [products]);
+
+  function restoreProductAfterSearch(){
+    if(products && query.length === 0)
+      setProductsToDisplay(products)
+  }
+
+  useEffect(() => {
+    if(sortValue)
+      retrieveSortValue();
+  }, [sortValue]);
+
+  function retrieveSortValue(){
+    if(storeId)
+    sortQuery(sortValue, storeId)
+      .then(res => setProductsToDisplay(res))
+      .catch(error => console.log(error))
+  }
+
+  useEffect(() => {
+    if(selectedCategories.length > 0)
+      retrieveSelectedCategories()
+    else 
+      if(products)
+      setProductsToDisplay(products)
+  }, [selectedCategories]);
+
+  function retrieveSelectedCategories(){
+    if(storeId)
+      fetchProductsBySelectedCategory(selectedCategories, storeId)
+        .then(res => setProductsToDisplay(res))
+        .catch(error => console.log(error))
+  }
 
   const storeId = user?.Stores?.id;
   const isAnyProductSelected = selectedProducts.length > 0;
@@ -62,9 +105,10 @@ export function TabContentAll() {
       const token = Cookies.get('token');
       if (!storeId || !token || !query) return;
 
-      const searchResults = await searchQuery(query, token);
+      const searchResults = await searchQuery(query, token, storeId);
       console.log("searchResult: ", searchResults);
-      setProducts(Array.isArray(searchResults) ? searchResults : []);
+      // setProducts(Array.isArray(searchResults) ? searchResults : []);
+      setProductsToDisplay(searchResults);
     } catch (err: any) {
       console.error('Search error:', err);
       toast.error(err.response?.data?.message || 'Error searching products.');
@@ -86,6 +130,7 @@ export function TabContentAll() {
               outline="#0086B4"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onBlur={restoreProductAfterSearch}
             />
           </InputGroup>
           <Box position="absolute" top={2} left={4}>
@@ -93,10 +138,10 @@ export function TabContentAll() {
           </Box>
         </GridItem>
         <GridItem>
-          <Category />
+          <Category onChangeData={setSelectedCategories} />
         </GridItem>
         <GridItem>
-          <SortingDropdown />
+          <SortingDropdown onChangeSortValue={setSortValue} />
         </GridItem>
       </Grid>
       <Flex justifyContent="space-between" alignItems="center" mt={3}>
@@ -110,7 +155,7 @@ export function TabContentAll() {
       {loading ? (
         <Text>Searching...</Text>
       ) : (
-        products?.map((product) => {
+        productsToDisplay.length > 0 ? productsToDisplay.map((product) => {
           return (
             <ProductCardDashboard
               key={product.id}
@@ -120,7 +165,11 @@ export function TabContentAll() {
               updateProductStatus={updateProductStatus}
             />
           );
-        })
+        }) : (
+          <Center>
+            <Text color={"gray.500"}>Produk kosong</Text>
+          </Center>
+        )
       )}
     </Box>
   );

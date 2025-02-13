@@ -12,17 +12,10 @@ import { DialogActionTrigger, DialogBody, DialogCloseTrigger, DialogContent, Dia
 import { useParams } from 'react-router'
 import { ProductType, VariantOptionType, VariantOptionValueType, VariantType } from '@/features/auth/types/prisma-types'
 
-// export interface VariantType {
-//     name: string;
-//     isActive: boolean;
-//     variantOptions: VariantOptionType[];
-// }
-
 interface Props {
     onChangeVariantData?: (data: VariantType[]) => void;
     isVariantType: boolean;
     setIsVariantType: (value: boolean) => void;
-    // productDataUpdateCase?: VariantType[];
     productDataUpdateCase?: ProductType | null;
 }
 
@@ -39,7 +32,6 @@ const VariantSectionForm: React.FC<Props> = ({ onChangeVariantData, setIsVariant
 
     useEffect(() => {
         if (productId && productDataUpdateCase) {
-            // console.log("prod: ", productDataUpdateCase);
             setVariantData(productDataUpdateCase.variant!)
         };
     }, [productId, productDataUpdateCase]);

@@ -43,10 +43,8 @@ const PrivateRoute = () => {
       }
 
       try {
-        await axios.post(apiURL + 'auth/validate-token', { token });
-        setTimeout(() => {
-          setIsAuthenticated(true);
-        }, 3000);
+        await axios.post(apiURL + 'auth/validate-token', { token })
+        setIsAuthenticated(true);
       } catch (error) {
         console.log(error);
         setIsAuthenticated(false);
