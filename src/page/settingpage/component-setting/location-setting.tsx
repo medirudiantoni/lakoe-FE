@@ -97,58 +97,60 @@ export function LocationSetting() {
   const token = Cookies.get('token');
   const storeId = user?.Stores?.id;
 
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['locations', storeId],
     queryFn: () => fetchLocationById(storeId!, token!),
-    enabled: !!storeId && !!token,
+    enabled: !!storeId && !!token, // Hanya fetch jika storeId & token ada
   });
+  
 
-  useEffect(() => {
-    console.log('Location ID Updated:', storeId);
-  }, [storeId]);
+useEffect(() => {
+  if (!data?.locations) return;
+  console.log("Location ID Updated:", storeId);
+  console.log("location fetch", data.locations);
+}, [data, storeId]);
 
-  useEffect(() => {
-    if (data?.locations?.length > 0) {
-      const firstLocation = data.locations[0];
-      setCoordinates([
-        parseFloat(firstLocation.latitude),
-        parseFloat(firstLocation.longitude),
-      ]);
+useEffect(() => {
+  if (data?.locations?.length > 0) {
+    const firstLocation = data.locations[0];
+    setCoordinates([
+      parseFloat(firstLocation.latitude),
+      parseFloat(firstLocation.longitude),
+    ]);
+  }
+}, [data]);
+
+// Mutation untuk Menambah Lokasi
+const addLocationMutation = useMutation({
+  mutationFn: async () => {
+    if (!token) throw new Error("Unauthorized");
+    if (!storeId) throw new Error("Store ID not found");
+
+    const formData = new FormData();
+    formData.append("cityDistrict", `${selectedProvince?.name || ""}, ${selectedCity?.name || ""}, ${selectedDistrict?.name || ""}`);
+    formData.append("postalCode", `${selectedVillage?.postal_code}`);
+    formData.append("address", address);
+    formData.append("name", name);
+    formData.append("storeId", storeId);
+    formData.append("userId", user?.id!);
+    if (coordinates) {
+      formData.append("latitude", coordinates[0].toString());
+      formData.append("longitude", coordinates[1].toString());
     }
-  }, [data]);
+    formData.append("type", "origin");
 
-  const addLocationMutation = useMutation({
-    mutationFn: async () => {
-      if (!token) throw new Error('Unauthorized');
-      if (!storeId) throw new Error('Store ID not found');
-
-      const formData = new FormData();
-      formData.append(
-        'cityDistrict',
-        `${selectedProvince?.name || ''}, ${selectedCity?.name || ''}, ${selectedDistrict?.name || ''}`
-      );
-      formData.append('postalCode', `${selectedVillage?.postal_code}`);
-      formData.append('address', address);
-      formData.append('name', name);
-      formData.append('storeId', storeId);
-      formData.append('userId', user?.id!);
-      if (coordinates) {
-        formData.append('latitude', coordinates[0].toString());
-        formData.append('longitude', coordinates[1].toString());
-      }
-      formData.append('type', 'origin');
-
-      return createLocation(formData, token);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['locations'] });
-      setOpen(false);
-      toast.success('Lokasi berhasil ditambahkan!');
-    },
-    onError: () => {
-      toast.error('Gagal menambahkan lokasi!');
-    },
-  });
+    return createLocation(formData, token);
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["locations", storeId] });
+    setOpen(false);
+    toast.success("Lokasi berhasil ditambahkan!");
+  },
+  onError: () => {
+    toast.error("Gagal menambahkan lokasi!");
+  },
+});
 
   const deleteMutation = useMutation({
     mutationFn: async (locationId: string) => {

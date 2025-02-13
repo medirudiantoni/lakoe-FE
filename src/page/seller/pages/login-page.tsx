@@ -8,7 +8,8 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
 import Cookies from 'js-cookie';
-import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
+import { apiURL } from '@/utils/baseurl';
 
 const loginSchema = z.object({
   email: z.string().email('Email yang anda masukan salah'),
@@ -20,7 +21,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 export function LoginBuyer() {
   const { store } = useSellerStore();
   const navigate = useNavigate();
-  const{setUser} = useAuthStore()
+  const{setBuyer} = useAuthBuyerStore()
 
   const {
     register,
@@ -31,16 +32,23 @@ export function LoginBuyer() {
   });
 
   const onSubmit = (data: LoginFormInputs) => {
+    const requestData = {
+      email: data.email,
+      password: data.password,
+      storeName: store?.name
+    }
     toast.promise(
-      fetchLogin(data),
+      fetchLogin(requestData),
       {
         loading: 'Sedang login...',
         success: (res) => {
-          const responseData = res.data;
-            setUser(responseData.user)
-          Cookies.set('token', responseData.token)
+          const data = res.data;
+          console.log('dataaanya mana woiii', res)
+          setBuyer(data.buyer);
+          console.log('Data Buyer setelah login:', data.buyer); // Debugging
+          Cookies.set('token-buyer', data.token);
           navigate(`/${store?.name}/`);
-          return responseData.message;
+          return data.message;
         },
       },
       {
@@ -58,7 +66,12 @@ export function LoginBuyer() {
         },
       }
     );
-  };
+};
+   const onClickGoogle = () => {
+    //   setIsLoading(true);
+      window.location.href = `${apiURL}auth-buyer/google/`;
+    };
+
   return (
     <Box>
       <Box
@@ -110,6 +123,7 @@ export function LoginBuyer() {
                 borderRadius={'7px'}
                 type="button"
                 mt={2}
+                onClick={onClickGoogle}
               >
                 <Image w="10" h="10" src="/google-icon.webp"></Image>
               </Button>

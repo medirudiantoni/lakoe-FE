@@ -1,17 +1,87 @@
-import { Box, Button, Flex, Input, Stack, Text, Textarea, VStack } from "@chakra-ui/react"
+import { Box, Button, Flex, Input, Stack, Text, Textarea, useDisclosure, VStack } from "@chakra-ui/react"
 // import { useNavigate } from "react-router";
 import SellerNavbar from "../../components/navbar";
 import SellerFooter from "../../components/footer";
 import BuyerOrderPage from "./order-page";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DialogActionTrigger, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
+import { useAuthStore } from "@/features/auth/store/auth-store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserById, updateDataBuyer } from "@/features/auth/services/buyer";
+import Cookies from "js-cookie";
+import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store";
+import LogoutButtonBuyer from "./logout";
+import { LocationSetting } from "./location";
+import toast from "react-hot-toast";
+import { useSellerStore } from "@/hooks/store";
 
 const BuyerLayout = () => {
-    // const navigate = useNavigate();
+    const { buyer } = useAuthBuyerStore(); 
+    const token = Cookies.get('token-buyer')
+    const queryClient = useQueryClient()
+    const {store} = useSellerStore();
+
+    useEffect(()=>{
+        console.log('buyer iniii',buyer)
+    },[buyer])
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ["user-buyer", buyer?.id], 
+        queryFn: () => getUserById(String(buyer?.id),token!), 
+        enabled: !!buyer?.id,
+    });
+
+    const [formData, setFormData] = useState({
+        name: buyer?.name || "",
+        phone: buyer?.phone || "",
+        email: buyer?.email || "",
+    });
+
+    useEffect(() => {
+        if (buyer) {
+            setFormData({
+                name: buyer.name || "",
+                phone: buyer.phone || "",
+                email: buyer.email || "",
+            });
+        }
+    }, [buyer]);
+
+
+    const mutation = useMutation({
+        mutationFn: async () => {
+            const modifiedEmail = `${formData.email}-${store?.name}`
+            const data = new FormData();
+            data.append("name", formData.name);
+            data.append("phone", formData.phone);
+            data.append("email", modifiedEmail);
+
+            return updateDataBuyer(String(buyer?.id), data, token!);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["user-buyer", buyer?.id]}); 
+            toast.success('Success')           
+        },
+    });
+
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        mutation.mutate();
+    };
+    
+    useEffect(()=> {
+        console.log('test dataaa',data)
+    },[data])
+
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "instant" });
-    }, [])
+    }, []);
+
     return (
         <Box w="full" minH="100vh" className="font-poppins" overflowX="hidden">
             <SellerNavbar />
@@ -22,9 +92,15 @@ const BuyerLayout = () => {
                         <VStack alignItems="stretch" mb="5">
                             <VStack alignItems="start" mb="5">
                                 <Text fontSize="lg" fontWeight="medium">Akun</Text>
-                                <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">Medi Rudiantoni</Text>
-                                <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">+62 822 2090 1125</Text>
-                                <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">medirudiant@gmail.com</Text>
+                                <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">
+                                        {buyer?.name}
+                                    </Text>
+                                    <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">
+                                        {buyer?.phone}
+                                    </Text>
+                                    <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">
+                                        {buyer?.email}
+                                    </Text>
                                 <DialogRoot closeOnInteractOutside={false}>
                                     <DialogTrigger asChild>
                                         <Button>Edit</Button>
@@ -33,63 +109,42 @@ const BuyerLayout = () => {
                                         <DialogHeader>
                                             <DialogTitle>Edit Informasi Akun</DialogTitle>
                                         </DialogHeader>
+                                        <form onSubmit={handleSubmit}>
                                         <DialogBody pb="4">
+                                            
                                             <Stack gap="4" mb="2">
                                                 <Field label="Nama">
-                                                    <Input placeholder="Nama"></Input>
+                                                    <Input placeholder="Nama" name="name" value={formData.name} onChange={handleChange}></Input>
                                                 </Field>
                                             </Stack>
                                             <Stack gap="4" mb="2">
                                                 <Field label="Email">
-                                                    <Input placeholder="Email"></Input>
+                                                    <Input placeholder="Email" name="email" value={formData.email} onChange={handleChange}></Input>
                                                 </Field>
                                             </Stack>
                                             <Stack gap="4" mb="2">
                                                 <Field label="No. Telp">
-                                                    <Input placeholder="No. Telp"></Input>
+                                                    <Input placeholder="No. Telp" name="phone" value={formData.phone} onChange={handleChange}></Input>
                                                 </Field>
                                             </Stack>
-                                            <Stack gap="4" mb="2">
-                                                <Field label="Alamat">
-                                                    <Textarea placeholder="Alamat"></Textarea>
-                                                </Field>
-                                            </Stack>
+                                         
+                                        
                                         </DialogBody>
                                         <DialogFooter>
                                             <DialogActionTrigger>
                                                 <Button variant="outline">Cancel</Button>
                                             </DialogActionTrigger>
-                                            <Button>Simpan</Button>
+                                            <Button type="submit">Simpan</Button>
                                         </DialogFooter>
+                                        </form>
                                     </DialogContent>
                                 </DialogRoot>
                             </VStack>
                             <VStack alignItems="start">
-                                <Text fontSize="lg" fontWeight="medium">Alamat</Text>
-                                <Text w="full" pb="2" borderBottomWidth={1} borderColor="gray.200">Jl. Kota Agung-Bengkunat, Pekon Lakaran, Kec. Wonosobo, Kab. Tanggamus, Lampung</Text>
-                                <DialogRoot closeOnInteractOutside={false}>
-                                    <DialogTrigger asChild>
-                                        <Button>Edit</Button>
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>Edit Alamat</DialogTitle>
-                                        </DialogHeader>
-                                        <DialogBody pb="4">
-                                            <Stack gap="4" mb="2">
-                                                <Field label="Alamat">
-                                                    <Input placeholder="Alamat"></Input>
-                                                </Field>
-                                            </Stack>
-                                        </DialogBody>
-                                        <DialogFooter>
-                                            <DialogActionTrigger>
-                                                <Button variant="outline">Cancel</Button>
-                                            </DialogActionTrigger>
-                                            <Button>Simpan</Button>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </DialogRoot>
+                                <LocationSetting/>
+                            </VStack>
+                            <VStack alignItems="start">
+                                <LogoutButtonBuyer/>
                             </VStack>
                         </VStack>
                         {/* <Button>Edit</Button> */}
