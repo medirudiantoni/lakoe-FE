@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/react';
 
 const LoadingLottieBuyer = () => {
     return (
-        <Box width={20} height={20} mt={-14}>
+        <Box width={20} height={20} mt={-24}>
             <Lottie animationData={animationData} loop={true} />
         </Box>
     );

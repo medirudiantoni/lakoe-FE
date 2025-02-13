@@ -36,6 +36,7 @@ import { LoginBuyer } from './page/seller/pages/login-page';
 import { RegisterBuyer } from './page/seller/pages/register-page';
 import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-buyer';
 import AddProductForm from './page/productpage/add-product';
+import PrivateRouteBuyer from './layouts/private-layout-buyer';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -101,7 +102,6 @@ function App() {
       Component: LoadingScreenBuyer,
       HydrateFallback: Fallback,
     },
-
     {
       path: '/:storeName',
       Component: SellerPage,
@@ -128,32 +128,38 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
-          path: 'checkout',
-          Component: SellerCheckoutPage,
-          HydrateFallback: Fallback,
+          path: '',
+          element: <PrivateRouteBuyer/>,
+          children: [
+            {
+              path: 'checkout',
+              Component: SellerCheckoutPage,
+              HydrateFallback: Fallback,
+            },
+            {
+              path: 'payment',
+              Component: SellerBillingPage,
+              HydrateFallback: Fallback,
+            },
+            {
+              path: 'buyer',
+              Component: BuyerLayout,
+              HydrateFallback: Fallback,
+            }
+          ]
         },
-        {
-          path: 'payment',
-          Component: SellerBillingPage,
-          HydrateFallback: Fallback,
-        },
-        {
-          path: 'buyer',
-          Component: BuyerLayout,
-          HydrateFallback: Fallback,
-        },
+    
+        // **Rute Public (Tetap Bisa Diakses Tanpa Login)**
         {
           path: 'login-buyer',
           Component: LoginBuyer,
-          HydrateFallback:Fallback,
+          HydrateFallback: Fallback,
         },
         {
           path: 'register-buyer',
           Component: RegisterBuyer,
-          HydrateFallback:Fallback,
+          HydrateFallback: Fallback,
         },
-
-    
       ]
     },
     {

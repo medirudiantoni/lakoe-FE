@@ -48,17 +48,19 @@ export function RegisterBuyer() {
     }
   })
 
-
   useEffect(()=>{
+      console.log('dataStore', data)
+      console.log('dataStoreName', storeName)
       if(!store){
         setStore(data!)
-  
       }
   }, [store])
 
   const onSubmit = (data: RegisterFormInputs) => {    
+
+    const requestData = { ...data, storeName: store?.name};
     toast.promise(
-      fetchRegister(data),
+      fetchRegister(requestData),
       {
         loading: 'Sedang mendaftarkan akun...',
         success: (res) => {
@@ -69,7 +71,7 @@ export function RegisterBuyer() {
           }
           return responseData.message;
         },
-        
+
         error: (error) => {
           return error;
         },
@@ -93,7 +95,6 @@ export function RegisterBuyer() {
 
     const onClickGoogle = () => {
     //   setIsLoading(true);
-      // window.location.href = 'http://localhost:5000/api/v1/auth/google';
       window.location.href = `${apiURL}auth-buyer/google/`;
     };
   return (
@@ -105,6 +106,8 @@ export function RegisterBuyer() {
         pt={'8'}
         alignItems={'center'}
         justifyContent={'center'}
+        overflowY={'hidden'}
+        
       >
         <Box w={'full'} maxW={'sm'} mx={'auto'}>
           <VStack w={'full'}>
@@ -112,7 +115,7 @@ export function RegisterBuyer() {
               src={store?.logoAttachment}
               width={133}
             ></Image>
-            <Text mb={3} fontSize={'22px'} fontWeight={'semibold'}>
+            <Text mb={3} mt={-8} fontSize={'22px'} fontWeight={'semibold'}>
               Daftar akun ke {store?.name}
             </Text>
           </VStack>

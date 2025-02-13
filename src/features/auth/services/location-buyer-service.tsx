@@ -1,9 +1,9 @@
 import { apiURL } from '@/utils/baseurl';
 import axios, { AxiosResponse } from 'axios';
 
-export const fetchLocationById = async (storeId:string, token: string) => {
+export const fetchLocationByIdBuyer = async (locationBuyerId:string, token: string) => {
   try {
-    const res: AxiosResponse = await axios.get(apiURL + `location/${storeId}`, {
+    const res: AxiosResponse = await axios.get(apiURL + `location-buyer/${locationBuyerId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -22,11 +22,11 @@ export const fetchLocationById = async (storeId:string, token: string) => {
   }
 };
 
-export const createLocation = async (data: FormData, token: string) => {
+export const createLocationBuyer = async (data: FormData, token: string) => {
     console.log("Data yang dikirim ke backend:", Object.fromEntries(data));
 
   try {
-    const res: AxiosResponse = await axios.post(apiURL + `location/`, data, {
+    const res: AxiosResponse = await axios.post(apiURL + `location-buyer/`, data, {
       headers: {
         'Content-type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -43,10 +43,10 @@ export const createLocation = async (data: FormData, token: string) => {
   }
 };
 
-export const deleteLocation = async (locationId: string, token: string) => {
+export const deleteLocationBuyer = async (locationId: string, token: string) => {
   try {
     const res: AxiosResponse = await axios.delete(
-      apiURL + `location/${locationId}`,
+      apiURL + `location-buyer/${locationId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -66,11 +66,11 @@ export const deleteLocation = async (locationId: string, token: string) => {
 };
 
 
-export const updateLocation = async (data: FormData, locationId: string, token: string) => {
+export const updateLocationBuyer = async (data: FormData, locationId: string, token: string) => {
   
   try {
     const res: AxiosResponse = await axios.put(
-      apiURL + `location/${locationId}`,
+      apiURL + `location-buyer/${locationId}`,
       data,
       {
         headers: {
