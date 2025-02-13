@@ -39,8 +39,6 @@ export default async function handleSubmitAddProduct(
 
   const variante = JSON.stringify(variants);
 
-  console.log("var coy: ", variante);
-
   const formData = new FormData();
   formData.append('name', data.name);
   formData.append('description', data.description);

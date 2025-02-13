@@ -29,9 +29,9 @@ const ProductCardDashboard: React.FC<Props> = ({ product, selectedProducts, togg
         const minPrice = Math.min(...variantsPrice);
         const maxPrice = Math.max(...variantsPrice);
         if (minPrice === maxPrice) {
-            return minPrice;
+            return formatRupiah(minPrice);
         } else {
-            return `${minPrice} - ${maxPrice}`;
+            return `${formatRupiah(minPrice)} - ${formatRupiah(maxPrice)}`;
         }
     }
     return (
@@ -68,7 +68,7 @@ const ProductCardDashboard: React.FC<Props> = ({ product, selectedProducts, togg
                     </HStack>
                     <Text fontSize="18px" fontWeight="bold">{product.name}</Text>
                     <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                        <Text fontWeight="semibold">Harga: {formatRupiah(`${price()}`)}</Text>
+                        <Text fontWeight="semibold">Harga: {price()}</Text>
                         <Text color="gray.500" ml={1}>• Stok: {productValues?.stock} • SKU: {productValues?.sku}</Text>
                     </Flex>
                     <Box display="flex" gap={2}>

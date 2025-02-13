@@ -26,7 +26,7 @@ export function TabContentNonActive() {
   const { products, setProducts, updateProductStatus } = useProductStore();
   const { selectedProducts, toggleProductSelection } = useCheckboxStore();
   const [isFetching, setIsFetching] = useState(true);
-  const storeId = user?.Stores.id;
+  const storeId = user?.Stores?.id;
   const isAnyProductSelected = selectedProducts.length > 0;
 
   useEffect(() => {
