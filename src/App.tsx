@@ -118,7 +118,7 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
-          path: 'detail-product/:productId',
+          path: 'detail-product/:productUrl',
           Component: SellerDetailProduct,
           HydrateFallback: Fallback,
         },
@@ -129,7 +129,7 @@ function App() {
         },
         {
           path: '',
-          element: <PrivateRouteBuyer/>,
+          element: <PrivateRouteBuyer />,
           children: [
             {
               path: 'checkout',

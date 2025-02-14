@@ -2,8 +2,7 @@ import { Field } from '@/components/ui/field'
 import { Box, Center, HStack, Input, Text } from '@chakra-ui/react'
 import { X } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
-// import { VariantOptionValues } from './variant-option-values'
-import { VariantOptionType, VariantOptionValueType, VariantType } from '@/features/auth/types/prisma-types'
+import { VariantOptionType } from '@/features/auth/types/prisma-types'
 import { useParams } from 'react-router'
 
 interface Props {
@@ -12,11 +11,6 @@ interface Props {
     onDataChange?: (data: VariantOptionType[]) => void;
     itemVariantUpdateCase?: VariantOptionType[];
 }
-
-// export interface VariantOptions {
-//     name: string;
-//     variantOptionValues: VariantOptionValueType[];
-// }
 
 const ItemVariantTypeForm: React.FC<Props> = ({ label, onDataChange, itemVariantUpdateCase }) => {
     const { productId } = useParams();
@@ -56,7 +50,7 @@ const ItemVariantTypeForm: React.FC<Props> = ({ label, onDataChange, itemVariant
     return (
         <Box mb="5" px={3}>
             <Field label={label} mt={5}>
-                <HStack w="full" px={2} borderWidth={1} borderColor="gray.200" borderRadius="md">
+                <HStack w="full" flexWrap="wrap" px={2} borderWidth={1} borderColor="gray.200" borderRadius="md">
                     {
                         variantOptionValues.map((item, id) => (
                             <HStack w={"fit-content"} key={id} gap={1} pl="2" pr="0.5" bgColor="gray.200" borderRadius={4}>
@@ -68,6 +62,7 @@ const ItemVariantTypeForm: React.FC<Props> = ({ label, onDataChange, itemVariant
                         ))
                     }
                     <Input
+                        flex={1}
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
                         border="none"

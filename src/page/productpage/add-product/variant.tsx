@@ -32,7 +32,7 @@ const VariantSectionForm: React.FC<Props> = ({ onChangeVariantData, setIsVariant
 
     useEffect(() => {
         if (productId && productDataUpdateCase) {
-            setVariantData(productDataUpdateCase.variant!)
+            setVariantData(productDataUpdateCase.variants!)
         };
     }, [productId, productDataUpdateCase]);
 
@@ -220,26 +220,6 @@ const VariantSectionForm: React.FC<Props> = ({ onChangeVariantData, setIsVariant
     /* ------------------------------------------------------------------- HANDLE ALL OPTION FINAL DATA START */
     const handleBulkUpdate = (data: VariantOptionValueType) => {
         setAllVariantsValues(data);
-        // setVariantData((prevState) => {
-        //     return prevState.map((variant) => {
-        //         if (variant.name === 'final') {
-        //             return {
-        //                 ...variant,
-        //                 variantOption: variant.variantOptions.map((option) => ({
-        //                     ...option,
-        //                     variantOptionValue: [{
-        //                         sku: data.sku ? `${data.sku}-${Array.from(option.name).map(e => e === " " ? "-" : e).join("").toUpperCase()}` : '',
-        //                         weight: data.weight,
-        //                         stock: data.stock,
-        //                         price: data.price,
-        //                         isActive: data.isActive,
-        //                     }]
-        //                 }))
-        //             };
-        //         }
-        //         return variant;
-        //     });
-        // });
         setVariantData(prev => {
             return prev.map(variant => {
                 if(variant.name === "final"){
@@ -323,19 +303,6 @@ const VariantSectionForm: React.FC<Props> = ({ onChangeVariantData, setIsVariant
                 </Box>
             )}
             {/* Variant Type Name Form End */}
-
-            {/* Variant Type Item Start */}
-            {/* {variantData.map((variant, id) => {
-                if (variant.name !== "final") return (
-                    <ItemVariantTypeForm
-                        key={id}
-                        index={id}
-                        label={variant.name}
-                        onDataChange={(data) => handleDataVariant(data, variant.name, true)}
-                        itemVariantUpdateCase={variant}
-                    />
-                )
-            })} */}
             {variantData.map((variant, id) => (
                 variant.name !== "final" && (
                     <ItemVariantTypeForm
@@ -358,10 +325,6 @@ const VariantSectionForm: React.FC<Props> = ({ onChangeVariantData, setIsVariant
                         </Text>
                         <Text>Kamu dapat mengatur harga, stok dan SKU sekaligus</Text>
                     </Box>
-                    {/* <Button variant={'solid'} colorPalette={'blue'} borderRadius={'50px'}>
-                        <NotebookPen />
-                        <span className="ms-2">Atur Sekaligus</span>
-                    </Button> */}
                     <VariantAllOptionForm
                         variantName='Semua'
                         dataValues={handleBulkUpdate}

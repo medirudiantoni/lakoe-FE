@@ -14,7 +14,6 @@ import {
   Button,
   Flex,
   MenuContent,
-  MenuItem,
   MenuRoot,
   MenuTrigger,
   Text,
@@ -44,12 +43,6 @@ const SideBar = () => {
         (path !== '/' && currentPath.startsWith(path))
     );
   };
-
-  
-
-  useEffect(() => {
-    console.log('Current Path:', currentPath);
-  }, [currentPath]);
 
   return (
     <Box

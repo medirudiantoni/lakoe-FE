@@ -39,6 +39,8 @@ export const fetchCurrentUserBuyerData = async (token: string) => {
           },
         }
       );
+
+      console.log("data res 43: ", res.data);
   
       return res.data;
     } catch (error) {

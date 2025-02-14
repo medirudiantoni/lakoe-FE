@@ -12,14 +12,6 @@ interface Props {
     dataPlaceHolder?: VariantOptionValueType;
 }
 
-// export interface VariantOptionValues {
-//     isActive: boolean;
-//     price: number;
-//     sku: string;
-//     stock: number;
-//     weight: number;
-// }
-
 const VariantOptionValuesForm: React.FC<Props> = ({ variantName, dataValues, dataPlaceHolder }) => {
     const [data, setData] = useState<VariantOptionValueType>({
         isActive: true,
