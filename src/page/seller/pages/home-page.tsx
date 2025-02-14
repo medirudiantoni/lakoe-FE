@@ -2,30 +2,44 @@ import { Box, Button, Center, Grid, Heading, HStack, Image, MenuContent, MenuIte
 import SellerNavbar from "../components/navbar"
 import { ArrowDownUp, Search, SlidersHorizontal } from "lucide-react"
 import SellerFooter from "../components/footer";
-import ProductCard from "../components/product-cart";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import CategoryDropDown, { CategoryType } from "../components/category";
 import { useSellerStore } from "@/hooks/store";
 import { ProductType } from "@/features/auth/types/prisma-types";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProductsByStoreId } from "@/features/auth/services/product-service";
+import { PaginationItems, PaginationNextTrigger, PaginationPrevTrigger, PaginationRoot } from "@/components/ui/pagination";
+import ProductCard from "../components/product-card";
+
+interface ProductsResponse {
+  products: ProductType[],
+  totalPage: number;
+}
 
 export default function SellerHomepage() {
   const { pathname } = useLocation();
   const { store } = useSellerStore();
-  const [products, setProducts] = useState<ProductType[] | undefined>(undefined);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchSectionRef = useRef<HTMLDivElement>(null);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState<CategoryType | null>(null);
   const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<CategoryType | null>(null);
+  const [page, setPage] = useState<number>(1);
+
+  const { data, error, isLoading } = useQuery<ProductsResponse>({
+    queryKey: ["products", page],
+    queryFn: () => fetchProductsByStoreId(String(store?.id), page, 10)
+  });
 
   useEffect(() => {
-    console.log("products: ", store);
-  }, [products]);
+    console.log("total page: ", data?.totalPage);
+    console.log("current page: ", page);
+  }, [data, page])
 
   useEffect(() => {
-    setProducts(store?.products)
-  }, [store])
+    console.log("products by tanstack: ", data);
+  }, [data]);
 
   useEffect(() => {
     if (pathname.includes('/search')) {
@@ -37,7 +51,6 @@ export default function SellerHomepage() {
     searchInputRef.current?.focus();
     searchSectionRef.current?.scrollIntoView({ behavior: "smooth" })
   }
-  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("products", store?.products);
@@ -125,26 +138,41 @@ export default function SellerHomepage() {
       {/* Title, filter, & sort End */}
 
       {/* Products display Start */}
-      {products ? (
-
-        <Grid px={{ base: "5", lg: "10" }} templateColumns="repeat(4, 1fr)" gapX="16" gapY="10" w="full" h="fit" maxW="7xl" mx="auto" pb="200px">
-          {products?.map((product) => (
-            <ProductCard
-              storeName={String(store?.name)}
-              id={product.id}
-              imgSrc={product.attachments[0]}
-              category={String(product.category)}
-              name={product.name}
-              price={product.price}
-              key={product.id}
-            />
-          ))}
-        </Grid>
+      {isLoading ? (
+        <Center w="full" h="20">Loading...</Center> // di sini tempat skeleton
+      ) : error ? (
+        <Center w="full" h="20">Gagal memuat produk</Center>
       ) : (
-        <Center w="full" h="20" mb="200px">
-          <Text color="gray.500">Belum ada produk</Text>
-        </Center>
+        data?.products ? (
+          <Box w="full" h="fit" maxW="7xl" mx="auto" pb="200px">
+            <Grid px={{ base: "5", lg: "10" }} templateColumns="repeat(4, 1fr)" gapX="16" gapY="10" mb={10}>
+              {data?.products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </Grid>
+            {data.totalPage > 1 && (
+              <HStack w="full" justifyContent="center">
+                <PaginationRoot
+                  count={data.totalPage}
+                  onPageChange={(e) => setPage(e.page)}
+                  pageSize={1}
+                  defaultPage={1}>
+                  <HStack>
+                    <PaginationPrevTrigger />
+                    <PaginationItems />
+                    <PaginationNextTrigger />
+                  </HStack>
+                </PaginationRoot>
+              </HStack>
+            )}
+          </Box>
+        ) : (
+          <Center w="full" h="20" mb="200px">
+            <Text color="gray.500">Belum ada produk</Text>
+          </Center>
+        )
       )}
+
       {/* Products display End */}
 
       {/* Footer start */}

@@ -11,7 +11,7 @@ import { useAuthStore } from '@/features/auth/store/auth-store';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
 import toast from 'react-hot-toast';
 import LoadingLottie from '@/components/icons/lottie';
-import { fetchCurrentUserBuyerData } from '@/features/auth/services/buyer';
+import { fetchCurrentUserBuyerData } from '@/features/auth/services/buyer'; 
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import LayoutBuyer from '@/components/layout/layout-buyer';
 import LoadingLottieBuyer from '@/components/icons/loading-buyer';
@@ -29,6 +29,7 @@ const PrivateRouteBuyer = () => {
   useEffect(() => {
     console.log('buyer', buyer)
     if (buyer === null) {
+      console.log("tes is null?")
       retrieveCurrentUser();
     }
   }, [buyer]);
@@ -39,7 +40,7 @@ const PrivateRouteBuyer = () => {
     fetchCurrentUserBuyerData(token!)
       .then((res) => {
         console.log('res buyer', res)
-        setBuyer(res.buyer);
+        setBuyer(res.user);
       })
       .catch((error) => {
         console.log(error);
@@ -80,7 +81,7 @@ const PrivateRouteBuyer = () => {
     );
   }
 
-  return isAuthenticated ? <LayoutBuyer /> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <LayoutBuyer /> : <Navigate to={`/${store?.name}/login-buyer`} replace />;
 };
 
 export default PrivateRouteBuyer;

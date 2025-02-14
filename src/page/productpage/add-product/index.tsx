@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import ProductInfoForm from './product-info'
-import { data, useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useCategoryStore } from '@/features/auth/store/category-store';
 import { useForm } from 'react-hook-form';
@@ -110,13 +110,13 @@ const AddProductForm = () => {
                 setSelectedCategoryId(String(product.category?.id))
 
                 const getValues = () => {
-                    const options = product.variant?.find((item, id) => id === 0 ? item.variantOptions : false);
+                    const options = product.variants?.find((item, id) => id === 0 ? item.variantOptions : false);
                     const optionValues = options?.variantOptions?.find((item, id) => id === 0 ? item.variantOptionValues : false);
                     const values = optionValues?.variantOptionValues?.find((item, id) => id === 0 ? item : false);
                     return values;
                 };
 
-                if (product.variant?.length === 1) {
+                if (product.variants?.length === 1) {
                     setValue("price", String(getValues()?.price));
                     setValue("stock", Number(getValues()?.stock));
                     setValue("sku", String(getValues()?.sku));

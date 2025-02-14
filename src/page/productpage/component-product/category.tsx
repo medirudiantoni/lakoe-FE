@@ -21,7 +21,6 @@ const Category: React.FC<Props> = ({ onChangeData }) => {
   const [isMenuOpen] = useState(false); 
 
   useEffect(() => {
-    console.log("selectedCategories: ", selectedCategories);
     if (typeof onChangeData === "function") {
       onChangeData(selectedCategories);
     } else {

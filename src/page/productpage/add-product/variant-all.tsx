@@ -13,14 +13,6 @@ interface Props {
     dataPlaceHolder?: VariantOptionValueType | null;
 }
 
-// export interface VariantOptionValues {
-//     isActive: boolean;
-//     price: number;
-//     sku: string;
-//     stock: number;
-//     weight: number;
-// }
-
 const VariantAllOptionForm: React.FC<Props> = ({ variantName, dataValues, dataPlaceHolder }) => {
     const [data, setData] = useState<VariantOptionValueType>({
         isActive: true,
@@ -34,11 +26,6 @@ const VariantAllOptionForm: React.FC<Props> = ({ variantName, dataValues, dataPl
         if (dataPlaceHolder)
             setData(dataPlaceHolder)
     }, [dataPlaceHolder])
-
-    // useEffect(() => {
-    //     dataValues && dataValues(data);
-    //     console.log("values: ", data)
-    // }, [data]);
 
     const handelSetAllOption = () => {
         dataValues && dataValues(data);

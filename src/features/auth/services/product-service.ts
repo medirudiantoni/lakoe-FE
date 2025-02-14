@@ -7,28 +7,6 @@ import { ProductType } from '../types/prisma-types';
 
 export const addNewProduct = async (data: FormData, token: string) => {
   try {
-    const res: AxiosResponse = await axios.post(apiURL + 'product/alt', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log('📡 Response dari API:', res);
-
-    return res.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('Axios Error:', error.response?.data || error.message);
-      throw new Error(error.response?.data?.message || 'Something went wrong');
-    }
-    console.error('Unexpected Error:', error);
-    throw error;
-  }
-};
-
-export const addProduct = async (data: FormData, token: string) => {
-  try {
-    console.log('form data: ', data);
     const res: AxiosResponse = await axios.post(apiURL + 'product', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -148,6 +126,19 @@ export const fetchProductById = async (productId: string, token: string) => {
   }
 };
 
+export const fetchProductByUrl = async (productUrl: string) => {
+  try {
+    const res: AxiosResponse = await axios.get(apiURL + `product/productUrl/${productUrl}`);
+    return res.data.product;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
 
 export const fetchProductsBySelectedCategory = async (data: string[], storeId: string) => {
   try {
@@ -167,7 +158,6 @@ export const fetchProductsBySelectedCategory = async (data: string[], storeId: s
     throw error;
   }
 };
-
 
 export const deleteProduct = async (productId: string, token: string) => {
   try {
@@ -327,3 +317,17 @@ export const toggleProductStatus = async (
     throw error;
   }
 };
+
+export const fetchProductsByStoreId = async (storeId: string, page?: number, limit?: number) => {
+  try {
+    const res = await axios.get(apiURL + `product/store/${storeId}?page=${page}&limit=${limit}`);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Something went wrong');
+    }
+    console.error('Unexpected Error:', error);
+    throw error;
+  }
+}

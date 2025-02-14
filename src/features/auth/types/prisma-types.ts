@@ -214,7 +214,7 @@ export type UserType = {
     stores?: StoreType;
     categoryId?: string;
     category?: CategoryType;
-    variant?: VariantType[];
+    variants?: VariantType[];
   };
   
   export type CategoryType = {
@@ -253,5 +253,6 @@ export type UserType = {
     isActive: boolean;
     cartItems?: CartItemType[];
     variantOptions?: VariantOptionType;
+    combinations?: string[];
   };
   

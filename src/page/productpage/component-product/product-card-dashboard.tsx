@@ -19,21 +19,27 @@ interface Props {
 }
 
 const ProductCardDashboard: React.FC<Props> = ({ product, selectedProducts, toggleProductSelection, updateProductStatus }) => {
-    const finalIndex = product.variant?.findIndex(varian => varian.name === "final");
-    const variantOption = product.variant && product.variant[Number(finalIndex)]?.variantOptions?.find((e, id) => id === 0 ? e : false);
-    const option = product.variant && product.variant[Number(finalIndex)]?.variantOptions;
+    useEffect(() => {
+        console.log("product card: ", product)
+    }, [product])
+    const finalIndex = product.variants?.findIndex(varian => varian.name === "final");
+    const variantOption = product.variants && product.variants[Number(finalIndex)]?.variantOptions?.find((e, id) => id === 0 ? e : false);
+    const option = product.variants && product.variants[Number(finalIndex)]?.variantOptions;
     const productValues = variantOption?.variantOptionValues && variantOption?.variantOptionValues[0];
+
     const price = () => {
         let variantsPrice: number[] = [];
-        option?.map(o => variantsPrice.push(o.variantOptionValues ? o.variantOptionValues[0].price : 0));
+        option?.map(o => variantsPrice.push(o.variantOptionValues ? o.variantOptionValues[0].price : 0))
         const minPrice = Math.min(...variantsPrice);
         const maxPrice = Math.max(...variantsPrice);
+        console.log("min & max: ", variantsPrice)
         if (minPrice === maxPrice) {
             return formatRupiah(minPrice);
         } else {
             return `${formatRupiah(minPrice)} - ${formatRupiah(maxPrice)}`;
         }
     }
+
     return (
         <Box
             key={product.id}
@@ -60,7 +66,7 @@ const ProductCardDashboard: React.FC<Props> = ({ product, selectedProducts, togg
                 />
                 <Box>
                     <HStack>
-                        {product.variant?.map(item => {
+                        {product.variants?.map(item => {
                             if (item.name !== "final") return (
                                 <Badge key={item.id} mb={1} colorPalette="blue">{item.variantOptions?.length} Varian {item.name}</Badge>
                             )
@@ -72,7 +78,7 @@ const ProductCardDashboard: React.FC<Props> = ({ product, selectedProducts, togg
                         <Text color="gray.500" ml={1}>• Stok: {productValues?.stock} • SKU: {productValues?.sku}</Text>
                     </Flex>
                     <Box display="flex" gap={2}>
-                        {product.variant && product.variant?.length <= 1 ? (
+                        {product.variants && product.variants?.length <= 1 ? (
                             <>
                                 <DialogPrice productId={product.id} />
                                 <DialogStock productId={product.id} />

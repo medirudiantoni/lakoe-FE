@@ -53,7 +53,7 @@ export function Detailproduct() {
   );
   const navigate = useNavigate();
 
-  const storeId = user?.Stores.id;
+  const storeId = user?.Stores?.id;
   useEffect(() => {
     const token = Cookies.get('token');
     if (storeId && token) {
