@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react'
 import React from 'react'
 
 const BuyerOrderCard = () => {
@@ -7,7 +7,9 @@ const BuyerOrderCard = () => {
             <HStack alignItems="stretch">
                 <VStack w="2/5">
                     <HStack gap="5">
-                        <Box w="20" h="20" bg="slateblue" borderRadius="lg"></Box>
+                        <Box w="20" h="20" borderRadius="lg">
+                            <Image src='https://menggambar.net/wp-content/uploads/2021/11/son-goku-drawing-step-13.png'/>
+                        </Box>
                         <Box flex="1">
                             <Text fontSize="md">
                                 <span className='font-medium'>Diadora Kilvano Men's Running Shoes,</span>

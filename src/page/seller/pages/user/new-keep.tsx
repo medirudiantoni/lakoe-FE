@@ -4,6 +4,7 @@ import {
   Flex,
   Input,
   Stack,
+  Tabs,
   Text,
   Textarea,
   useDisclosure,
@@ -34,10 +35,10 @@ import LogoutButtonBuyer from './logout';
 import { LocationSetting } from './location';
 import toast from 'react-hot-toast';
 import { useSellerStore } from '@/hooks/store';
-import { Keep } from './keep';
-import { NewKeep } from './new-keep';
+import { TabsProfile } from './tabs/tab-profile';
+import { TabsPesanan } from './tabs/tab-pesanan';
 
-const BuyerLayout = () => {
+export function NewKeep() {
   const { buyer } = useAuthBuyerStore();
   const token = Cookies.get('token-buyer');
   const queryClient = useQueryClient();
@@ -51,8 +52,8 @@ const BuyerLayout = () => {
     queryKey: ['user-buyer', buyer?.id],
     queryFn: async () => {
       const res = await getUserById(String(buyer?.id), token!);
-      console.log('resss', res.data)
-      return res.data; 
+      console.log('resss', res.data);
+      return res.data;
     },
     enabled: !!buyer?.id,
   });
@@ -75,7 +76,6 @@ const BuyerLayout = () => {
 
   const mutation = useMutation({
     mutationFn: async () => {
-        
       const data = new FormData();
       data.append('name', formData.name);
       data.append('phone', formData.phone);
@@ -105,14 +105,28 @@ const BuyerLayout = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
-
   return (
-    <Box w="full" minH="100vh" className="font-poppins" overflowX="hidden">
-      <SellerNavbar />
-        <NewKeep/>
-      <SellerFooter />
+    <Box pt={28} mx={'auto'}  maxW="7xl" px={'35px'}>
+      <Text fontWeight={'semibold'} fontSize={24} mb={'24px'}>
+        Informasi Profile
+      </Text>
+
+      <Tabs.Root defaultValue="profile"  variant={'subtle'}>
+      <Tabs.List >
+        <Tabs.Trigger value="profile">
+          Profile
+        </Tabs.Trigger>
+        <Tabs.Trigger value="pesanan">
+          Pesanan
+        </Tabs.Trigger>
+      </Tabs.List>
+      <Tabs.Content value="profile">
+        <TabsProfile/>
+      </Tabs.Content>
+      <Tabs.Content value="pesanan">
+        <TabsPesanan/>
+      </Tabs.Content>
+    </Tabs.Root>
     </Box>
   );
-};
-
-export default BuyerLayout;
+}

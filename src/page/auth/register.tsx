@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { apiURL } from '@/utils/baseurl';
+import { PasswordInput } from '@/components/ui/password-input';
 
 const registerSchema = z.object({
   name: z.string().min(3, 'Full name is required'),
@@ -82,7 +83,7 @@ export function Register() {
       // justifyContent={'center'}
       pt={20}
       flexDirection={'column'}
-      width={'100vw'}
+      width={'full'}
       height={'100vh'}
       position={'relative'}
     >
@@ -123,6 +124,20 @@ export function Register() {
             )}
           </Field>
 
+          <Field label="Phone" mt={2}>
+            <Input placeholder="Masukan no telepon" {...register('phone')} />
+            {errors.phone && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop={1.5}
+              >
+                {errors.phone.message}
+              </Text>
+            )}
+          </Field>
+          
           <Field label="Email" mt={2}>
             <Input placeholder="Masukan email" {...register('email')} />
             {errors.email && (
@@ -137,7 +152,7 @@ export function Register() {
             )}
           </Field>
           <Field label="Password" mt={2}>
-            <Input placeholder="Masukan password" {...register('password')} />
+            <PasswordInput placeholder="Masukan password" {...register('password')} />
             {errors.password && (
               <Text
                 color="red.500"
@@ -149,20 +164,7 @@ export function Register() {
               </Text>
             )}
           </Field>
-          <Field label="Phone" mt={2}>
-            <Input placeholder="Masukan no telepon" {...register('phone')} />
-            {errors.password && (
-              <Text
-                color="red.500"
-                fontSize="xs"
-                textAlign={'left'}
-                marginTop={1.5}
-              >
-                {errors.password.message}
-              </Text>
-            )}
-          </Field>
-          
+      
           {/* <Field label="Konfirmasi Password" mt={2}>
             <Input
               placeholder="Masukan ulang password"
