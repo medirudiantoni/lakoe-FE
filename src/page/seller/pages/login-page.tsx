@@ -10,6 +10,7 @@ import { z } from 'zod';
 import Cookies from 'js-cookie';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import { apiURL } from '@/utils/baseurl';
+import { PasswordInput } from '@/components/ui/password-input';
 
 const loginSchema = z.object({
   email: z.string().email('Email yang anda masukan salah'),
@@ -103,7 +104,7 @@ export function LoginBuyer() {
               )}
             </Field>
             <Field label="Password">
-              <Input placeholder="Masukan Password" {...register('password')} />
+              <PasswordInput placeholder="Masukan Password" {...register('password')} />
               {errors.password && (
                 <Text
                 color="red.500"
@@ -129,7 +130,7 @@ export function LoginBuyer() {
               </Button>
               <Text textAlign={'center'} mt={2}>
                 Belum punya akun? silakan{' '}
-                <Link to={'/register-buyer'} className="text-blue-400">
+                <Link to={`/${store?.name}/register-buyer`} className="text-blue-400">
                   daftar di sini
                 </Link>
               </Text>

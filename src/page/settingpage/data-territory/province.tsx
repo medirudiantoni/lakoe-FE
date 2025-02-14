@@ -53,7 +53,7 @@ export function LocationSelector({ setSelectedProvince, setSelectedCity, selecte
   }, []);
 
   return (
-    <Box>
+    <Box position={"relative"}>
       <MenuRoot>
         <MenuTrigger asChild>
           <Field label="Provinsi" required>
@@ -69,6 +69,8 @@ export function LocationSelector({ setSelectedProvince, setSelectedCity, selecte
           {provinces.length > 0 ? (
             provinces.map((province) => (
               <MenuItem
+              bg={'white'}
+              cursor={'pointer'}
               value="item"
                 key={province.id}
                 onClick={() => {
@@ -77,7 +79,10 @@ export function LocationSelector({ setSelectedProvince, setSelectedCity, selecte
                   setSelectedCity(null);
                 }}
               >
+                <Box>
                 {province.name}
+                </Box>
+               
               </MenuItem>
             ))
           ) : (

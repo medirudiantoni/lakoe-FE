@@ -31,7 +31,7 @@ const LogoutButtonBuyer: React.FC<LogoutButtonProps> = ({ onClick }) => {
   };
 
   return (
-    <Button outline={'none'} colorPalette={'red'} onClick={handleLogout}>
+    <Button outline={'none'} colorPalette={'red'} onClick={handleLogout} mb={'24'}>
       <span>Logout</span>
     </Button>
   );

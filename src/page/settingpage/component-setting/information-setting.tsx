@@ -42,7 +42,7 @@ export function InformationSetting() {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
 
-  const storeId = user?.Stores.id;
+  const storeId = user?.Stores!.id;
 
   useEffect(() => {
     const token = Cookies.get("token")

@@ -60,6 +60,9 @@ export function Profile() {
       <Text fontSize={'22px'} mt={4} fontWeight={'medium'}>Informasi Profile</Text>
       <Grid templateColumns="repeat(2, 1fr)">
         <GridItem mt={5}>
+          <Field label="Name">
+            <Input placeholder="Masukan nama" name='name' value={formData.name} disabled={!isEditing} onChange={handleChange} />
+          </Field>
           <Field label="Email">
             <Input placeholder="Masukan email" name='email' value={formData.email} disabled={!isEditing} onChange={handleChange} />
           </Field>

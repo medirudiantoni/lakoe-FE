@@ -39,7 +39,7 @@ const PrivateRouteBuyer = () => {
     fetchCurrentUserBuyerData(token!)
       .then((res) => {
         console.log('res buyer', res)
-        setBuyer(res.buyer);
+        setBuyer(res.user);
       })
       .catch((error) => {
         console.log(error);
@@ -59,7 +59,7 @@ const PrivateRouteBuyer = () => {
         await axios.post(apiURL + 'auth-buyer/validate-token', { token });
         setTimeout(() => {
           setIsAuthenticated(true);
-        }, 3000);
+        }, 2000);
       } catch (error) {
         console.log(error);
         setIsAuthenticated(false);
