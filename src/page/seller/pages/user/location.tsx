@@ -46,6 +46,8 @@ import MapComponent from '@/page/settingpage/component-setting/locationApi';
 import { LocationSelector } from '@/page/settingpage/data-territory/province';
 import { createLocationBuyer, deleteLocationBuyer, fetchLocationByIdBuyer, updateLocationBuyer } from '@/features/auth/services/location-buyer-service';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
+import LoadingLottie from '@/components/icons/loading';
+import LoadingButtonLottie from '@/components/icons/loading-button';
   
   interface Location {
     id: string;
@@ -154,7 +156,7 @@ import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
           toast.success('Lokasi berhasil ditambahkan!');
         },
         onError: (error) => {
-          console.error('❌ Error menambahkan lokasi:', error);
+          console.error('Error menambahkan lokasi:', error);
           toast.error('Gagal menambahkan lokasi!');
         },
       });
@@ -244,15 +246,19 @@ import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          mt={5}
+          mt={20}
         >
-          <Button
-            variant="outline"
-            borderRadius="50px"
-            onClick={() => setOpen(true)}
-          >
-            Tambahkan Lokasi
-          </Button>
+          <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} width={'full'}>
+            <Text fontSize={'18px'} fontWeight={'semibold'}>Alamat</Text>
+            <Button
+              variant="outline"
+              borderRadius="50px"
+              onClick={() => setOpen(true)}
+            >
+              Tambahkan Lokasi
+            </Button>
+          </Box>
+        
           <DialogRoot lazyMount open={open} onOpenChange={(e) => setOpen(e.open)}>
             <DialogContent>
               <DialogHeader>
@@ -316,24 +322,34 @@ import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
   
         <Box
           width="full"
-          mt={3}
-          p={3}
+          mt={5}
+          mb={8}
+          maxH={'200px'}
+          overflowY={'auto'}
         >
           {isLoading ? (
-            <Spinner />
+            <LoadingButtonLottie />
           ) : isError ? (
-            <Text color="red.500">Tidak ada lokasi di store anda</Text>
+            <Text color="red.500">Tidak ada lokasi di akun anda</Text>
           ) : data?.locations && data.locations.length > 0 ? (
             data.locations.map((location: Location) => (
               <Grid
                 key={location.id}
-                templateColumns="1fr 2fr 1fr"
+                templateColumns="1fr 1fr"
+                borderBottom={'1px solid'} borderColor={'gray.200'}
+                py={3}
+              
               >
                 <GridItem display="flex" flexDirection="column" gap={3}>
-                  <Text maxW={'60'}>{location.address}</Text>
-                  <Text  maxW={'60'} >{location.cityDistrict},{location.postalCode}</Text>
-                  <Box display="flex" justifyContent="start" gap={2} mb={10}>
-                    <Box>
+                  <Box >
+                  <Text >{location.address}</Text>
+                  <Text >{location.cityDistrict},{location.postalCode}</Text>
+                  </Box>
+                </GridItem>
+
+                <GridItem>
+                <Box display="flex" justifyContent="end" gap={2} mb={10} pr={3}>
+                    <Box >
                       <DialogRoot
                         lazyMount
                         open={openDialogUpdate}
@@ -429,9 +445,6 @@ import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
                       </DialogContent>
                     </DialogRoot>
                   </Box>
-                </GridItem>
-                <GridItem>
-               
                 </GridItem>
               </Grid>
             ))

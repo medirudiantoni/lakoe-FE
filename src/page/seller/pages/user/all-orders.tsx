@@ -12,8 +12,6 @@ const BuyerAllOrders = () => {
                 <Box w="1/5" p="2" className='bg-slate-100' borderRadius="lg">Aksi</Box>
             </HStack>
             <BuyerOrderCard />
-            <BuyerOrderCard />
-            <BuyerOrderCard />
         </VStack>
     )
 }

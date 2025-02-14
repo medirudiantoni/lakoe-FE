@@ -7,12 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { z } from 'zod';
 import { StoreType } from '@/features/auth/types/prisma-types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { PasswordInput } from '@/components/ui/password-input';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Nama user harus diisi'),
@@ -102,11 +103,11 @@ export function RegisterBuyer() {
       <Box
         display={'flex'}
         flexDirection={'column'}
-        width={'100vw'}
+        width={'full'}
         pt={'8'}
         alignItems={'center'}
         justifyContent={'center'}
-        overflowY={'hidden'}
+        position={'relative'}
         
       >
         <Box w={'full'} maxW={'sm'} mx={'auto'}>
@@ -115,7 +116,17 @@ export function RegisterBuyer() {
               src={store?.logoAttachment}
               width={133}
             ></Image>
-            <Text mb={3} mt={-8} fontSize={'22px'} fontWeight={'semibold'}>
+                <Link to={`/${store?.name}/login-buyer`}>
+        <Text
+          position={'absolute'}
+          top={25}
+          right={30}
+          fontWeight={'semibold'}
+        >
+          Masuk
+        </Text>
+      </Link>
+            <Text mb={3} fontSize={'22px'} fontWeight={'semibold'}>
               Daftar akun ke {store?.name}
             </Text>
           </VStack>
@@ -161,7 +172,7 @@ export function RegisterBuyer() {
             )}
             </Field>
             <Field label="Password">
-              <Input placeholder="Masukan Password" {...register('password')}/>
+              <PasswordInput placeholder="Masukan Password" {...register('password')}/>
               {errors.password && (
               <Text
                 color="red.500"

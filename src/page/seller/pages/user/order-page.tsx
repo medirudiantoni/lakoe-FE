@@ -1,6 +1,7 @@
 import { Tabs, Text, Box } from '@chakra-ui/react'
 import { CircleCheck, MessageCircleX, Package, PackageCheck, ScanBarcode, Truck } from 'lucide-react'
 import BuyerAllOrders from './all-orders'
+import BuyerNullOrders from './null-order'
 
 const BuyerOrderPage = () => {
     return (
@@ -37,6 +38,9 @@ const BuyerOrderPage = () => {
                         </Tabs.List>
                         <Tabs.Content value='all'>
                             <BuyerAllOrders />
+                        </Tabs.Content>
+                        <Tabs.Content value='unpaid'>
+                            <BuyerNullOrders />
                         </Tabs.Content>
                     </Tabs.Root>
                 </Box>

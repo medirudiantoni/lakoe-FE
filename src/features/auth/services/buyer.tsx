@@ -22,7 +22,7 @@ export const updateDataBuyer = async (buyerId:string, data:FormData, token:strin
         'Content-Type': 'application/json'
       }
     })
-    return res
+    return res.data;
   } catch (error) {
     throw error
   }

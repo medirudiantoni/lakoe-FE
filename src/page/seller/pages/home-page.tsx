@@ -74,8 +74,8 @@ export default function SellerHomepage() {
       <HStack px={{ base: "5", lg: "10" }} w="full" maxW="7xl" mx="auto">
         <HStack w="full" alignItems="stretch" position="relative">
 
-          <Box className="peer group" w="fit" borderRadius="lg" px="5" py="2" bg="blue.600" color="white">
-            <button>Kategori</button>
+          <Box className="peer group" w="fit" borderRadius="lg" px="3" bg={'#18181b'} color="white">
+            <Button variant={"plain"} color={"white"} border={"none"}>Kategori</Button>
             <CategoryDropDown
               onSelectCategory={setSelectedCategory}
               onSelectSubCategory={setSelectedSubCategory}
@@ -85,8 +85,8 @@ export default function SellerHomepage() {
 
           <form className="flex-1">
             <HStack position="relative">
-              <Search className="absolute left-2" />
-              <input ref={searchInputRef} type="text" className="w-full h-full bg-neutral-200 py-2.5 rounded-lg ps-10 pr-2 placeholder:font-medium outline-none focus:ring-2" placeholder="Cari produk" />
+              <Search size={20} className="absolute left-2 di" />
+              <input ref={searchInputRef} type="text" className="w-full h-full bg-[#F4F4F5] py-2.5 rounded-lg ps-10 pr-2 placeholder:font-normal outline-none focus:ring-2" placeholder="Cari produk" />
             </HStack>
           </form>
 
