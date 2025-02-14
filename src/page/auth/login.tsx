@@ -44,9 +44,7 @@ export function Login() {
             console.log('text', data)
             Cookies.set('token', data.token);
             data.user.Stores ? navigate('/dashboard') : navigate('/register-store')
-
             return data.message;
-
           }
         })
         .catch((error) => {
@@ -56,7 +54,7 @@ export function Login() {
           setIsLoading(false);
         }),
       {
-        loading: 'Logging in...',
+        loading: 'Sedang login...',
         success: (message) => <div>{message}</div>,
         error: (err) => <div>{err}</div>,
       },

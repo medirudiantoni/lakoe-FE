@@ -1,149 +1,176 @@
 import { InputGroup } from '@/components/ui/input-group';
-import { fetchProduct } from '@/features/auth/services/product-service';
+import {
+  fetchProduct,
+  fetchProductsBySelectedCategory,
+  searchQuery,
+  sortQuery,
+} from '@/features/auth/services/product-service';
 import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useCheckboxStore } from '@/features/auth/store/product-store';
 import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
 import {
   Box,
-  Button,
+  Center,
   Flex,
   Grid,
   GridItem,
-  Image,
   Input,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
-import { Link2, PackageSearch } from 'lucide-react';
+import { PackageSearch } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router';
 import Category from '../component-product/category';
-import CheckBox from '../component-product/checkbox';
-import SortingDropdown from '../component-product/Sorting';
-import ProductToggleSwitch from '../component-product/switch-status';
-import { DialogPrice } from '../dialog-product/dialog-price';
-import { DialogStock } from '../dialog-product/dialog-stock';
+import SelectAllCheckbox from '../component-product/checkbox';
+import ProductCardDashboard from '../component-product/product-card-dashboard';
+import { DialogDelete } from '../dialog-product/dialog-delete';
+import SortingDropdown from '../component-product/sorting';
+import { ProductType } from '@/features/auth/types/prisma-types';
 
 export function TabContentAll() {
   const { user } = useAuthStore();
-  const [isFetching, setIsFetching] = useState(true);
   const { products, setProducts, updateProductStatus } = useProductStore();
-  const storeId = user?.Stores.id;
+  const { selectedProducts, toggleProductSelection } = useCheckboxStore();
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [productsToDisplay, setProductsToDisplay] = useState<ProductType[]>([]);
+  const [sortValue, setSortValue] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    restoreProductAfterSearch();
+  }, [products]);
 
+  function restoreProductAfterSearch(){
+    if(products && query.length === 0)
+      setProductsToDisplay(products)
+  }
+
+  useEffect(() => {
+    if(sortValue)
+      retrieveSortValue();
+  }, [sortValue]);
+
+  function retrieveSortValue(){
+    if(storeId)
+    sortQuery(sortValue, storeId)
+      .then(res => setProductsToDisplay(res))
+      .catch(error => console.log(error))
+  }
+
+  useEffect(() => {
+    if(selectedCategories.length > 0)
+      retrieveSelectedCategories()
+    else 
+      if(products)
+      setProductsToDisplay(products)
+  }, [selectedCategories]);
+
+  function retrieveSelectedCategories(){
+    if(storeId)
+      fetchProductsBySelectedCategory(selectedCategories, storeId)
+        .then(res => setProductsToDisplay(res))
+        .catch(error => console.log(error))
+  }
+
+  const storeId = user?.Stores?.id;
+  const isAnyProductSelected = selectedProducts.length > 0;
+
+  useEffect(() => {
+    const token = Cookies.get('token')
     if (storeId && token) {
       fetchProduct(storeId, token)
-        .then((data) => {
-          setProducts(data);
-          console.log('cek:', data);
-        })
-        .catch(() => {
-          toast.error('Gagal mengambil data produk.');
-        })
-        .finally(() => {
-          setIsFetching(false);
-        });
+        .then(setProducts)
+        .catch(() => toast.error('Gagal mengambil data produk'))
+        .finally(() => setIsFetching(false))
     }
-  }, [storeId, setProducts]);
+  }, [storeId, setProducts])
 
+  useEffect(() => {
+    if (!query) return;
 
-  if (isFetching) {
-    return <Text>Loading...</Text>;
-  }
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
+
+  const handleSearch = async () => {
+    setLoading(true);
+
+    try {
+      const token = Cookies.get('token');
+      if (!storeId || !token || !query) return;
+
+      const searchResults = await searchQuery(query, token, storeId);
+      console.log("searchResult: ", searchResults);
+      // setProducts(Array.isArray(searchResults) ? searchResults : []);
+      setProductsToDisplay(searchResults);
+    } catch (err: any) {
+      console.error('Search error:', err);
+      toast.error(err.response?.data?.message || 'Error searching products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isFetching) return <Text>Loading...</Text>;
 
   return (
     <Box>
-      <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2}>
-        <GridItem position={'relative'}>
-          <InputGroup flex="1" width={'100%'}>
-            <Input px={11} placeholder="Search produk" outline={'#0086B4'} />
+      <Grid templateColumns="repeat(3, 1fr)" width="100%" gap={2}>
+        <GridItem position="relative">
+          <InputGroup flex="1" width="100%">
+            <Input
+              px={11}
+              placeholder="Search produk"
+              outline="#0086B4"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onBlur={restoreProductAfterSearch}
+            />
           </InputGroup>
-          <Box position={'absolute'} top={2} left={4}>
+          <Box position="absolute" top={2} left={4}>
             <PackageSearch color="#75757C" />
           </Box>
         </GridItem>
         <GridItem>
-          <Box position={'relative'}>
-            <Category />
-          </Box>
+          <Category onChangeData={setSelectedCategories} />
         </GridItem>
         <GridItem>
-          <Box position={'relative'}>
-            <SortingDropdown />
-          </Box>
+          <SortingDropdown onChangeSortValue={setSortValue} />
         </GridItem>
       </Grid>
-      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
-        <Text color={'gray.400'}>{products?.length} Produk</Text>
-        <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
-          {/* <DialogDelete />
-          <DialogNonaktif /> */}
-          <CheckBox display="block" />
+      <Flex justifyContent="space-between" alignItems="center" mt={3}>
+        <Text color="gray.400">{products?.length} Produk</Text>
+        <Box display="flex" alignItems="center" gap={2} color="#75757C">
+          {isAnyProductSelected && <DialogDelete />}
+          <SelectAllCheckbox allProductIds={products?.map((p) => p.id) || []} />
         </Box>
       </Flex>
-      {products?.map((product) => (
-        <Box
-          key={product.id}
-          width="full"
-          border="1px solid"
-          borderColor="gray.200"
-          height="170px"
-          borderRadius="10px"
-          mt={3}
-          display="flex"
-          justifyContent={'space-between'}
-          px={3}
-          py={4}
-        >
-          <Box display={'flex'} alignItems={'center'}>
-            <Image
-              src={String(product.attachments)}
-              width={36}
-              height={36}
-              borderRadius="20px"
-              p={3}
-              mr={3}
-            />
-            <Box>
-              <Text fontSize="18px" fontWeight="bold">
-                {product.name}
-              </Text>
-              <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                <Text fontWeight={'semibold'}>Harga: {product.price} </Text>
-                <Text color={'gray.500'} ml={1}>
-                  • Stok: {product.stock} • SKU: {product.sku}
-                </Text>
-              </Flex>
-              <Box display={'flex'} gap={2}>
-                <DialogPrice />
-                <DialogStock />
-                <Link to={`/product-detail/${product.id}`}>
-                  <Button variant={'outline'} mt={4} borderRadius={'20px'}>
-                    <Link2 />
-                    Lihat halaman
-                  </Button>
-                </Link>
-              </Box>
-            </Box>
-          </Box>
-          <Box
-            display={'flex'}
-            flexDirection={'column'}
-            justifyContent={'space-between'}
-            alignItems={'end'}
-          >
-            <CheckBox display={'none'} />
-            <ProductToggleSwitch
+
+      {loading ? (
+        <Text>Searching...</Text>
+      ) : (
+        productsToDisplay.length > 0 ? productsToDisplay.map((product) => {
+          return (
+            <ProductCardDashboard
               key={product.id}
-              productId={product.id}
-              initialStatus={product.isActive}
-              onStatusChange={updateProductStatus}
+              product={product}
+              selectedProducts={selectedProducts}
+              toggleProductSelection={toggleProductSelection}
+              updateProductStatus={updateProductStatus}
             />
-          </Box>
-        </Box>
-      ))}
+          );
+        }) : (
+          <Center>
+            <Text color={"gray.500"}>Produk kosong</Text>
+          </Center>
+        )
+      )}
     </Box>
   );
 }

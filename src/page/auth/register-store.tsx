@@ -108,9 +108,9 @@ export function RegisterStore() {
           setIsLoading(false);
         }),
       {
-        loading: 'Submitting your information...',
-        success: (message) => `Success: ${message}`,
-        error: (err) => `Error: ${err}`,
+        loading: 'Sedang membuat toko...',
+        success: (message) => `${message}`,
+        error: (err) => `${err}`,
       },
       {
         position: 'top-center',

@@ -1,105 +1,183 @@
-import { Box, Grid, Heading, HStack, Image, Input, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Center, Grid, Heading, HStack, Image, MenuContent, MenuItem, MenuRoot, MenuTrigger, Text, VStack } from "@chakra-ui/react"
 import SellerNavbar from "../components/navbar"
 import { ArrowDownUp, Search, SlidersHorizontal } from "lucide-react"
 import SellerFooter from "../components/footer";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router";
+import CategoryDropDown, { CategoryType } from "../components/category";
+import { useSellerStore } from "@/hooks/store";
+import { ProductType } from "@/features/auth/types/prisma-types";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProductsByStoreId } from "@/features/auth/services/product-service";
+import { PaginationItems, PaginationNextTrigger, PaginationPrevTrigger, PaginationRoot } from "@/components/ui/pagination";
+import ProductCard from "../components/product-card";
 
-const url_banner_dummy = 'https://res.cloudinary.com/dbtcocjdk/image/fetch/f_auto,dpr_2.0,w_800/https:/storage.jukeboxprint.com/s/images/Graphic%20Design%20Trends%202024%20359.jpg';
-
-export const dummy_product = [
-    {
-        id: 1,
-        name: "Halmington Jacket dark",
-        category: "Pakaian Pria",
-        price: 2340000,
-        attachments: ["https://i.pinimg.com/736x/b9/69/bb/b969bba3af3c94b29409049c2fed717b.jpg", "https://i.pinimg.com/736x/6a/ff/7b/6aff7b9d1a097538cf3cd93b9ce90c57.jpg"],
-    },
-    {
-        id: 2,
-        name: "Kemeja Jil Sander",
-        category: "Pakaian Pria",
-        price: 1343000,
-        attachments: ["https://i.pinimg.com/736x/76/1c/49/761c49926373a605a71391d1272c5cf0.jpg", "https://i.pinimg.com/736x/37/25/63/3725630bee7ef38841a03f1ad9d5b5f4.jpg"],
-    },
-    {
-        id: 3,
-        name: "Samsung Galaxy S24 Ultra",
-        category: "Smartphone",
-        price: 23240000,
-        attachments: ["https://i.pinimg.com/736x/00/48/a7/0048a7ec27539ccd6437b7b0087f4108.jpg", "https://i.pinimg.com/736x/ea/99/81/ea99810744a9257d8cf09d4214ac5c27.jpg", "https://i.pinimg.com/736x/8e/db/b0/8edbb010eee8a26f44ff331e281df5dd.jpg", "https://i.pinimg.com/736x/be/18/49/be18494fd2e3638dc40cd533f611da98.jpg"],
-    },
-    {
-        id: 4,
-        name: "HP Elite book",
-        category: "Laptop",
-        price: 16240000,
-        attachments: ["https://i.pinimg.com/736x/36/49/97/36499765914857e715c672592fb9fa15.jpg", "https://i.pinimg.com/736x/af/70/c5/af70c59d48f929899c16dd7fc4473737.jpg"],
-    },
-];
+interface ProductsResponse {
+  products: ProductType[],
+  totalPage: number;
+}
 
 export default function SellerHomepage() {
+  const { pathname } = useLocation();
+  const { store } = useSellerStore();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<CategoryType | null>(null);
+  const [selectedSubSubCategory, setSelectedSubSubCategory] = useState<CategoryType | null>(null);
+  const [page, setPage] = useState<number>(1);
 
-    return (
-        <Box w="full" h="fit" minH="100vh">
-            <SellerNavbar />
+  const { data, error, isLoading } = useQuery<ProductsResponse>({
+    queryKey: ["products", page],
+    queryFn: () => fetchProductsByStoreId(String(store?.id), page, 10)
+  });
 
-            {/* Banner start */}
-            <VStack w="full" maxW="7xl" mx="auto" h="fit" pt="32" pb="10">
-                <Box w="full" aspectRatio="4/1" overflow="hidden" borderRadius={10}>
-                    <Image src={url_banner_dummy} w="full" h="full" objectFit="cover"></Image>
-                </Box>
-            </VStack>
-            {/* Banner end */}
+  useEffect(() => {
+    console.log("total page: ", data?.totalPage);
+    console.log("current page: ", page);
+  }, [data, page])
 
-            {/* Search Input Start */}
-            <HStack w="full" maxW="7xl" mx="auto" alignItems="stretch">
-                <Box role="button" w="fit" borderRadius="lg" px="5" py="2" bg="blue.600" color="white">Kategori</Box>
-                <form className="flex-1">
-                    <HStack w="full" borderRadius="lg" bg="gray.200" px="2">
-                        <Search color="#737373" />
-                        <Input placeholder="Cari Produk" _placeholder={{ fontWeight: "400", fontSize: "md" }} focusRing={"none"} px="0" borderWidth="0"></Input>
-                    </HStack>
-                </form>
-            </HStack>
-            {/* Search Input end */}
+  useEffect(() => {
+    console.log("products by tanstack: ", data);
+  }, [data]);
 
-            {/* Title, filter, & sort Start */}
-            <HStack justifyContent="space-between" w="full" maxW="7xl" mx="auto" py="10">
-                <Heading size="3xl" fontWeight="semibold" className="font-poppins">Semua Produk</Heading>
-                <HStack>
-                    <HStack role="button" px="4" py="2" borderRadius="lg" bg="gray.200">
-                        <Text fontWeight="medium">Filter</Text>
-                        <SlidersHorizontal size="16px" />
-                    </HStack>
-                    <HStack role="button" px="4" py="2" borderRadius="lg" bg="gray.200">
-                        <Text fontWeight="medium">Sort</Text>
-                        <ArrowDownUp size="16px" />
-                    </HStack>
-                </HStack>
-            </HStack>
-            {/* Title, filter, & sort End */}
+  useEffect(() => {
+    if (pathname.includes('/search')) {
+      handleFocusSearch();
+    }
+  }, [pathname]);
 
-            {/* Products display Start */}
-            <Grid templateColumns="repeat(4, 1fr)" gapX="16" gapY="10" w="full" h="fit" maxW="7xl" mx="auto" pb="200px">
-                {dummy_product.map(product => (
-                    <Box role="button" 
-                    key={product.id} h="fit-content" p="3" w="full" _hover={{ bg: "gray.100" }}>
-                        <Image w="full" aspectRatio="1/1" mb="2" src={product.attachments[0]}></Image>
-                        <VStack alignItems="start" justifyContent="space-between" className="font-poppins">
-                            <Box mb="1">
-                                <Heading size="lg" fontWeight="semibold">{product.name}</Heading>
-                                <Text fontSize="xs" color="gray.600">{product.category}</Text>
-                            </Box>
-                            <Text fontSize="md" fontWeight="semibold">{product.price}</Text>
-                        </VStack>
-                    </Box>
-                ))}
-            </Grid>
-            {/* Products display End */}
+  function handleFocusSearch() {
+    searchInputRef.current?.focus();
+    searchSectionRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
-            {/* Footer start */}
-            <SellerFooter />
-            {/* Footer end */}
+  useEffect(() => {
+    console.log("products", store?.products);
+  }, [store])
 
+  return (
+    <Box w="full" h="fit" minH="100vh">
+      <SellerNavbar onSearch={() => handleFocusSearch()} />
+
+      {/* Banner start */}
+      <VStack ref={searchSectionRef} px={{ base: "5", lg: "10" }} w="full" maxW="7xl" mx="auto" h="fit" pt="32" pb="10">
+        <Box w="full" aspectRatio="4/1" overflow="hidden" borderRadius={10}>
+          {store && (
+            <Image src={store.bannerAttachment} w="full" h="full" objectFit="cover"></Image>
+          )}
         </Box>
-    )
+      </VStack>
+      {/* Banner end */}
+
+      {/* Search Input Start */}
+      <HStack px={{ base: "5", lg: "10" }} w="full" maxW="7xl" mx="auto">
+        <HStack w="full" alignItems="stretch" position="relative">
+
+          <Box className="peer group" w="fit" borderRadius="lg" px="5" py="2" bg="blue.600" color="white">
+            <button>Kategori</button>
+            <CategoryDropDown
+              onSelectCategory={setSelectedCategory}
+              onSelectSubCategory={setSelectedSubCategory}
+              onSelectSubSubCategory={setSelectedSubSubCategory}
+            />
+          </Box>
+
+          <form className="flex-1">
+            <HStack position="relative">
+              <Search className="absolute left-2" />
+              <input ref={searchInputRef} type="text" className="w-full h-full bg-neutral-200 py-2.5 rounded-lg ps-10 pr-2 placeholder:font-medium outline-none focus:ring-2" placeholder="Cari produk" />
+            </HStack>
+          </form>
+
+        </HStack>
+      </HStack>
+      {/* Search Input end */}
+
+      {/* Title, filter, & sort Start */}
+      <HStack px={{ base: "5", lg: "10" }} justifyContent="space-between" w="full" maxW="7xl" mx="auto" py="10">
+        <HStack alignItems={"end"}>
+          <Heading size="3xl" fontWeight="semibold" lineHeight="1" className="font-poppins">{selectedCategory?.name ? selectedCategory.name : "Semua Produk"}</Heading>
+          {selectedSubCategory && (
+            <HStack fontWeight="semibold">
+              <Text>/</Text>
+              <Text>{selectedSubCategory?.name}</Text>
+              {selectedSubSubCategory && (
+                <>
+                  <Text>/</Text>
+                  <Text>{selectedSubSubCategory?.name}</Text>
+                </>
+              )}
+            </HStack>
+          )}
+        </HStack>
+        <HStack>
+          <HStack role="button" px="4" py="2" borderRadius="lg" bg="gray.200">
+            <Text fontWeight="medium">Filter</Text>
+            <SlidersHorizontal size="16px" />
+          </HStack>
+          <Box position="relative">
+            <MenuRoot positioning={{ placement: "bottom", gutter: 4 }}>
+              <MenuTrigger asChild>
+                <Button px="4" py="2" borderRadius="lg" bg="gray.200" color="black">
+                  <Text fontWeight="medium">Sort</Text>
+                  <ArrowDownUp size="16px" />
+                </Button>
+              </MenuTrigger>
+              <MenuContent position="absolute" top="12">
+                <MenuItem value="new-txt">New Text File</MenuItem>
+                <MenuItem value="new-file">New File...</MenuItem>
+                <MenuItem value="new-win">New Window</MenuItem>
+                <MenuItem value="open-file">Open File...</MenuItem>
+                <MenuItem value="export">Export</MenuItem>
+              </MenuContent>
+            </MenuRoot>
+          </Box>
+        </HStack>
+      </HStack>
+      {/* Title, filter, & sort End */}
+
+      {/* Products display Start */}
+      {isLoading ? (
+        <Center w="full" h="20">Loading...</Center> // di sini tempat skeleton
+      ) : error ? (
+        <Center w="full" h="20">Gagal memuat produk</Center>
+      ) : (
+        data?.products ? (
+          <Box w="full" h="fit" maxW="7xl" mx="auto" pb="200px">
+            <Grid px={{ base: "5", lg: "10" }} templateColumns="repeat(4, 1fr)" gapX="16" gapY="10" mb={10}>
+              {data?.products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </Grid>
+            {data.totalPage > 1 && (
+              <HStack w="full" justifyContent="center">
+                <PaginationRoot
+                  count={data.totalPage}
+                  onPageChange={(e) => setPage(e.page)}
+                  pageSize={1}
+                  defaultPage={1}>
+                  <HStack>
+                    <PaginationPrevTrigger />
+                    <PaginationItems />
+                    <PaginationNextTrigger />
+                  </HStack>
+                </PaginationRoot>
+              </HStack>
+            )}
+          </Box>
+        ) : (
+          <Center w="full" h="20" mb="200px">
+            <Text color="gray.500">Belum ada produk</Text>
+          </Center>
+        )
+      )}
+
+      {/* Products display End */}
+
+      {/* Footer start */}
+      <SellerFooter />
+      {/* Footer end */}
+    </Box>
+  );
 }

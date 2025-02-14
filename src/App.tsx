@@ -10,8 +10,7 @@ import { Setting } from './page/settingpage/Setting';
 
 import PrivateRoute from './layouts/private-layout';
 import { Dashboard } from './page/dashboard-page/dashboard';
-import { AddProductContent } from './page/productpage/add-product-content';
-import { Product } from './page/productpage/component-product/product';
+import { Product } from './page/productpage/product';
 import { Detailproduct } from './page/productpage/detail-product';
 import { Toaster } from 'react-hot-toast';
 import AboutPage from './page/landing-page/about-page';
@@ -23,11 +22,36 @@ import SellerPage from './page/seller/pages/seller-layout';
 import SellerHomepage from './page/seller/pages/home-page';
 import SellerDetailProduct from './page/seller/pages/detail-product';
 import SellerCartPage from './page/seller/pages/cart-page';
+import SellerCheckoutPage from './page/seller/pages/checkout-page';
+import SellerBillingPage from './page/seller/pages/billing-page';
+import BuyerLayout from './page/seller/pages/user/buyer-layout';
+import NotFound from './page/404/not-found';
+import CobaTanstack from './page/seller/pages/coba-tanstack';
+import CobaCache from './page/seller/pages/coba-cache';
+import "leaflet/dist/leaflet.css";
+import SearchArea from './page/settingpage/data-territory/test';
+import { Profile } from './page/profile-page/profile';
+
+import { LoginBuyer } from './page/seller/pages/login-page';
+import { RegisterBuyer } from './page/seller/pages/register-page';
+import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-buyer';
+import AddProductForm from './page/productpage/add-product';
+import PrivateRouteBuyer from './layouts/private-layout-buyer';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
   
   const router = createBrowserRouter([
+    {
+      path: '/tanstack',
+      Component: CobaTanstack,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '/cache',
+      Component: CobaCache,
+      HydrateFallback: Fallback
+    },
     {
       path: '/',
       Component: LandingPage,
@@ -74,7 +98,12 @@ function App() {
       HydrateFallback: Fallback,
     },
     {
-      path: '/seller',
+      path: 'loading-screen-buyer',
+      Component: LoadingScreenBuyer,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/:storeName',
       Component: SellerPage,
       HydrateFallback: Fallback,
       children: [
@@ -84,13 +113,51 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
-          path: 'detail-product',
+          path: 'search',
+          Component: SellerHomepage,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: 'detail-product/:productUrl',
           Component: SellerDetailProduct,
           HydrateFallback: Fallback,
         },
         {
           path: 'cart',
           Component: SellerCartPage,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: '',
+          element: <PrivateRouteBuyer />,
+          children: [
+            {
+              path: 'checkout',
+              Component: SellerCheckoutPage,
+              HydrateFallback: Fallback,
+            },
+            {
+              path: 'payment',
+              Component: SellerBillingPage,
+              HydrateFallback: Fallback,
+            },
+            {
+              path: 'buyer',
+              Component: BuyerLayout,
+              HydrateFallback: Fallback,
+            }
+          ]
+        },
+    
+        // **Rute Public (Tetap Bisa Diakses Tanpa Login)**
+        {
+          path: 'login-buyer',
+          Component: LoginBuyer,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: 'register-buyer',
+          Component: RegisterBuyer,
           HydrateFallback: Fallback,
         },
       ]
@@ -115,6 +182,11 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
+          path: '/test',
+          Component: SearchArea,
+          HydrateFallback: Fallback,
+        },
+        {
           path: '/order-list',
           Component: Order,
           HydrateFallback: Fallback,
@@ -132,12 +204,32 @@ function App() {
         },
         {
           path: '/add-product',
-          Component: AddProductContent,
+          Component: AddProductForm,
+          HydrateFallback: Fallback,
+        },
+        {
+          path: '/edit-product/:productId',
+          Component: AddProductForm,
           HydrateFallback: Fallback,
         },
    
+        {
+          path: '/profile',
+          Component: Profile,
+          HydrateFallback: Fallback,
+        }
       ],
     },
+    {
+      path: '/not-found',
+      Component: NotFound,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '/*',
+      Component: NotFound,
+      HydrateFallback: Fallback
+    }
   ]);
 
   return (

@@ -16,7 +16,6 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { Field } from '@/components/ui/field';
-
 import {
   fetchStore,
   updateStore,
@@ -146,7 +145,6 @@ export function InformationSetting() {
       </Flex>
       {isFetching ? (
         <Box>
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <Grid templateColumns={'repeat(2, 1fr)'} gap={3} py={'5'}>
               <GridItem>
                 <Box>
@@ -176,7 +174,6 @@ export function InformationSetting() {
                 </GridItem>
               </GridItem>
             </Grid>
-          </form>
         </Box>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">

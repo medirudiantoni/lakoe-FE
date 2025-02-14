@@ -3,11 +3,12 @@ import { fetchCategory } from '../services/category-service';
 type Category = {
   id: string;
   name: string;
+  children?: Category[];
 };
 
 type CategoryStore = {
-  categories: Category[]; // Simpan semua kategori
-  selectedCategoryId: string | null; // Simpan ID kategori yang dipilih
+  categories: Category[]; 
+  selectedCategoryId: string | null; 
   fetchCategories: () => Promise<void>;
   setSelectedCategoryId: (id: string) => void;
 };
@@ -19,11 +20,18 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
   fetchCategories: async () => {
     try {
       const categories = await fetchCategory();
-      set({ categories }); // Simpan semua kategori
+      
+      const formattedCategories = categories.map((cat:any) => ({
+        ...cat,
+        children: cat.children ?? [] 
+      }));
+  
+      set({ categories: formattedCategories });
     } catch (error) {
       console.error("Gagal ambil kategori:", error);
     }
   },
+  
 
-  setSelectedCategoryId: (id) => set({ selectedCategoryId: id }), // Set kategori yang dipilih
+  setSelectedCategoryId: (id) => set({ selectedCategoryId: id }),
 }));

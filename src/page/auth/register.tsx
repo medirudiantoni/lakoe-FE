@@ -13,6 +13,7 @@ import { apiURL } from '@/utils/baseurl';
 const registerSchema = z.object({
   name: z.string().min(3, 'Full name is required'),
   email: z.string().email('Invalid email address'),
+  phone: z.string().min(12, 'Invalid phone number'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -37,11 +38,11 @@ export function Register() {
       .promise(
         fetchRegister(data),
         {
-          loading: 'Registering your account...',
+          loading: 'Sedang mendaftarkan akun',
           success: (res) => {
             const responseData = res.data;
             navigate('/login');
-            return responseData.message || 'Registration successful!';
+            return responseData.message;
           },
           error: (error) => {
             return (
@@ -148,7 +149,21 @@ export function Register() {
               </Text>
             )}
           </Field>
-          <Field label="Konfirmasi Password" mt={2}>
+          <Field label="Phone" mt={2}>
+            <Input placeholder="Masukan no telepon" {...register('phone')} />
+            {errors.password && (
+              <Text
+                color="red.500"
+                fontSize="xs"
+                textAlign={'left'}
+                marginTop={1.5}
+              >
+                {errors.password.message}
+              </Text>
+            )}
+          </Field>
+          
+          {/* <Field label="Konfirmasi Password" mt={2}>
             <Input
               placeholder="Masukan ulang password"
               {...register('password')}
@@ -163,7 +178,7 @@ export function Register() {
                 {errors.password.message}
               </Text>
             )}
-          </Field>
+          </Field> */}
 
           <Button
             colorPalette={'blue'}

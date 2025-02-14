@@ -13,8 +13,8 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
 
   const handleLogout = () => {
     Cookies.remove('token');
-    Cookies.remove('auth-store');
-    toast.success('You have been successfully logged out.', {
+  
+    toast.success('Anda telah Logout', {
       style: {
         background: '#FFFF',
         color: '#1d1d1d',
