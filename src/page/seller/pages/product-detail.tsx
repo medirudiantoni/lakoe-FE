@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react"
 import SellerNavbar from "../components/navbar"
 import SellerFooter from "../components/footer";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { formatRupiah } from "@/lib/rupiah";
 import useCart from "@/hooks/cart-store";
@@ -12,6 +12,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchProductByUrl } from "@/features/auth/services/product-service";
 import { fetchAddToCart } from "@/features/auth/services/cart-service";
 import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store";
+import { useProductStore } from "@/features/auth/store/product-store";
+import { useAuthStore } from "@/features/auth/store/auth-store";
+import { useSellerStore } from "@/hooks/store";
 
 interface SelectedOptionValue {
   name: string;
@@ -27,11 +30,39 @@ const SellerProductDetail = () => {
   const [selectedOptionName, setSelectedOptionName] = useState<string[]>([]);
   const [selectedOption, setSelectedOption] = useState<VariantOptionType | null>(null);
   const [choosenOptions, setChoosenOptions] = useState<SelectedOptionValue[]>([]);
+  const { store } = useSellerStore()
+  const { setSelectedProduct, setSelectedVariantOption } = useProductStore()
+
+  const navigate = useNavigate()
 
   const { data: product, isLoading } = useQuery<ProductType>({
     queryKey: ["product", "productUrl"],
     queryFn: () => fetchProductByUrl(String(productUrl))
   });
+
+  const handleBuyNow = () => {
+    if (!product || !selectedOption) return;
+  
+    // ✅ Ambil variantOptionValue yang sesuai
+    const selectedVariantOptionValue = selectedOption.variantOptionValues?.[0]; 
+  
+    if (!selectedVariantOptionValue) {
+      console.error("Tidak ada variant option value yang dipilih!");
+      return;
+    }
+  
+    setSelectedProduct({
+      name: product.name,
+      price: product.variants?.[0]?.variantOptions?.[0]?.variantOptionValues?.[0]?.price || 0,
+      productId: product.id,
+      quantity: 1,
+      category: product.category?.name,
+      image: product.attachments[0],
+    });
+    navigate(`/${store?.name}/checkout`); 
+  };
+  
+
 
   const mutation = useMutation({
     mutationFn: (data: CartItemType) => fetchAddToCart(data).then(res => console.log("res mutate: ", res))
@@ -115,7 +146,38 @@ const SellerProductDetail = () => {
     )
   }
 
+  useEffect(()=> {
+    if(product?.variants && product.variants.length === 1){
+      if(product.variants[0].variantOptions){
+        setSelectedOption(product.variants[0].variantOptions[0])
+      }
+    }
+  }, [product])
+
   function handleAddToCart() {
+    if (product?.variants && product.variants.length <2 ){
+      const category =
+      product?.category?.parent ?
+        product.category.parent.parent ?
+          `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
+          : `${product.category.parent.name}/${product.category.name}`
+        : `${product?.category?.name}`;
+    const data: CartItemType = {
+      buyerId: buyer?.id,
+      variantOptionValueId: selectedOption?.variantOptionValues && selectedOption.variantOptionValues[0].id,
+      productId: String(product?.id),
+      storeId: product?.storeId,
+      name: String(selectedOptionName),
+      quantity: 1,
+      price: priceNumber,
+      categoryName: category
+    }
+    console.log("datanya: ", data);
+    addCart(data);
+    toast.success("Produk Telah ditambahkan ke keranjang");
+    mutation.mutate(data);
+  }else {
+
     if (selectedOption) {
       const category =
         product?.category?.parent ?
@@ -138,7 +200,12 @@ const SellerProductDetail = () => {
       toast.success("Produk Telah ditambahkan ke keranjang");
       mutation.mutate(data);
     }
+  } 
+
   }
+
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -185,32 +252,56 @@ const SellerProductDetail = () => {
               </Box>
             </Box>
             <HStack w="full" py="5">
-              {selectedOption === null ? (
-                <>
-                  <Button flex={1} disabled bg="white" color="blue.600" borderColor="blue.600">Beli Langsung</Button>
-                  <Button flex={1} disabled className="bg-blue-600">+ Keranjang</Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    flex={1}
-                    _active={{ transform: "scale(0.95)" }}
-                    bg="white"
-                    color="blue.600"
-                    borderColor="blue.600"
-                  >
-                    Beli Langsung
-                  </Button>
-                  <Button
-                    flex={1}
-                    _active={{ transform: "scale(0.95)" }}
-                    className="bg-blue-700"
-                    onClick={handleAddToCart}
-                  >
-                    + Keranjang
-                  </Button>
-                </>
-              )}
+            {product?.variants && product.variants.length < 2 ? (
+               <>
+               <Button
+                 flex={1}
+                 _active={{ transform: "scale(0.95)" }}
+                 bg="white"
+                 color="blue.600"
+                 borderColor="blue.600"
+                 onClick={handleBuyNow}
+               >
+                 Beli Langsung
+               </Button>
+               <Button
+                 flex={1}
+                 _active={{ transform: "scale(0.95)" }}
+                 className="bg-blue-700"
+                 onClick={handleAddToCart}
+               >
+                 + Keranjang
+               </Button>
+             </>
+            ) : (
+                selectedOption === null ? (
+                  <>
+                    <Button flex={1} disabled bg="white" color="blue.600" borderColor="blue.600">Beli Langsung</Button>
+                    <Button flex={1} disabled className="bg-blue-600">+ Keranjang</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      flex={1}
+                      _active={{ transform: "scale(0.95)" }}
+                      bg="white"
+                      color="blue.600"
+                      borderColor="blue.600"
+                      onClick={handleBuyNow}
+                    >
+                      Beli Langsung
+                    </Button>
+                    <Button
+                      flex={1}
+                      _active={{ transform: "scale(0.95)" }}
+                      className="bg-blue-700"
+                      onClick={handleAddToCart}
+                    >
+                      + Keranjang
+                    </Button>
+                  </>
+                )
+            )}
             </HStack>
           </VStack>
         </Flex>

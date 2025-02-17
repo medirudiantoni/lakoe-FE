@@ -223,14 +223,6 @@ export type ProductType = {
   variants?: VariantType[];
 };
 
-export type CategoryType = {
-  id: string;
-  name: string;
-  parentId?: string;
-  parent?: CategoryType;
-  children?: CategoryType[];
-  products?: ProductType[];
-};
 
 export type VariantType = {
   id?: string;
@@ -260,6 +252,15 @@ export type VariantOptionValueType = {
   cartItems?: CartItemType[];
   variantOptions?: VariantOptionType;
   combinations?: string[];
+};
+
+export type CategoryType = {
+  id: string;
+  name: string;
+  parentId?: string;
+  parent?: CategoryType;
+  children?: CategoryType[];
+  products?: ProductType[];
 };
 
 // Type untuk Orders

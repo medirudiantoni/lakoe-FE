@@ -267,12 +267,7 @@ export function LocationSettingCheckout({
                           </Grid>
                         ))}
                       </DialogBody>
-                      <DialogFooter>
-                        <DialogActionTrigger asChild>
-                          <Button variant="outline">Cancel</Button>
-                        </DialogActionTrigger>
-                        <Button>Ganti</Button>
-                      </DialogFooter>
+                     
                       <DialogCloseTrigger />
                     </DialogContent>
                   </DialogRoot>
