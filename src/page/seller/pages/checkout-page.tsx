@@ -1,28 +1,39 @@
-import { Box, Button, Flex, Heading, HStack, Image, RadioGroupRoot, Table, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, Heading, HStack, Image, RadioGroupRoot, Table, Text, VStack } from "@chakra-ui/react"
 import SellerFooter from "../components/footer";
 import { useNavigate } from "react-router";
 import { Radio, RadioGroup } from "@/components/ui/radio";
 import { eWallets, virtualAccount } from "@/page/payment-page/PaymentPage";
 import { useEffect, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import LoadingButtonLottie from "@/components/icons/loading-button";
 import toast from "react-hot-toast";
 import { useSellerStore } from "@/hooks/store";
+import { motion } from "framer-motion";
+import LottieSpread from "@/components/icons/lottie-spread";
+import SuccessAnimation from "../components/success-animation";
 
 const SellerCheckoutPage = () => {
     const navigate = useNavigate();
     const { store } = useSellerStore();
     const [isPaymentMethod, setIsPaymentMethod] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isAnimate, setIsAnimate] = useState(false);
 
     const handlePlaceOrder = () => {
         setLoading(true)
-        setTimeout(() => {
-            navigate(`/${store?.name}/payment`);
-            setLoading(false);
-            toast.success('Pesanan anda telah dibuat');
-        }, 2000);
+        setIsAnimate(true);
+        // setTimeout(() => {
+        //     setIsAnimate(true);
+        // }, 0);
     }
+
+    // useEffect(() => {
+    //     isAnimate && setTimeout(() => {
+    //         navigate(`/${store?.name}/payment`);
+    //         setLoading(false);
+    //         toast.success('Pesanan anda telah dibuat');
+    //     }, 2000);
+    // }, [isAnimate]);
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "instant" });
@@ -30,6 +41,12 @@ const SellerCheckoutPage = () => {
 
     return (
         <Box w="full" minH="100vh" className="font-poppins">
+
+            {/* animation start */}
+            {isAnimate && (
+                <SuccessAnimation />
+            )}
+            {/* animation end */}
 
             <Button onClick={() => navigate(-1)} position="absolute" top="10" left="10">
                 <ArrowLeft />

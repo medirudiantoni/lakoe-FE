@@ -25,7 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ( props ) => {
     }
     return (
         <Box role="button"
-            onClick={() => navigate(`/${props.product.stores?.name}/detail-product/${props.product.url}`)}
+            onClick={() => navigate(`/${props.product.stores?.name}/product-detail/${props.product.url}`)}
             key={props.product.id} h="fit-content" p="3" w="full" _hover={{ bg: "gray.100" }}>
             <Image w="full" aspectRatio="1/1" mb="2" src={props.product.attachments[0]}></Image>
             <VStack alignItems="start" justifyContent="space-between" className="font-poppins">
