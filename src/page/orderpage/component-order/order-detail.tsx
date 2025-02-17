@@ -79,6 +79,7 @@ export function OrderDetail() {
   const toggleCollapsible = () => {
     setIsOpen(!isOpen);
   };
+  
 
   if (isLoading) return <Text>Loading...</Text>;
   if (isError) return <Text>Error fetching orders</Text>;
@@ -110,8 +111,8 @@ export function OrderDetail() {
         <Box display={'flex'} alignItems={'start'} gap={'2'}>
           <NotepadText color="#75757C" size={'35px'} />
           <Box>
-            <Button colorPalette={getStatusColor(data.order.invoice.status)} px={2}>
-              {data.order.invoice.status}
+            <Button colorPalette={getStatusColor(data.order.status)} px={2}>
+              {data.order.status}
             </Button>
             <Text fontSize={'14px'} mt={2}>
               Pesanan akan dibatalkan bila pembayaran tidak dilakukan sampai{' '}
@@ -299,7 +300,7 @@ export function OrderDetail() {
                 alignItems={'end'}
               >
                 <Text>Total belanja</Text>
-                <Text fontWeight={'semibold'}>Rp.{data.order.totalPrice.toLocaleString("id-ID")}</Text>
+                <Text fontWeight={'semibold'}>Rp.{data.order.invoice.price.toLocaleString("id-ID")}</Text>
               </Box>
             </Box>
           </Box>
@@ -351,7 +352,7 @@ export function OrderDetail() {
                     </Box>
                     <Box>
                       <Text>No Resi</Text>
-                      <Text fontWeight={'bold'}>JT6268865922</Text>
+                      <Text fontWeight={'bold'}>{data.order.invoice.waybill}</Text>
                     </Box>
                     <Box>
                       <Text>Pengiriman</Text>
@@ -457,7 +458,7 @@ export function OrderDetail() {
           </GridItem>
           <GridItem display={'flex'} flexDirection={'column'} gap={2}>
             <Text>{data.order.courier}</Text>
-            <Text>-</Text>
+            <Text>{data.order.invoice.waybill}</Text>
             <Box>
               <Text>
               {data.order.recipientAddress}
@@ -498,12 +499,12 @@ export function OrderDetail() {
           pb={'5'}
         >
           <Box display={'flex'} justifyContent={'space-between'}>
-            <Text>Total Harga (1 barang)</Text>
-            <Text fontWeight={'bold'}>Rp.{`${item.price.toLocaleString("id-ID")}`}</Text>
+          <Text>Total Harga ({item.quantity} barang)</Text>
+            <Text fontWeight={'bold'}>Rp.{`${data.order.invoice.price.toLocaleString("id-ID")}`}</Text>
           </Box>
           <Box display={'flex'} justifyContent={'space-between'}>
-            <Text>Total Ongkos Kirim(10kg)</Text>
-            <Text fontWeight={'bold'}>Rp.{`${data.order.invoice.price.toLocaleString("id-ID")}`}</Text>
+            <Text>Total Ongkos Kirim({item.weight} gram)</Text>
+            <Text fontWeight={'bold'}>{`${data.order.invoice.serviceCharge.toLocaleString("id-ID")}`}</Text>
           </Box>
           <Box display={'flex'} justifyContent={'space-between'}>
             <Text>Diskon</Text>
@@ -521,7 +522,7 @@ export function OrderDetail() {
           fontSize={'24px'}
         >
           <Text>Total Penjualan</Text>
-          <Text>  Rp.{`${(item.price + data.order.invoice.price).toLocaleString("id-ID")}`}</Text>
+          <Text>  Rp.{`${(data.order.totalPrice).toLocaleString("id-ID")}`}</Text>
         </Box>
       </Box>
     </Box>
