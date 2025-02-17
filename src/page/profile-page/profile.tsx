@@ -63,7 +63,7 @@ export function Profile() {
           <Field label="Name">
             <Input placeholder="Masukan nama" name='name' value={formData.name} disabled={!isEditing} onChange={handleChange} />
           </Field>
-          <Field label="Email">
+          <Field label="Email" mt={3}>
             <Input placeholder="Masukan email" name='email' value={formData.email} disabled={!isEditing} onChange={handleChange} />
           </Field>
           <Field label="No telepon" mt={3}>
