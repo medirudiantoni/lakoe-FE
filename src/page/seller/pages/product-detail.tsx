@@ -7,13 +7,12 @@ import { formatRupiah } from "@/lib/rupiah";
 import useCart from "@/hooks/cart-store";
 import { LoadingScreen } from "@/components/loading-screen/loading-screen";
 import toast from "react-hot-toast";
-import { CartItemType, OrderItemType, ProductType, VariantOptionType } from "@/features/auth/types/prisma-types";
+import { CartItemType, ProductType, VariantOptionType } from "@/features/auth/types/prisma-types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchProductByUrl } from "@/features/auth/services/product-service";
 import { fetchAddToCart } from "@/features/auth/services/cart-service";
 import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store";
 import { useProductStore } from "@/features/auth/store/product-store";
-import { useAuthStore } from "@/features/auth/store/auth-store";
 import { useSellerStore } from "@/hooks/store";
 
 interface SelectedOptionValue {
@@ -31,7 +30,7 @@ const SellerProductDetail = () => {
   const [selectedOption, setSelectedOption] = useState<VariantOptionType | null>(null);
   const [choosenOptions, setChoosenOptions] = useState<SelectedOptionValue[]>([]);
   const { store } = useSellerStore()
-  const { setSelectedProduct, setSelectedVariantOption } = useProductStore()
+  const { setSelectedProduct } = useProductStore()
 
   const navigate = useNavigate()
 
@@ -146,63 +145,65 @@ const SellerProductDetail = () => {
     )
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     if(product?.variants && product.variants.length === 1){
       if(product.variants[0].variantOptions){
         setSelectedOption(product.variants[0].variantOptions[0])
       }
-    }
-  }, [product])
+    };
+  }, [product]);
 
   function handleAddToCart() {
-    if (product?.variants && product.variants.length <2 ){
-      const category =
-      product?.category?.parent ?
-        product.category.parent.parent ?
-          `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
-          : `${product.category.parent.name}/${product.category.name}`
-        : `${product?.category?.name}`;
-    const data: CartItemType = {
-      buyerId: buyer?.id,
-      variantOptionValueId: selectedOption?.variantOptionValues && selectedOption.variantOptionValues[0].id,
-      productId: String(product?.id),
-      storeId: product?.storeId,
-      name: String(selectedOptionName),
-      quantity: 1,
-      price: priceNumber,
-      categoryName: category
-    }
-    console.log("datanya: ", data);
-    addCart(data);
-    toast.success("Produk Telah ditambahkan ke keranjang");
-    mutation.mutate(data);
-  }else {
-
-    if (selectedOption) {
-      const category =
-        product?.category?.parent ?
-          product.category.parent.parent ?
-            `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
-            : `${product.category.parent.name}/${product.category.name}`
-          : `${product?.category?.name}`;
+    if(product?.variants && product?.variants.length < 2){
+      // const category =
+      //   product?.category?.parent ?
+      //     product.category.parent.parent ?
+      //       `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
+      //       : `${product.category.parent.name}/${product.category.name}`
+      //     : `${product?.category?.name}`;
       const data: CartItemType = {
         buyerId: buyer?.id,
-        variantOptionValueId: selectedOption.variantOptionValues && selectedOption.variantOptionValues[0].id,
+        variantOptionValueId: selectedOption?.variantOptionValues && selectedOption.variantOptionValues[0].id,
         productId: String(product?.id),
         storeId: product?.storeId,
         name: String(selectedOptionName),
         quantity: 1,
         price: priceNumber,
-        categoryName: category
+        product: product
+        // categoryName: category,
       }
       console.log("datanya: ", data);
       addCart(data);
       toast.success("Produk Telah ditambahkan ke keranjang");
       mutation.mutate(data);
+    } else {
+      if (selectedOption) {
+        // const category =
+        //   product?.category?.parent ?
+        //     product.category.parent.parent ?
+        //       `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
+        //       : `${product.category.parent.name}/${product.category.name}`
+        //     : `${product?.category?.name}`;
+        const data: CartItemType = {
+          buyerId: buyer?.id,
+          variantOptionValueId: selectedOption.variantOptionValues && selectedOption.variantOptionValues[0].id,
+          productId: String(product?.id),
+          storeId: product?.storeId,
+          name: String(selectedOptionName),
+          quantity: 1,
+          price: priceNumber,
+          product
+          // categoryName: category,
+        }
+        console.log("datanya: ", data);
+        addCart(data);
+        toast.success("Produk Telah ditambahkan ke keranjang");
+        mutation.mutate(data);
+      }
     }
   } 
 
-  }
+  
 
 
 
@@ -301,7 +302,7 @@ const SellerProductDetail = () => {
                     </Button>
                   </>
                 )
-            )}
+              )}
             </HStack>
           </VStack>
         </Flex>
