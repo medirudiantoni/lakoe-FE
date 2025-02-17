@@ -29,7 +29,7 @@ export function TemplateSetting() {
   const [judulPesan, setJudulPesan] = useState('');
   const [isiPesan, setIsiPesan] = useState('');
   const { user } = useAuthStore();
-  const storeId = user?.Stores.id;
+  const storeId = user?.Stores?.id;
   const queryClient = useQueryClient();
   const {
     data: templates = [],
