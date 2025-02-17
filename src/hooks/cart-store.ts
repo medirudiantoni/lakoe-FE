@@ -1,38 +1,36 @@
-import { ProductType } from '@/features/auth/types/prisma-types';
+import { CartItemType } from '@/features/auth/types/prisma-types';
 import { create } from 'zustand';
 
-export interface Cart extends ProductType {
-  quantity: number;
-  optionIndex: number; 
-  price: number;
-}
-
 interface CartStore {
-  cart: Cart[];
+  cart: CartItemType[];
   totalQuantity: number;
   totalPrice: number;
-  addCart: (item: Cart) => void;
-  increase: (id: string, optionIndex: number) => void;
-  decrease: (id: string, optionIndex: number) => void;
-  removeCart: (id: string, optionIndex: number) => void;
+  setManyCart: (data: CartItemType[]) => void;
+  addCart: (item: CartItemType) => void;
+  increase: (id: string) => void;
+  decrease: (id: string) => void;
+  removeCart: (id: string) => void;
 }
 
-const calculateTotalPrice = (cart: Cart[]) =>
+const calculateTotalPrice = (cart: CartItemType[]) =>
   cart.reduce((total, product) => total + product.price * product.quantity, 0);
 
 const useCart = create<CartStore>((set) => ({
   cart: [],
   totalQuantity: 0,
   totalPrice: 0,
+  setManyCart: (data) => set(() => ({
+    cart: Array.from(new Map(data.map(item => [item.id, item])).values()), // Menghapus duplikasi berdasarkan ID
+    totalQuantity: data.reduce((total, product) => total + product.quantity, 0),
+    totalPrice: calculateTotalPrice(data),
+  })),  
   addCart: (item) =>
     set((state) => {
-      const existingItem = state.cart.find(
-        (product) => product.id === item.id && product.optionIndex === item.optionIndex
-      );
+      const existingItem = state.cart.find((product) => product.name === item.name);
 
       const updatedCart = existingItem
         ? state.cart.map((product) =>
-            product.id === item.id && product.optionIndex === item.optionIndex
+            product.name === item.name
               ? { ...product, quantity: product.quantity + 1 }
               : product
           )
@@ -44,12 +42,10 @@ const useCart = create<CartStore>((set) => ({
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
-  increase: (id, optionIndex) =>
+  increase: (id) =>
     set((state) => {
       const updatedCart = state.cart.map((product) =>
-        product.id === id && product.optionIndex === optionIndex
-          ? { ...product, quantity: product.quantity + 1 }
-          : product
+        product.name === id ? { ...product, quantity: product.quantity + 1 } : product
       );
       return {
         cart: updatedCart,
@@ -57,13 +53,11 @@ const useCart = create<CartStore>((set) => ({
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
-  decrease: (id, optionIndex) =>
+  decrease: (id) =>
     set((state) => {
       const updatedCart = state.cart
         .map((product) =>
-          product.id === id && product.optionIndex === optionIndex
-            ? { ...product, quantity: product.quantity - 1 }
-            : product
+          product.name === id ? { ...product, quantity: product.quantity - 1 } : product
         )
         .filter((product) => product.quantity > 0);
 
@@ -73,11 +67,9 @@ const useCart = create<CartStore>((set) => ({
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
-  removeCart: (id, optionIndex) =>
+  removeCart: (id) =>
     set((state) => {
-      const updatedCart = state.cart.filter(
-        (product) => !(product.id === id && product.optionIndex === optionIndex)
-      );
+      const updatedCart = state.cart.filter((product) => product.name !== id);
       return {
         cart: updatedCart,
         totalQuantity: updatedCart.reduce((total, product) => total + product.quantity, 0),

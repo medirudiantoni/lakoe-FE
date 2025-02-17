@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Box, Center, Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { X } from "lucide-react";
@@ -6,7 +6,7 @@ import { formatRupiah } from "@/lib/rupiah";
 import useCart from "@/hooks/cart-store";
 
 interface CartCardProps {
-    id: string,
+    id?: string,
     imageUrl?: string;
     productName: string;
     category: string;
@@ -15,7 +15,16 @@ interface CartCardProps {
 }
 
 const CartCard: React.FC<CartCardProps> = ({ id, imageUrl, productName, category, price, quantity }) => {
-    const { increase, decrease, removeCart } = useCart();
+    const { increase, decrease, removeCart, cart } = useCart();
+    const [decreaseAble, setDecreaseAble] = useState<boolean>(true);
+    useEffect(() => {
+        const productIndex = cart.findIndex(e => e.name === productName);
+        if(cart[productIndex].quantity < 2){
+            setDecreaseAble(false);
+        } else {
+            setDecreaseAble(true)
+        }
+    }, [cart]);
     return (
         <Flex py="5" gap="10" w="full" maxW="6xl">
             <Box w="40" h="40" bg="gray.300">
@@ -24,10 +33,10 @@ const CartCard: React.FC<CartCardProps> = ({ id, imageUrl, productName, category
             <HStack flex={1} borderBottomWidth={1} h="52" pb="12">
                 <VStack flex={1} alignItems="start" justifyContent="space-between" h="full">
                     <Box>
-                        <Heading size="2xl" fontWeight="medium">{productName}</Heading>
+                        <Heading size="xl" fontWeight="medium" mb={2}>{productName}</Heading>
                         <Text fontSize="md" fontWeight="medium" color="gray.600">{category}</Text>
                     </Box>
-                    <HStack alignItems="end" gap={0}>
+                    <HStack alignItems="end" color={"blue.700"} gap={0}>
                         <Text fontSize="xl" fontWeight="medium" lineHeight={1.2}>{formatRupiah(price)}</Text>
                         <Text fontSize="sm" fontWeight="medium">/Item</Text>
                     </HStack>
@@ -40,11 +49,15 @@ const CartCard: React.FC<CartCardProps> = ({ id, imageUrl, productName, category
                         <Heading size="xl" fontWeight="medium">{formatRupiah(price * quantity)},-</Heading>
                         <HStack w="full" justifyContent="space-between">
                             <HStack gap="5">
-                                <Button onClick={() => decrease(id)} _active={{ bg: "gray.700", transform: "scale(0.95)" }}>-</Button>
+                                {decreaseAble ? (
+                                    <Button onClick={() => decrease(productName)} _active={{ bg: "gray.700", transform: "scale(0.95)" }}>-</Button>
+                                ):(
+                                    <Button disabled _active={{ bg: "gray.700", transform: "scale(0.95)" }}>-</Button>
+                                )}
                                 <Text fontSize="md" fontWeight="medium" color="gray.600">{quantity}</Text>
-                                <Button onClick={() => increase(id)} _active={{ bg: "gray.700", transform: "scale(0.95)" }}>+</Button>
+                                <Button onClick={() => increase(String(productName))} _active={{ bg: "gray.700", transform: "scale(0.95)" }}>+</Button>
                             </HStack>
-                            <Center onClick={() => removeCart(id)} role="button" cursor="pointer" bg="white" color="black" borderWidth={1} borderRadius="md" p={2}>
+                            <Center onClick={() => removeCart(String(productName))} role="button" cursor="pointer" bg="white" color="black" borderWidth={1} borderRadius="md" p={2}>
                                 <X />
                             </Center>
                         </HStack>
