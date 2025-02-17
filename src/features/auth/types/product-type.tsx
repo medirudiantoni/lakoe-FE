@@ -2,13 +2,13 @@ export type ProductType = {
   id: string;
   name: string;
   description: string;
-  attachments?: File;
+  attachments?: string[];
   url: string;
   sku?: string;
   weight?: number;
   stock?: number;
   price?: number;
-  minimumOrder: string;
+  minimumOrder: number;
   storeId?: string;
   categoryId?: string;
   isActive: boolean;

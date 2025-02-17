@@ -20,14 +20,12 @@ import { ArrowLeft, CheckIcon } from 'lucide-react';
 import LoadingButtonLottie from '@/components/icons/loading-button';
 import toast from 'react-hot-toast';
 import { useSellerStore } from '@/hooks/store';
-import { motion } from "framer-motion";
-import LottieSpread from "@/components/icons/lottie-spread";
-import SuccessAnimation from "../components/success-animation";
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { LocationSettingCheckout } from './user/location-checkout';
 import { useMutation } from '@tanstack/react-query';
 import { formatRupiah } from '@/lib/rupiah';
+import { useProductStore } from '@/features/auth/store/product-store';
 
 type Courier = {
   courier_name: string;
@@ -41,34 +39,30 @@ const SellerCheckoutPage = () => {
   const { store } = useSellerStore();
   const [isPaymentMethod, setIsPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isAnimate, setIsAnimate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const [couriers, setCouriers] = useState<Courier[]>([]);
   const [selectedCourier, setSelectedCourier] = useState<string>('');
-  const [selectedCourierName, setSelectedCourierName] = useState<string>('Pilih Kurir');
+  const [selectedCourierName, setSelectedCourierName] =
+    useState<string>('Pilih Kurir');
   const [selectedCourierImage, setSelectedCourierImage] = useState<string>('');
   const [selectedCouriers, setSelectedCouriers] = useState<Courier[]>([]);
   const [finalCourier, setFinalCourier] = useState<Courier | null>(null);
 
-  const [selectedCourierForNext, setSelectedCourierForNext] = useState<Courier | null>(null);
+  const [selectedCourierForNext, setSelectedCourierForNext] =
+    useState<Courier | null>(null);
   const [isOpenFirst, setIsOpenFirst] = useState(false);
   const [isOpenSecond, setIsOpenSecond] = useState(false);
   const [isOpenFirstDropdown, setIsOpenFirstDropdown] = useState(false);
   const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
-  
-  const [selectedLocation, setSelectedLocation] = useState<{
-    postalCode: string;
-    latitude: string;
-    longitude: string;
-  } | null>(null);
+
+  const { selectedProduct, selectedVariantOption } = useProductStore();
+
+  useEffect(() => {
+    console.log('priceeeeeee', selectedProduct?.price);
+  }, [selectedProduct?.price]);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-    
-  
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: "instant" });
-    }, [])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -89,6 +83,12 @@ const SellerCheckoutPage = () => {
     };
   }, [isOpenFirst]);
 
+  const [selectedLocation, setSelectedLocation] = useState<{
+    postalCode: string;
+    latitude: string;
+    longitude: string;
+  } | null>(null);
+
   const postCourierRates = useMutation({
     mutationFn: async () => {
       if (!selectedLocation) {
@@ -103,14 +103,13 @@ const SellerCheckoutPage = () => {
         couriers: 'tiki,jne,pos,ninja,jnt,paxel,sicepat',
         items: [
           {
-            name: 'Shoes',
-            description: 'Black colored size 45',
-            value: 199000,
-            length: 30,
-            width: 15,
-            height: 20,
-            weight: 200,
-            quantity: 2,
+            name: selectedProduct?.name,
+            value: selectedProduct?.price,
+            // length: 30,
+            // width: 15,
+            // height: 20,
+            // weight: 200,
+            // quantity: 2,
           },
         ],
       };
@@ -199,6 +198,41 @@ const SellerCheckoutPage = () => {
             <Heading size="2xl" fontWeight="bold" mb="5" fontFamily="inherit">
               Checkout
             </Heading>
+
+            <Box width={'full'} mb={'8'}>
+              <Heading
+                size="xl"
+                fontWeight="medium"
+                pb="3"
+                mb="2"
+                borderBottomWidth={1}
+                borderColor="gray.200"
+                fontFamily="inherit"
+              >
+                Produk yang ingin dicheckout
+              </Heading>
+
+              <Box display={'flex'} alignItems={'center'} gap={'3'}>
+                <Image src={selectedProduct?.image} width={'150px'} />
+                <Box
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'space-between'}
+                  width={'full'}
+                >
+                  <Box>
+                    <Text fontSize={'20px'} fontWeight={'semibold'}>
+                      {selectedProduct?.name}
+                    </Text>
+                    <Text color={'gray.400'}>{selectedProduct?.category}</Text>
+                  </Box>
+
+                  <Text fontSize={'18px'} fontWeight={'semibold'}>
+                    {formatRupiah(`${selectedProduct?.price}`)}
+                  </Text>
+                </Box>
+              </Box>
+            </Box>
 
             {/* Alamat Pengiriman start */}
             <Box mb="10">
@@ -361,17 +395,24 @@ const SellerCheckoutPage = () => {
                 <Table.Row>
                   <Table.Cell px="0">{'Subtotal'}</Table.Cell>
                   <Table.Cell px="0" textAlign="end">
-                    {'Rp5.000.000,-'}
+                    {formatRupiah(`${selectedProduct?.price}`)}
                   </Table.Cell>
                 </Table.Row>
-                <Table.Row>
-                  <Table.Cell px="0">{'Biaya Pengiriman'}</Table.Cell>
-                  <Table.Cell px="0" textAlign="end">
-                    {'Rp50.000,-'}
-                  </Table.Cell>
-                </Table.Row>
+                {selectedCouriers.map((c, index) => (
+                  <Table.Row key={index}>
+                    <Table.Cell px="0">
+                      Metode Pengiriman <br />
+                      <Text fontSize="sm" color="gray.500">
+                        {c.courier_name} - {c.courier_service_name}
+                      </Text>
+                    </Table.Cell>
+                    <Table.Cell px="0" textAlign="end">
+                      {formatRupiah(c.price)}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
               </Table.Body>
-              
+
               <Table.Footer>
                 <Table.Row>
                   <Table.ColumnHeader
@@ -389,34 +430,15 @@ const SellerCheckoutPage = () => {
                     textAlign="end"
                     fontWeight="semibold"
                   >
-                    {'Rp 5.050.000,-'}
+            {formatRupiah(
+        (selectedProduct?.price ?? 0) +
+        selectedCouriers.reduce((total, c) => total + (c.price ?? 0), 0)
+      )}
                   </Table.ColumnHeader>
                 </Table.Row>
               </Table.Footer>
             </Table.Root>
 
-            <Text>
-              {selectedCouriers.map((c, index) => (
-                <Box key={index}>
-                  <HStack
-                    justifyContent="space-between"
-                    fontWeight="medium"
-                    borderTopWidth={1}
-                    pt="4"
-                    pb={'2'}
-                  >
-                    <Text>Metode Pengiriman</Text>
-                  </HStack>
-                  <Box display={'flex'}>
-                    <Text fontSize="md">
-                      {c.courier_name} - {c.courier_service_name}
-                    </Text>
-                    <Spacer />
-                    <Text>{formatRupiah(c.price)}</Text>
-                  </Box>
-                </Box>
-              ))}
-            </Text>
             <Button w="full" onClick={handlePlaceOrder} mt={'5'}>
               {loading ? <LoadingButtonLottie /> : 'Buat Pesanan'}
             </Button>
