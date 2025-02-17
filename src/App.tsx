@@ -20,7 +20,6 @@ import PaymentPage from './page/payment-page/PaymentPage';
 import { LoadingScreen } from './components/loading-screen/loading-screen';
 import SellerPage from './page/seller/pages/seller-layout';
 import SellerHomepage from './page/seller/pages/home-page';
-import SellerDetailProduct from './page/seller/pages/detail-product';
 import SellerCartPage from './page/seller/pages/cart-page';
 import SellerCheckoutPage from './page/seller/pages/checkout-page';
 import SellerBillingPage from './page/seller/pages/billing-page';

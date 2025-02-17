@@ -62,7 +62,6 @@ export type CartItemType = {
   buyerId?: string;
   variantOptionValue?: VariantOptionValueType;
   variantOptionValueId?: string;
-  categoryName?: string;
 };
 
 export type InvoiceType = {

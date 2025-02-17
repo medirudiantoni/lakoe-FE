@@ -34,13 +34,16 @@ const SellerPage = () => {
   }, [buyer]);
 
   function retrieveCurrentBuyer() {
-    const token = Cookies.get('token-buyer');
+    const token = Cookies.get(`token-buyer-${storeName}`);
     if (token)
       fetchCurrentUserBuyerData(token)
         .then((res) => {
-          console.log('res buyer', res);
-          toast.success(`Selamat datang kembali ${res.user.name}`)
-          setBuyer(res.user);
+          const emailWithStoreName = res.user.email;
+          const buyerStoreName = emailWithStoreName.split("-").slice(1).join("-");
+          if(storeName === buyerStoreName){
+            toast.success(`Selamat datang kembali ${res.user.name}`)
+            setBuyer(res.user);
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -64,4 +67,4 @@ const SellerPage = () => {
   )
 }
 
-export default SellerPage
+export default SellerPage;

@@ -25,7 +25,6 @@ export function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
-  const [value, setValue] = useState("")
 
   const {
     register,

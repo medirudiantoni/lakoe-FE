@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import { apiURL } from '@/utils/baseurl';
 import { PasswordInput } from '@/components/ui/password-input';
+import { useEffect } from 'react';
 
 const loginSchema = z.object({
   email: z.string().email('Email yang anda masukan salah'),
@@ -22,7 +23,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 export function LoginBuyer() {
   const { store } = useSellerStore();
   const navigate = useNavigate();
-  const{setBuyer} = useAuthBuyerStore()
+  const{setBuyer} = useAuthBuyerStore();
 
   const {
     register,
@@ -47,7 +48,7 @@ export function LoginBuyer() {
           console.log('dataaanya mana woiii', res)
           setBuyer(data.buyer);
           console.log('Data Buyer setelah login:', data.buyer); // Debugging
-          Cookies.set('token-buyer', data.token);
+          Cookies.set(`token-buyer-${store?.name}`, data.token);
           navigate(`/${store?.name}/`);
           return data.message;
         },

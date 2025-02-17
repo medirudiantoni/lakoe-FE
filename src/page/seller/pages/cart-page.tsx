@@ -21,7 +21,6 @@ const SellerCartPage = () => {
     const { cart, setManyCart, totalPrice, totalQuantity } = useCart();
 
     useEffect(() => {
-        console.log("cartnya 24: ", cart);
         if(cart.length === 0 && buyer){
             retrieveBuyerCart();
         }
@@ -30,7 +29,7 @@ const SellerCartPage = () => {
     function retrieveBuyerCart(){
         fetchBuyerCart()
             .then((res: CartType) => {
-                const data: CartItemType[] = res.cartItems ? res.cartItems : []; 
+                const data: CartItemType[] = res.cartItems ? res.cartItems : [];
                 setManyCart(data);
             })
             .catch((error) => {
@@ -68,15 +67,15 @@ const SellerCartPage = () => {
                 {/* Heading end */}
 
                 {/* card product start */}
-                {cart.length > 0 ? cart.map((product) => (
+                {cart.length > 0 ? cart.map((item) => (
                     <CartCard
-                        key={product.name}
-                        id={String(product.id)}
-                        productName={product.name}
-                        category={String(product.categoryName)}
-                        imageUrl={product.product?.attachments[0]}
-                        price={product.price ? product.price : 0}
-                        quantity={product.quantity}
+                        key={item.name}
+                        cartItemId={String(item.id)}
+                        productName={item.name}
+                        category={item.product?.category}
+                        imageUrl={item.product?.attachments[0]}
+                        price={item.price ? item.price : 0}
+                        quantity={item.quantity}
                     />
                 )) : (
                     <Center w="full" h={'fit-content'}>
