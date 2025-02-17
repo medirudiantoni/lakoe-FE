@@ -25,8 +25,9 @@ import Category from '../component-product/category';
 import SelectAllCheckbox from '../component-product/checkbox';
 import ProductCardDashboard from '../component-product/product-card-dashboard';
 import { DialogDelete } from '../dialog-product/dialog-delete';
-import SortingDropdown from '../component-product/sorting';
+
 import { ProductType } from '@/features/auth/types/prisma-types';
+import SortingDropdown from '../component-product/sorting';
 
 export function TabContentAll() {
   const { user } = useAuthStore();

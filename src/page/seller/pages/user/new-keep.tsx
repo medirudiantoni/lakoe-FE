@@ -1,42 +1,18 @@
 import {
   Box,
-  Button,
-  Flex,
-  Input,
-  Stack,
   Tabs,
-  Text,
-  Textarea,
-  useDisclosure,
-  VStack,
+  Text
 } from '@chakra-ui/react';
 // import { useNavigate } from "react-router";
-import SellerNavbar from '../../components/navbar';
-import SellerFooter from '../../components/footer';
-import BuyerOrderPage from './order-page';
-import { useEffect, useState } from 'react';
-import {
-  DialogActionTrigger,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogRoot,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Field } from '@/components/ui/field';
-import { useAuthStore } from '@/features/auth/store/auth-store';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserById, updateDataBuyer } from '@/features/auth/services/buyer';
-import Cookies from 'js-cookie';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
-import LogoutButtonBuyer from './logout';
-import { LocationSetting } from './location';
-import toast from 'react-hot-toast';
 import { useSellerStore } from '@/hooks/store';
-import { TabsProfile } from './tabs/tab-profile';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { TabsPesanan } from './tabs/tab-pesanan';
+import { TabsProfile } from './tabs/tab-profile';
 
 export function NewKeep() {
   const { buyer } = useAuthBuyerStore();
