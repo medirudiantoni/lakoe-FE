@@ -37,6 +37,7 @@ import { RegisterBuyer } from './page/seller/pages/register-page';
 import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-buyer';
 import AddProductForm from './page/productpage/add-product';
 import PrivateRouteBuyer from './layouts/private-layout-buyer';
+import SellerProductDetail from './page/seller/pages/product-detail';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -118,8 +119,8 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
-          path: 'detail-product/:productUrl',
-          Component: SellerDetailProduct,
+          path: 'product-detail/:productUrl',
+          Component: SellerProductDetail,
           HydrateFallback: Fallback,
         },
         {

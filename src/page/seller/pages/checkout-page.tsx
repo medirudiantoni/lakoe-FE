@@ -20,6 +20,9 @@ import { ArrowLeft, CheckIcon } from 'lucide-react';
 import LoadingButtonLottie from '@/components/icons/loading-button';
 import toast from 'react-hot-toast';
 import { useSellerStore } from '@/hooks/store';
+import { motion } from "framer-motion";
+import LottieSpread from "@/components/icons/lottie-spread";
+import SuccessAnimation from "../components/success-animation";
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { LocationSettingCheckout } from './user/location-checkout';
@@ -38,6 +41,7 @@ const SellerCheckoutPage = () => {
   const { store } = useSellerStore();
   const [isPaymentMethod, setIsPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isAnimate, setIsAnimate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const [couriers, setCouriers] = useState<Courier[]>([]);
@@ -52,8 +56,19 @@ const SellerCheckoutPage = () => {
   const [isOpenSecond, setIsOpenSecond] = useState(false);
   const [isOpenFirstDropdown, setIsOpenFirstDropdown] = useState(false);
   const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
+  
+  const [selectedLocation, setSelectedLocation] = useState<{
+    postalCode: string;
+    latitude: string;
+    longitude: string;
+  } | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+    
+  
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "instant" });
+    }, [])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,12 +88,6 @@ const SellerCheckoutPage = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpenFirst]);
-
-  const [selectedLocation, setSelectedLocation] = useState<{
-    postalCode: string;
-    latitude: string;
-    longitude: string;
-  } | null>(null);
 
   const postCourierRates = useMutation({
     mutationFn: async () => {
