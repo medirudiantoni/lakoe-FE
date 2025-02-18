@@ -98,10 +98,6 @@ const SellerProductDetail = () => {
     navigate(`/${store?.name}/checkout`);
   };
 
-  // const mutation = useMutation({
-  //   mutationFn: (data: CartItemType) => fetchAddToCart(data, tokenBuyer).then(res => console.log("res mutate: ", res))
-  // })
-
   useEffect(() => {
     if (product?.variants && selectedOptionName) {
       const optionName = selectedOptionName.join(' ');
@@ -250,8 +246,6 @@ const SellerProductDetail = () => {
           price: priceNumber,
           product,
         };
-        console.log('datanya: ', data);
-        addCart(data);
         toast.success('Produk Telah ditambahkan ke keranjang');
         fetchAddToCart(data, tokenBuyer).then((res) => {
           console.log('add cart sukses: ', res.cartItem);
