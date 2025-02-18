@@ -23,9 +23,11 @@ import { useSellerStore } from '@/hooks/store';
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { LocationSettingCheckout } from './user/location-checkout';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatRupiah } from '@/lib/rupiah';
 import { useProductStore } from '@/features/auth/store/product-store';
+import { checkout } from '@/features/auth/services/checkout-services';
+import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 
 type Courier = {
   courier_name: string;
@@ -36,27 +38,19 @@ type Courier = {
 
 const SellerCheckoutPage = () => {
   const navigate = useNavigate();
-  const { store } = useSellerStore();
-  const [isPaymentMethod, setIsPaymentMethod] = useState('');
+ 
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+
 
   const [couriers, setCouriers] = useState<Courier[]>([]);
-  const [selectedCourier, setSelectedCourier] = useState<string>('');
-  const [selectedCourierName, setSelectedCourierName] =
-    useState<string>('Pilih Kurir');
-  const [selectedCourierImage, setSelectedCourierImage] = useState<string>('');
-  const [selectedCouriers, setSelectedCouriers] = useState<Courier[]>([]);
-  const [finalCourier, setFinalCourier] = useState<Courier | null>(null);
 
-  const [selectedCourierForNext, setSelectedCourierForNext] =
-    useState<Courier | null>(null);
+  const [selectedCouriers, setSelectedCouriers] = useState<Courier[]>([]);
+
   const [isOpenFirst, setIsOpenFirst] = useState(false);
-  const [isOpenSecond, setIsOpenSecond] = useState(false);
-  const [isOpenFirstDropdown, setIsOpenFirstDropdown] = useState(false);
-  const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
+  const { buyer } = useAuthBuyerStore();
 
   const { selectedProduct, selectedVariantOption } = useProductStore();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     console.log('priceeeeeee', selectedProduct?.price);
@@ -87,6 +81,9 @@ const SellerCheckoutPage = () => {
     postalCode: string;
     latitude: string;
     longitude: string;
+    address: string;
+    cityDistrict: string;
+    village: string;
   } | null>(null);
 
   const postCourierRates = useMutation({
@@ -138,14 +135,73 @@ const SellerCheckoutPage = () => {
     }
   }, [selectedLocation]);
 
-  const handlePlaceOrder = () => {
-    setLoading(true);
-    setTimeout(() => {
-      navigate(`/${store?.name}/payment`);
-      setLoading(false);
-      alert('Pesanan anda telah dibuat');
-    }, 2000);
-  };
+  const postCheckout = useMutation({
+    mutationFn: async () => {
+      setLoading(true)
+      const formData = new FormData();
+
+      const selectedCourier = selectedCouriers[0];
+      formData.append('buyerId', buyer?.id || '');
+      console.log('buyeridcheckout', buyer?.id);
+      formData.append(
+        'orderItems',
+        JSON.stringify([
+          {
+            productId: selectedProduct?.id,
+            quantity: 1,
+            price: selectedProduct?.price,
+            name: selectedProduct?.name,
+            image: selectedProduct?.image,
+          },
+        ])
+      );
+      formData.append(
+        'recipient',
+        JSON.stringify({
+          receiverName: selectedProduct?.name,
+          receiverDistrict: selectedLocation?.cityDistrict,
+          receiverVillage: selectedLocation?.village,
+          receiverAddress: selectedLocation?.address,
+          receiverPhone: buyer?.phone,
+          receiverEmail: buyer?.email.split('-')[0],
+          receiverLatitude: selectedLocation?.latitude,
+          receiverLongitude: selectedLocation?.longitude,
+        })
+      );
+
+      formData.append('courier', selectedCourier.courier_name);
+      formData.append('shippingCost', selectedCourier.price.toString());
+
+      return toast.promise(checkout(formData), {
+        loading: 'Memproses pesanan...',
+        success: 'Pesanan berhasil dibuat!',
+        error: 'Gagal membuat pesanan!',
+      });
+    },
+    onSuccess: (data) => {
+      setLoading(false)
+      queryClient.invalidateQueries({ queryKey: ['locations-buyer'] });
+      if (data?.snapRedirectUrl) {
+        window.location.href = data.snapRedirectUrl;
+      }
+
+      console.log('redirect_url', data);
+    },
+    onError: (error) => {
+      setLoading(false)
+      console.error('Error menambahkan lokasi:', error);
+      toast.error('Gagal menambahkan lokasi!');
+    },
+  });
+
+  // const handlePlaceOrder = () => {
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     navigate(`/${store?.name}/payment`);
+  //     setLoading(false);
+  //     alert('Pesanan anda telah dibuat');
+  //   }, 2000);
+  // };
 
   useEffect(() => {
     if (selectedLocation) {
@@ -161,9 +217,7 @@ const SellerCheckoutPage = () => {
     );
 
   const toggleCourier = (courier: Courier) => {
-    setSelectedCouriers(
-      (prev) => (isCourierSelected(courier) ? [] : [courier]) // Hanya satu kurir yang bisa dipilih
-    );
+    setSelectedCouriers(() => (isCourierSelected(courier) ? [] : [courier]));
   };
 
   useEffect(() => {
@@ -304,7 +358,7 @@ const SellerCheckoutPage = () => {
                         </Text>
                       </Box>
                     ) : (
-                      <Text>Pilih Kurir</Text>
+                      <Text>Pilih Kurir <span className='text-red-500'>*</span></Text>
                     )}
                   </HStack>
                 </Box>
@@ -430,16 +484,24 @@ const SellerCheckoutPage = () => {
                     textAlign="end"
                     fontWeight="semibold"
                   >
-            {formatRupiah(
-        (selectedProduct?.price ?? 0) +
-        selectedCouriers.reduce((total, c) => total + (c.price ?? 0), 0)
-      )}
+                    {formatRupiah(
+                      (selectedProduct?.price ?? 0) +
+                        selectedCouriers.reduce(
+                          (total, c) => total + (c.price ?? 0),
+                          0
+                        )
+                    )}
                   </Table.ColumnHeader>
                 </Table.Row>
               </Table.Footer>
             </Table.Root>
 
-            <Button w="full" onClick={handlePlaceOrder} mt={'5'}>
+            <Button
+              w="full"
+              onClick={() => postCheckout.mutate()}
+              mt="5"
+              disabled={selectedCouriers.length === 0}
+            >
               {loading ? <LoadingButtonLottie /> : 'Buat Pesanan'}
             </Button>
           </Box>
