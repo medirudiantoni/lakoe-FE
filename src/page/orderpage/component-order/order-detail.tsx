@@ -49,18 +49,14 @@ import {
 import { useState } from 'react';
 import { LuCheck, LuPackage, LuShip } from 'react-icons/lu';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { fetchOrderDetail } from '@/features/auth/services/order.service';
 
 
 export function OrderDetail() {
   const { id } = useParams<{ id: string }>();
- const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['orders', id],
-    queryFn: async () => {
-      const response = await axios.get(`http://localhost:5000/api/v1/order/${id}`);
-      console.log(response.data); // Debugging
-      return response.data;
-    },
+    queryFn: async () => await fetchOrderDetail(id as string),
     enabled: !!id, // Hanya jalankan query jika ID ada
   });
   const [isOpen, setIsOpen] = useState(false);
@@ -85,8 +81,14 @@ export function OrderDetail() {
   if (isError) return <Text>Error fetching orders</Text>;
   return (
     <>
- {data?.order?.orderItems?.length > 0 ? (
+
+
+
+{data?.order?.orderItems && data.order.orderItems.length > 0 ? (
   data.order.orderItems.map((item: any, index: number) => {
+  
+
+
   
   return (
     <Box p={3} m={4}  key={index}>
@@ -211,14 +213,14 @@ export function OrderDetail() {
             <NotepadTextDashed color="#75757C" size={'25px'} />
             <Text>Invoice</Text>
           </Box>
-          <ClipboardRoot value={`${data.order.invoice.invoiceNumber }`}>
+          <ClipboardRoot value={`${data?.order?.invoice?.invoiceNumber }`}>
             <Flex alignItems={'center'} gap={'3'}>
               <ClipboardLink
                 color="blue.400"
                 textStyle="md"
                 cursor={'pointer'}
               />
-              <Text color={'#75757C'}>{data.order.invoice.invoiceNumber }</Text>
+              <Text color={'#75757C'}>{data?.order?.invoice?.invoiceNumber }</Text>
             </Flex>
           </ClipboardRoot>
         </Box>
@@ -232,7 +234,7 @@ export function OrderDetail() {
             <Text>Pembeli</Text>
           </Box>
           {/* <WhatsappIcon/> */}
-          <Text color={'#75757C'}>{data.order.invoice.receiverName }</Text>
+          <Text color={'#75757C'}>{data?.order?.invoice?.receiverName }</Text>
         </Box>
       </Box>
 
@@ -300,7 +302,7 @@ export function OrderDetail() {
                 alignItems={'end'}
               >
                 <Text>Total belanja</Text>
-                <Text fontWeight={'semibold'}>Rp.{data.order.invoice.price.toLocaleString("id-ID")}</Text>
+                <Text fontWeight={'semibold'}>Rp.{data?.order?.invoice?.price.toLocaleString("id-ID")}</Text>
               </Box>
             </Box>
           </Box>
@@ -352,7 +354,7 @@ export function OrderDetail() {
                     </Box>
                     <Box>
                       <Text>No Resi</Text>
-                      <Text fontWeight={'bold'}>{data.order.invoice.waybill}</Text>
+                      <Text fontWeight={'bold'}>{data?.order?.invoice?.waybill}</Text>
                     </Box>
                     <Box>
                       <Text>Pengiriman</Text>
@@ -363,7 +365,7 @@ export function OrderDetail() {
                     <Box>
                       <Text>Penerima</Text>
                       <Box>
-                        <Text fontWeight={'bold'}>{data.order.invoice.receiverName}</Text>
+                        <Text fontWeight={'bold'}>{data?.order?.invoice?.receiverName}</Text>
                         <Text>
                         {data.order.recipientAddress}
                         </Text>
@@ -373,7 +375,7 @@ export function OrderDetail() {
                 </Grid>
                 <Text mt={'5'}>
                   Status:{' '}
-                  <span className="font-bold">{data.order.invoice.status}</span>
+                  <span className="font-bold">{data.order.status}</span>
                 </Text>
                 <Box
                   border="1px solid"
@@ -458,13 +460,13 @@ export function OrderDetail() {
           </GridItem>
           <GridItem display={'flex'} flexDirection={'column'} gap={2}>
             <Text>{data.order.courier}</Text>
-            <Text>{data.order.invoice.waybill}</Text>
+            <Text>{data?.order?.invoice?.waybill}</Text>
             <Box>
               <Text>
               {data.order.recipientAddress}
               </Text>
-              <Text>  {data.order.invoice.receiverPhone}</Text>
-              <Text>{data.order.invoice.receiverName}</Text>
+              <Text>  {data?.order?.invoice?.receiverPhone}</Text>
+              <Text>{data?.order?.invoice?.receiverName}</Text>
             </Box>
           </GridItem>
         </Grid>
@@ -500,11 +502,11 @@ export function OrderDetail() {
         >
           <Box display={'flex'} justifyContent={'space-between'}>
           <Text>Total Harga ({item.quantity} barang)</Text>
-            <Text fontWeight={'bold'}>Rp.{`${data.order.invoice.price.toLocaleString("id-ID")}`}</Text>
+            <Text fontWeight={'bold'}>Rp.{`${data.order?.invoice?.price?.toLocaleString("id-ID")}`}</Text>
           </Box>
           <Box display={'flex'} justifyContent={'space-between'}>
             <Text>Total Ongkos Kirim({item.weight} gram)</Text>
-            <Text fontWeight={'bold'}>{`${data.order.invoice.serviceCharge.toLocaleString("id-ID")}`}</Text>
+            <Text fontWeight={'bold'}>{`${data.order?.invoice?.serviceCharge.toLocaleString("id-ID")}`}</Text>
           </Box>
           <Box display={'flex'} justifyContent={'space-between'}>
             <Text>Diskon</Text>

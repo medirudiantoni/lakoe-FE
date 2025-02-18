@@ -22,11 +22,11 @@ import { TabInDeliveryOrder } from './tab-indelivery-order';
 import { TabOrderComplete } from './tab-order-complete-order';
 import { TabCancelledOrder } from './tab-cancelled-order';
 import { InputGroup } from '@/components/ui/input-group';
-import axios from 'axios';
+import { fetchOrders } from '@/features/auth/services/order.service';
 import { useState, useEffect, useCallback } from 'react';
 import type { Order } from '@/features/auth/types/order.types';
 
-// Komponen SearchBar
+
 function SearchBar() {
   return (
     <GridItem position={'relative'}>
@@ -108,27 +108,25 @@ export function Order() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Fungsi untuk mengambil data pesanan
+
   const fetchData = useCallback(async () => {
     if (cachedOrders[status]) {
-      // Jika data sudah ada di cache, gunakan data tersebut
       setOrders(cachedOrders[status]);
       return;
     }
   
     setIsLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:5000/api/v1/order', {
-        params: { status: status === 'Semua' ? undefined : status },
-      });
-      setOrders(data.orders);
-      setCachedOrders((prev) => ({ ...prev, [status]: data.orders })); // Simpan data ke cache
+      const orders = await fetchOrders(status);
+      setOrders(orders);
+      setCachedOrders((prev) => ({ ...prev, [status]: orders })); 
     } catch (error: any) {
       setError(error);
     } finally {
       setIsLoading(false);
     }
   }, [status, cachedOrders]);
+  
   
 
   
