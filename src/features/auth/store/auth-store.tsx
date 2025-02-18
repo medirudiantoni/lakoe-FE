@@ -6,7 +6,8 @@ export interface UserType {
   id: string;
   name: string;
   email: string;
-  Stores: StoreFormProps;
+  phone: string;
+  Stores?: StoreFormProps;
 }
 interface AuthState {
   user: UserType | null;

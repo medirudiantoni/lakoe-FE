@@ -1,118 +1,177 @@
 import { InputGroup } from '@/components/ui/input-group';
-import { Switch } from '@/components/ui/switch';
+import {
+  fetchProduct,
+  fetchProductsBySelectedCategory,
+  searchQuery,
+  sortQuery,
+} from '@/features/auth/services/product-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useCheckboxStore } from '@/features/auth/store/product-store';
+import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
 import {
   Box,
-  Button,
+  Center,
   Flex,
   Grid,
   GridItem,
-  Image,
   Input,
-  Text,
+  Text
 } from '@chakra-ui/react';
-import { Link2, PackageSearch } from 'lucide-react';
-import CheckBox from '../component-product/checkbox';
-
-import products from '@/data-dummy/products.json';
-import { Link } from 'react-router';
+import Cookies from 'js-cookie';
+import { PackageSearch } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import Category from '../component-product/category';
-import SortingDropdown from '../component-product/Sorting';
+import SelectAllCheckbox from '../component-product/checkbox';
+import ProductCardDashboard from '../component-product/product-card-dashboard';
 import { DialogDelete } from '../dialog-product/dialog-delete';
-import { DialogNonaktif } from '../dialog-product/dialog-nonaktif';
-import { DialogPrice } from '../dialog-product/dialog-price';
-import { DialogStock } from '../dialog-product/dialog-stock';
 
-const TabContentAll = () => {
+import { ProductType } from '@/features/auth/types/prisma-types';
+import SortingDropdown from '../component-product/sorting';
+
+export function TabContentAll() {
+  const { user } = useAuthStore();
+  const { products, setProducts, updateProductStatus } = useProductStore();
+  const { selectedProducts, toggleProductSelection } = useCheckboxStore();
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [productsToDisplay, setProductsToDisplay] = useState<ProductType[]>([]);
+  const [sortValue, setSortValue] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    restoreProductAfterSearch();
+  }, [products]);
+
+  function restoreProductAfterSearch(){
+    if(products && query.length === 0)
+      setProductsToDisplay(products)
+  }
+
+  useEffect(() => {
+    if(sortValue)
+      retrieveSortValue();
+  }, [sortValue]);
+
+  function retrieveSortValue(){
+    if(storeId)
+    sortQuery(sortValue, storeId)
+      .then(res => setProductsToDisplay(res))
+      .catch(error => console.log(error))
+  }
+
+  useEffect(() => {
+    if(selectedCategories.length > 0)
+      retrieveSelectedCategories()
+    else 
+      if(products)
+      setProductsToDisplay(products)
+  }, [selectedCategories]);
+
+  function retrieveSelectedCategories(){
+    if(storeId)
+      fetchProductsBySelectedCategory(selectedCategories, storeId)
+        .then(res => setProductsToDisplay(res))
+        .catch(error => console.log(error))
+  }
+
+  const storeId = user?.Stores?.id;
+  const isAnyProductSelected = selectedProducts.length > 0;
+
+  useEffect(() => {
+    const token = Cookies.get('token')
+    if (storeId && token) {
+      fetchProduct(storeId, token)
+        .then(setProducts)
+        .catch(() => toast.error('Gagal mengambil data produk'))
+        .finally(() => setIsFetching(false))
+    }
+  }, [storeId, setProducts])
+
+  useEffect(() => {
+    if (!query) return;
+
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch();
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
+
+  const handleSearch = async () => {
+    setLoading(true);
+
+    try {
+      const token = Cookies.get('token');
+      if (!storeId || !token || !query) return;
+
+      const searchResults = await searchQuery(query, token, storeId);
+      console.log("searchResult: ", searchResults);
+      // setProducts(Array.isArray(searchResults) ? searchResults : []);
+      setProductsToDisplay(searchResults);
+    } catch (err: any) {
+      console.error('Search error:', err);
+      toast.error(err.response?.data?.message || 'Error searching products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isFetching) return <Text>Loading...</Text>;
+
   return (
     <Box>
-      <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2}>
-        <GridItem position={'relative'}>
-          <InputGroup flex="1" width={'100%'}>
-            <Input px={11} placeholder="Search produk" outline={'#0086B4'} />
+      <Grid templateColumns="repeat(3, 1fr)" width="100%" gap={2}>
+        <GridItem position="relative">
+          <InputGroup flex="1" width="100%">
+            <Input
+              px={11}
+              placeholder="Search produk"
+              outline="#0086B4"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onBlur={restoreProductAfterSearch}
+            />
           </InputGroup>
-          <Box position={'absolute'} top={2} left={4}>
+          <Box position="absolute" top={2} left={4}>
             <PackageSearch color="#75757C" />
           </Box>
         </GridItem>
         <GridItem>
-          <Box position={'relative'}>
-            <Category />
-          </Box>
+          <Category onChangeData={setSelectedCategories} />
         </GridItem>
         <GridItem>
-          <Box position={'relative'}>
-            <SortingDropdown />
-          </Box>
+          <SortingDropdown onChangeSortValue={setSortValue} />
         </GridItem>
       </Grid>
-      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
-        <Text color={'gray.400'}>{products.length} Produk</Text>
-        <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
-          <DialogDelete />
-          <DialogNonaktif />
-          <CheckBox display="block" />
+      <Flex justifyContent="space-between" alignItems="center" mt={3}>
+        <Text color="gray.400">{products?.length} Produk</Text>
+        <Box display="flex" alignItems="center" gap={2} color="#75757C">
+          {isAnyProductSelected && <DialogDelete />}
+          <SelectAllCheckbox allProductIds={products?.map((p) => p.id) || []} />
         </Box>
       </Flex>
-      {products.map((product, index) => (
-        <Box
-          width="full"
-          border="1px solid"
-          borderColor="gray.200"
-          height="150px"
-          borderRadius="10px"
-          mt={3}
-          display="flex"
-          justifyContent={'space-between'}
-          p={3}
-        >
-          <Box display={'flex'} alignItems={'center'}>
-            <Image
-              src={product.image}
-              width={36}
-              height={36}
-              borderRadius="md"
-              p={3}
-              mr={3}
+
+      {loading ? (
+        <Text>Searching...</Text>
+      ) : (
+        productsToDisplay.length > 0 ? productsToDisplay.map((product) => {
+          return (
+            <ProductCardDashboard
+              key={product.id}
+              product={product}
+              selectedProducts={selectedProducts}
+              toggleProductSelection={toggleProductSelection}
+              updateProductStatus={updateProductStatus}
             />
-            <Box>
-              <Text fontSize="20px" fontWeight="bold">
-                {product.name}
-              </Text>
-              <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                <Text fontWeight={'semibold'}>Harga: {product.harga} </Text>
-                <Text color={'gray.500'} ml={1}>
-                  • Stok: {product.stok} • SKU: {product.sku}
-                </Text>
-              </Flex>
-              <Box display={'flex'} gap={2}>
-                <DialogPrice />
-                <DialogStock />
-                <Link to={`/product-detail/${product.id}`}>
-                  <Button variant={'outline'} mt={4} borderRadius={'20px'}>
-                    <Link2 />
-                    Lihat halaman
-                  </Button>
-                </Link>
-              </Box>
-            </Box>
-          </Box>
-          <Box
-            display={'flex'}
-            flexDirection={'column'}
-            justifyContent={'space-between'}
-            alignItems={'end'}
-          >
-            <CheckBox display={'none'} />
-            <Switch
-              colorPalette={'blue'}
-              defaultChecked={product.status === 'defaultChecked'}
-              size={'lg'}
-            />
-          </Box>
-        </Box>
-      ))}
+          );
+        }) : (
+          <Center>
+            <Text color={"gray.500"}>Produk kosong</Text>
+          </Center>
+        )
+      )}
     </Box>
   );
-};
-
-export default TabContentAll;
+}

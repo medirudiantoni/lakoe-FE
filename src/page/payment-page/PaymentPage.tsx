@@ -18,9 +18,9 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Navigate, useNavigate } from 'react-router';
 import Cookies from 'js-cookie';
-import LoadingLottie from '@/components/icons/Loading';
+import LoadingLottie from '@/components/icons/lottie';
 
-const eWallets = [
+export const eWallets = [
   {
     name: 'gopay',
     image: '/gopay.webp',
@@ -39,7 +39,7 @@ const eWallets = [
   },
 ];
 
-const virtualAccount = [
+export const virtualAccount = [
   {
     name: 'bca',
     image: '/bca.png',
@@ -74,27 +74,27 @@ const PaymentPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if(user === null){
-      retrieveCurrentUser()
+    if (user === null) {
+      retrieveCurrentUser();
     }
   }, [user]);
 
-  function retrieveCurrentUser(){
-    const token = Cookies.get("token");
+  function retrieveCurrentUser() {
+    const token = Cookies.get('token');
     fetchCurrentUserData(token!)
-      .then(res => {
-        setUser(res.user)
+      .then((res) => {
+        setUser(res.user);
       })
       .catch((error) => {
-        console.log(error)
-        toast.error("Oops!, Something went wrong");
+        console.log(error);
+        toast.error('Oops!, Something went wrong');
       });
   }
 
   useEffect(() => {
     const validateToken = async () => {
       const token = Cookies.get('token');
-      if(!token){
+      if (!token) {
         setIsAuthenticated(false);
         return;
       }
@@ -103,7 +103,7 @@ const PaymentPage = () => {
         await axios.post(apiURL + 'auth/validate-token', { token });
         setIsAuthenticated(true);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         setIsAuthenticated(false);
       }
     };
@@ -127,8 +127,8 @@ const PaymentPage = () => {
   }, []);
 
   const [isPaymentMethod, setIsPaymentMethod] = useState('');
-  
-  if( isAuthenticated === null ) {
+
+  if (isAuthenticated === null) {
     return (
       <Center w="100vw" h="100vh">
         <VStack gap="10">
@@ -136,8 +136,8 @@ const PaymentPage = () => {
           <LoadingLottie />
         </VStack>
       </Center>
-    )
-  };
+    );
+  }
   return isAuthenticated ? (
     <Box w="full" minH="100vh" pb="20" className="bg-slate-100">
       <VStack py="10" position="relative">
@@ -338,7 +338,9 @@ const PaymentPage = () => {
         </VStack>
       </VStack>
     </Box>
-  ) : <Navigate to="/login" replace />;
+  ) : (
+    <Navigate to="/login" replace />
+  );
 };
 
 export default PaymentPage;

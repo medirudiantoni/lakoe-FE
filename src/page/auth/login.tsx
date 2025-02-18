@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { apiURL } from '@/utils/baseurl';
 import LoadingButtonLottie from '@/components/icons/loading-button';
 import { useAuthStore } from '@/features/auth/store/auth-store';
+import { PasswordInput } from '@/components/ui/password-input';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),
@@ -43,10 +44,8 @@ export function Login() {
             setUser(data.user);
             console.log('text', data)
             Cookies.set('token', data.token);
-            data.user.stores ? navigate('/dashboard') : navigate('/register-store')
-
+            data.user.Stores ? navigate('/dashboard') : navigate('/register-store')
             return data.message;
-
           }
         })
         .catch((error) => {
@@ -56,7 +55,7 @@ export function Login() {
           setIsLoading(false);
         }),
       {
-        loading: 'Logging in...',
+        loading: 'Sedang login...',
         success: (message) => <div>{message}</div>,
         error: (err) => <div>{err}</div>,
       },
@@ -111,7 +110,8 @@ export function Login() {
             )}
           </Field>
           <Field label="Password" mt={5}>
-            <Input placeholder="Masukan password" {...register('password')} />
+          <PasswordInput placeholder="Masukan password" {...register('password')}/>
+          
             {errors.password && (
               <Text
                 color="red.500"

@@ -10,7 +10,7 @@ import LogoIcon from '@/components/icons/logo';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
 import toast from 'react-hot-toast';
-import LoadingLottie from '@/components/icons/Loading';
+import LoadingLottie from '@/components/icons/lottie';
 
 const PrivateRoute = () => {
   const { setUser, user } = useAuthStore();
@@ -46,7 +46,7 @@ const PrivateRoute = () => {
         await axios.post(apiURL + 'auth/validate-token', { token });
         setTimeout(() => {
           setIsAuthenticated(true);
-        }, 3000);
+        }, 500);
       } catch (error) {
         console.log(error);
         setIsAuthenticated(false);

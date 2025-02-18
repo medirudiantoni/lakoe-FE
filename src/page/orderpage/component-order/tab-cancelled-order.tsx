@@ -1,76 +1,94 @@
-import orders from '@/data-dummy/orders.json';
+import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import { Link } from 'react-router'; 
+import type { Order } from '@/features/auth/types/order.types';
 
-export function TabCancelledOrder() {
-  const canceled = orders[5];
-  {
-    return (
-      <Box
-        width="full"
-        border="1px solid"
-        borderColor="gray.200"
-        height="190px"
-        borderRadius="10px"
-        mt={3}
-        p={3}
-      >
-        <Box>
-          <Box
-            display={'flex'}
-            justifyContent={'space-between'}
-            borderBottom={'1px solid'}
-            borderColor={'gray.300'}
-            pb={2}
-          >
-            <Box>
-              <Button colorPalette={`${canceled.colorPalette}`}>
-                {canceled.status}
-              </Button>
-              <Text fontSize={'14px'} mt={2} color={'gray.400'}>
-                INV/20230809/MPL/00000239
-              </Text>
-            </Box>
-            <Button variant={'outline'} borderRadius={'20px'}>
-              Hubungi Pembeli
-            </Button>
-          </Box>
-          <Box
-            display={'flex'}
-            justifyContent={'space-between'}
-            alignItems={'center'}
-          >
-            <Box display={'flex'} alignItems={'center'}>
-              <Image
-                src={canceled.product.image}
-                width={'24'}
-                height={'24'}
-                borderRadius="md"
-                p={3}
-                mr={3}
-              />
-              <Box>
-                <Text fontSize="20px" fontWeight="bold">
-                  {canceled.product.name}
-                </Text>
-                <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                  <Text fontWeight={'semibold'}>
-                    Barang: {canceled.product.quantity}
-                  </Text>
-                </Flex>
+type TabNewOrderProps = {
+  orders: Order[];
+};
+
+export function TabCancelledOrder({ orders }: TabNewOrderProps) {
+  const [cancelledOrders, setCancelledOrders] = useState<Order[]>([]);
+
+  
+  useEffect(() => {
+    console.log('Received Orders:', orders); 
+    const filteredOrders = orders.filter(order => {
+      console.log('Order Status:', order.status); 
+      return order.status === 'Dibatalkan'; 
+    });
+
+    console.log('Filtered New Orders:', filteredOrders);
+    setCancelledOrders(filteredOrders);
+  }, [orders]); 
+
+  return (
+    <>
+      {cancelledOrders.length > 0 ? (
+        cancelledOrders.map((order) => {
+          const product = order.orderItems?.[0]?.product;
+
+          if (!product) {
+            return (
+              <Box key={order.id} width="full" border="1px solid" borderColor="gray.200" height="190px" borderRadius="10px" mt={3} p={3}>
+                <Text>Produk tidak ditemukan</Text>
               </Box>
-            </Box>
-            <Box
-              display={'flex'}
-              flexDirection={'column'}
-              justifyContent={'space-between'}
-              alignItems={'end'}
-            >
-              <Text>Total belanja</Text>
-              <Text fontWeight={'semibold'}>Rp.{canceled.product.price}</Text>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
-    );
-  }
+            );
+          }
+
+          return (
+            <Link to={`/order-detail/${order.id}`} key={order.id}>
+              <Box width="full" border="1px solid" borderColor="gray.200" height="190px" borderRadius="10px" mt={3} p={3}>
+                <Box>
+                  <Box display="flex" justifyContent="space-between" borderBottom="1px solid" borderColor="gray.300" pb={2}>
+                    <Box>
+                      <Button colorPalette="red">{order.status}</Button>
+                      <Text fontSize="14px" mt={2} color="gray.400">
+                        {order.invoice?.invoiceNumber || "No Invoice"}
+                      </Text>
+                    </Box>
+                    <Button variant="outline" borderRadius="20px">
+                      {order.status === 'Dibatalkan' ? 'Hubungi Pembeli' : 'Lihat Detail'}
+                    </Button>
+                  </Box>
+
+                  <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" alignItems="center">
+                      <Image
+                        src={product.attachments?.[0] || "https://via.placeholder.com/50"}
+                        width="50px"
+                        height="50px"
+                        borderRadius="md"
+                        mr={3}
+                        alt="Product Image"
+                      />
+                      <Box>
+                        <Text fontSize="20px" fontWeight="bold">
+                          {product.name || "Produk Tidak Diketahui"}
+                        </Text>
+                        <Flex fontSize="14px" fontWeight="normal" mt={1}>
+                          <Text fontWeight="semibold">
+                            Barang: {order.orderItems?.[0]?.quantity || 0}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    </Box>
+
+                    <Box display="flex" flexDirection="column" alignItems="end">
+                      <Text>Total belanja</Text>
+                      <Text fontWeight="semibold">
+                        Rp. {order.totalPrice?.toLocaleString("id-ID") || "0"}
+                      </Text>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Link>
+          );
+        })
+      ) : (
+        <Text>Tidak ada pesanan dibatalkan</Text>
+      )}
+    </>
+  );
 }

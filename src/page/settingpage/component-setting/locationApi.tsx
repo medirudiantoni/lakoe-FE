@@ -1,104 +1,83 @@
-import React, { useState, useEffect } from "react";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { Box, Button, Text } from '@chakra-ui/react';
+import L from 'leaflet';
+import "leaflet/dist/leaflet.css";
+import { useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 
-// Konfigurasi peta
-const containerStyle = {
-  width: "100%",
-  height: "300px",
-};
+const customIcon = new L.Icon({
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34]
+});
 
-const defaultCenter = {
-  lat: -6.200000, // Latitude default (Jakarta)
-  lng: 106.816666, // Longitude default (Jakarta)
-};
+function LocationMarker({ setCoordinates }: { setCoordinates: (coords: [number, number] | null) => void }) {
+  const [position, setPosition] = useState<[number, number] | null>(null);
 
-function MapComponent() {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyABI573pS7wll87-hiuVuF5hVTf9I7_3qs", 
+  useMapEvents({
+    click(e) {
+      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng];
+      setPosition(newPos);
+      setCoordinates(newPos);
+    },
   });
 
-  const [markerPosition, setMarkerPosition] = useState(defaultCenter);
-
-  // Fungsi untuk menangkap lokasi klik
-  const handleMapClick = (event: any) => {
-    setMarkerPosition({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-    });
-  };
-
-  // Fungsi untuk menangkap lokasi setelah marker digeser
-  const handleMarkerDragEnd = (event:any) => {
-    setMarkerPosition({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-    });
-  };
-
-  // Fungsi untuk mendapatkan lokasi pengguna menggunakan GPS
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setMarkerPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error mendapatkan lokasi:", error);
-          alert("Gagal mendapatkan lokasi. Pastikan GPS di perangkat Anda aktif.");
-        }
-      );
-    } else {
-      alert("Geolocation tidak didukung oleh browser Anda.");
-    }
-  };
-
-  // Ambil posisi saat ini ketika pertama kali komponen dimuat
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
-
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-      <h2 className="text-lg font-semibold mb-2">Pinpoint Lokasi</h2>
-      <p className="text-sm text-gray-500 mb-4">
-        Tandai lokasi untuk mempermudah permintaan pickup kurir
-      </p>
-      <button
-        className="px-4 py-2 bg-blue-500 text-white rounded mb-4 cursor-pointer"
-        onClick={getCurrentLocation}
-        
-      >
-        Gunakan Lokasi Saat Ini
-      </button>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={markerPosition}
-        zoom={15}
-        onClick={handleMapClick}
-      >
-        {/* Marker untuk menunjukkan lokasi dan draggable */}
-        <Marker
-          position={markerPosition}
-          draggable={true} // Buat marker bisa digeser
-          onDragEnd={handleMarkerDragEnd} // Tangkap posisi setelah marker digeser
-        />
-      </GoogleMap>
-      <div className="mt-4">
-        <p className="text-sm">
-          Lokasi saat ini: <br />
-          Latitude: <strong>{markerPosition.lat.toFixed(6)}</strong>, Longitude:{" "}
-          <strong>{markerPosition.lng.toFixed(6)}</strong>
-        </p>
-      </div>
-    </div>
+  return position === null ? null : (
+    <Marker position={position} icon={customIcon}>
+      <Popup>
+        Latitude: {position[0]} <br /> Longitude: {position[1]}
+      </Popup>
+    </Marker>
   );
 }
 
-export default MapComponent;
+export default function MapComponent({ setCoordinates }: { setCoordinates: (coords: [number, number] | null) => void }) {
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+
+  const handleGeolocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+          setCoordinates([latitude, longitude]); 
+          setSelectedCoordinates([latitude, longitude]); 
+        },
+        (error) => {
+          console.error("Error obtaining location:", error);
+        }
+      );
+    }
+  };
+
+  return (
+    <Box mt={4}>
+      <MapContainer center={userLocation || [-6.2088, 106.8456]} zoom={13} style={{ height: "300px", width: "100%" }}>
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {userLocation && (
+          <Marker position={userLocation} icon={customIcon}>
+            <Popup>Lokasi Anda</Popup>
+          </Marker>
+        )}
+        <LocationMarker
+          setCoordinates={(coords) => {
+            setCoordinates(coords);
+            setSelectedCoordinates(coords);
+          }}
+        />
+      </MapContainer>
+
+      <Button onClick={handleGeolocation} colorPalette="blue" my={2}>
+        Dapatkan Lokasi Saya
+      </Button>
+
+      {selectedCoordinates && (
+        <Box mt={2} p={2}>
+          <Text>Latitude: {selectedCoordinates[0]}</Text>
+          <Text>Longitude: {selectedCoordinates[1]}</Text>
+        </Box>
+      )}
+    </Box>
+  );
+}

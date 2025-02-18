@@ -12,12 +12,30 @@ import {
 import { Box, Button, Text } from '@chakra-ui/react';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
+import { useCheckboxStore, useProductStore} from '@/features/auth/store/product-store';
+import toast from 'react-hot-toast';
 
 export function DialogDelete() {
   const [open, setOpen] = useState(false);
+  const { selectedProducts, setSelectedProducts } = useCheckboxStore();
+  const { deleteProduct } = useProductStore();
+  const [ loading, setIsLoading ] = useState(false)
+
+  const handleDelete = async () => {
+    setIsLoading(true)
+    try {
+      await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
+      toast.success(`${selectedProducts.length} produk telah dihapus.`);
+      setSelectedProducts([]); 
+      setOpen(false);
+    } catch (error) {
+      toast.error('Gagal menghapus produk.');
+    }
+  };
+
   return (
     <Box>
-      <DialogRoot lazyMount open={open} onOpenChange={(e) => setOpen(e.open)}>
+      <DialogRoot lazyMount open={open} onOpenChange={(details) => setOpen(details.open)}>
         <DialogTrigger asChild>
           <Box
             border={'1px solid'}
@@ -32,7 +50,7 @@ export function DialogDelete() {
 
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus 5 Produk</DialogTitle>
+            <DialogTitle>Hapus {selectedProducts.length} Produk</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Text>
@@ -42,9 +60,9 @@ export function DialogDelete() {
           </DialogBody>
           <DialogFooter>
             <DialogActionTrigger asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             </DialogActionTrigger>
-            <Button colorPalette={'blue'}>Ya, Hapus</Button>
+            <Button colorPalette={'red'} onClick={handleDelete}>Ya, Hapus</Button>
           </DialogFooter>
           <DialogCloseTrigger />
         </DialogContent>

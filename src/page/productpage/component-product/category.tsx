@@ -1,4 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { fetchAllCategoryLevel1 } from "@/features/auth/services/category-service";
+import { CategoryType } from "@/features/auth/types/prisma-types";
 import {
   Box,
   Button,
@@ -7,21 +9,33 @@ import {
   MenuTrigger
 } from "@chakra-ui/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const categories = [
-  "Audio, Kamera & Elektronik",
-  "Buku",
-  "Dapur",
-  "Fashion Anak & Bayi",
-  "Fashion Muslim",
-  "Fashion Pria",
-  "Fashion Wanita",
-];
+type Props = {
+  onChangeData: (data: string[]) => void;
+}
 
-export default function Category() {
+const Category: React.FC<Props> = ({ onChangeData }) => {
+  const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const [isMenuOpen] = useState(false); 
+
+  useEffect(() => {
+    if (typeof onChangeData === "function") {
+      onChangeData(selectedCategories);
+    } else {
+      console.error("onChangeData is not a function", onChangeData);
+    }
+  }, [selectedCategories])
+
+  useEffect(() => {
+    retrieveAllCatLevel1();
+  }, []);
+
+  function retrieveAllCatLevel1(){
+    fetchAllCategoryLevel1()
+      .then((res: CategoryType[]) => setCategories([...res.map(e => e.name)]))
+  }
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -87,3 +101,5 @@ export default function Category() {
     </Box>
   );
 }
+
+export default Category;

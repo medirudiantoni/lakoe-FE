@@ -13,7 +13,7 @@ export function ColorModeProvider(props: ColorModeProviderProps) {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="light" // Tambahkan ini
+      defaultTheme="light" 
       disableTransitionOnChange
       {...props}
     />

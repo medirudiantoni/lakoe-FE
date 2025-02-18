@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@chakra-ui/react";
 import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from "@chakra-ui/react";
 import { ChevronDown } from "lucide-react";
 
-const SortingDropdown = () => {
+interface Props {
+  onChangeSortValue: (data: string) => void;
+}
+
+const SortingDropdown: React.FC<Props> = ({ onChangeSortValue }) => {
   const [selectedItem, setSelectedItem] = useState("Urutkan");
 
   const handleSelect = (value: string) => {
     setSelectedItem(value);
+    onChangeSortValue(value);
   };
 
   const menuItems = [
@@ -36,7 +41,7 @@ const SortingDropdown = () => {
           <MenuItem
             key={item.value}
             value={item.value}
-            onClick={() => handleSelect(item.label)}
+            onClick={() => handleSelect(item.value)}
             className={`flex items-center justify-between ${
               selectedItem === item.label ? "bg-blue-100 text-blue-600" : ""
             }`}

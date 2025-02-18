@@ -48,35 +48,55 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { LuCheck, LuPackage, LuShip } from 'react-icons/lu';
-import orders from '@/data-dummy/orders.json';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
 
 export function OrderDetail() {
   const { id } = useParams<{ id: string }>();
-  const order = orders.find((order) => order.id === id);
+ const { data, isLoading, isError } = useQuery({
+    queryKey: ['orders', id],
+    queryFn: async () => {
+      const response = await axios.get(`http://localhost:5000/api/v1/order/${id}`);
+      console.log(response.data); // Debugging
+      return response.data;
+    },
+    enabled: !!id, // Hanya jalankan query jika ID ada
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const getStatusColor = (status: string) => {
+    const statusColors: Record<string, string> = {
+      "Menunggu Pembayaran": "yellow",
+      "Pesanan Baru": "green",
+      "Siap Dikirim": "blue",
+      "Dalam Pengiriman": "orange",
+      "Pesanan Selesai": "black",
+      "Dibatalkan": "red",
+    };
+    return statusColors[status] || "gray";
+  };
   const toggleCollapsible = () => {
     setIsOpen(!isOpen);
   };
+  
 
-  if (!order) {
-    return (
-      <Box p={3} m={4} textAlign="center" color="red.500">
-        <p>Pesanan tidak ditemukan!</p>
-      </Box>
-    );
-  }
-
+  if (isLoading) return <Text>Loading...</Text>;
+  if (isError) return <Text>Error fetching orders</Text>;
   return (
-    <Box p={3} m={4}>
+    <>
+ {data?.order?.orderItems?.length > 0 ? (
+  data.order.orderItems.map((item: any, index: number) => {
+  
+  return (
+    <Box p={3} m={4}  key={index}>
       <BreadcrumbRoot>
         <BreadcrumbLink>
           <Link to="/order-list" className="text-blue-400">
             Daftar Pesanan
           </Link>
         </BreadcrumbLink>
-        <BreadcrumbCurrentLink>{order.product.name}</BreadcrumbCurrentLink>
+        <BreadcrumbCurrentLink>{item.name}</BreadcrumbCurrentLink>
       </BreadcrumbRoot>
       <Box
         width="full"
@@ -91,8 +111,8 @@ export function OrderDetail() {
         <Box display={'flex'} alignItems={'start'} gap={'2'}>
           <NotepadText color="#75757C" size={'35px'} />
           <Box>
-            <Button colorPalette={order.colorPalette} px={2}>
-              {order.status}
+            <Button colorPalette={getStatusColor(data.order.status)} px={2}>
+              {data.order.status}
             </Button>
             <Text fontSize={'14px'} mt={2}>
               Pesanan akan dibatalkan bila pembayaran tidak dilakukan sampai{' '}
@@ -180,7 +200,7 @@ export function OrderDetail() {
             <Calendar color="#75757C" size={'25px'} />
             <Text>Tanggal</Text>
           </Box>
-          <Text color={'#75757C'}>09 Agustus 2023 - 19:43 WIB</Text>
+          <Text color={'#75757C'}>{data.order.createdAt }</Text>
         </Box>
         <Box
           display={'flex'}
@@ -191,14 +211,14 @@ export function OrderDetail() {
             <NotepadTextDashed color="#75757C" size={'25px'} />
             <Text>Invoice</Text>
           </Box>
-          <ClipboardRoot value={`${order.invoice}`}>
+          <ClipboardRoot value={`${data.order.invoice.invoiceNumber }`}>
             <Flex alignItems={'center'} gap={'3'}>
               <ClipboardLink
                 color="blue.400"
                 textStyle="md"
                 cursor={'pointer'}
               />
-              <Text color={'#75757C'}>{order.invoice}</Text>
+              <Text color={'#75757C'}>{data.order.invoice.invoiceNumber }</Text>
             </Flex>
           </ClipboardRoot>
         </Box>
@@ -212,7 +232,7 @@ export function OrderDetail() {
             <Text>Pembeli</Text>
           </Box>
           {/* <WhatsappIcon/> */}
-          <Text color={'#75757C'}>Marco</Text>
+          <Text color={'#75757C'}>{data.order.invoice.receiverName }</Text>
         </Box>
       </Box>
 
@@ -249,7 +269,7 @@ export function OrderDetail() {
             >
               <Box display={'flex'} alignItems={'center'}>
                 <Image
-                  src={order.product.image}
+                  src={item.image?.[0]|| "https://via.placeholder.com/50"}
                   width={'24'}
                   height={'24'}
                   borderRadius="md"
@@ -259,7 +279,7 @@ export function OrderDetail() {
                 />
                 <Box>
                   <Text fontSize="20px" fontWeight="bold">
-                    {order.product.name}
+                    {item.name}
                   </Text>
                   <Flex fontSize="14px" fontWeight="normal" mt={1}>
                     <Text
@@ -267,8 +287,8 @@ export function OrderDetail() {
                       display={'flex'}
                       alignItems={'center'}
                     >
-                      {order.product.quantity} <X size={'16px'} /> Rp.
-                      {order.product.price}
+                      {item.quantity} <X size={'16px'} /> Rp.
+                      {item.price}
                     </Text>
                   </Flex>
                 </Box>
@@ -280,7 +300,7 @@ export function OrderDetail() {
                 alignItems={'end'}
               >
                 <Text>Total belanja</Text>
-                <Text fontWeight={'semibold'}>Rp.{order.product.price}</Text>
+                <Text fontWeight={'semibold'}>Rp.{data.order.invoice.price.toLocaleString("id-ID")}</Text>
               </Box>
             </Box>
           </Box>
@@ -328,11 +348,11 @@ export function OrderDetail() {
                   <GridItem display={'flex'} flexDirection={'column'} gap={'3'}>
                     <Box>
                       <Text>Kurir</Text>
-                      <Text fontWeight={'bold'}>J&T Express</Text>
+                      <Text fontWeight={'bold'}>{data.order.courier}</Text>
                     </Box>
                     <Box>
                       <Text>No Resi</Text>
-                      <Text fontWeight={'bold'}>JT6268865922</Text>
+                      <Text fontWeight={'bold'}>{data.order.invoice.waybill}</Text>
                     </Box>
                     <Box>
                       <Text>Pengiriman</Text>
@@ -343,10 +363,9 @@ export function OrderDetail() {
                     <Box>
                       <Text>Penerima</Text>
                       <Box>
-                        <Text fontWeight={'bold'}>Marco</Text>
+                        <Text fontWeight={'bold'}>{data.order.invoice.receiverName}</Text>
                         <Text>
-                          Jl. Elang IV, Sawah Lama, Kec. Ciputat, Kota Tangerang
-                          Selatan, Banten 15413
+                        {data.order.recipientAddress}
                         </Text>
                       </Box>
                     </Box>
@@ -354,7 +373,7 @@ export function OrderDetail() {
                 </Grid>
                 <Text mt={'5'}>
                   Status:{' '}
-                  <span className="font-bold">Dalam Proses Pengiriman</span>
+                  <span className="font-bold">{data.order.invoice.status}</span>
                 </Text>
                 <Box
                   border="1px solid"
@@ -414,7 +433,7 @@ export function OrderDetail() {
         <Grid templateColumns="1fr 3fr">
           <GridItem display={'flex'} flexDirection={'column'} gap={2}>
             <Text color={'#75757C'}>Kurir</Text>
-            <ClipboardRoot value={`JnT Express`}>
+            <ClipboardRoot value={`${data.order.courier}`}>
               <Flex alignItems={'center'} gap={'3'}>
                 <Text color={'#75757C'}>No Resi</Text>
                 <ClipboardLink
@@ -438,15 +457,14 @@ export function OrderDetail() {
             </ClipboardRoot>
           </GridItem>
           <GridItem display={'flex'} flexDirection={'column'} gap={2}>
-            <Text>JnT Express</Text>
-            <Text>-</Text>
+            <Text>{data.order.courier}</Text>
+            <Text>{data.order.invoice.waybill}</Text>
             <Box>
               <Text>
-                Jl. Elang IV, Sawah Lama, Kec. Ciputat, Kota Tangerang Selatan,
-                Banten 15413
+              {data.order.recipientAddress}
               </Text>
-              <Text>081234567890</Text>
-              <Text>Marco</Text>
+              <Text>  {data.order.invoice.receiverPhone}</Text>
+              <Text>{data.order.invoice.receiverName}</Text>
             </Box>
           </GridItem>
         </Grid>
@@ -481,12 +499,12 @@ export function OrderDetail() {
           pb={'5'}
         >
           <Box display={'flex'} justifyContent={'space-between'}>
-            <Text>Total Harga (1 barang)</Text>
-            <Text fontWeight={'bold'}>Rp.190.000</Text>
+          <Text>Total Harga ({item.quantity} barang)</Text>
+            <Text fontWeight={'bold'}>Rp.{`${data.order.invoice.price.toLocaleString("id-ID")}`}</Text>
           </Box>
           <Box display={'flex'} justifyContent={'space-between'}>
-            <Text>Total Ongkos Kirim(10kg)</Text>
-            <Text fontWeight={'bold'}>Rp.10.000</Text>
+            <Text>Total Ongkos Kirim({item.weight} gram)</Text>
+            <Text fontWeight={'bold'}>{`${data.order.invoice.serviceCharge.toLocaleString("id-ID")}`}</Text>
           </Box>
           <Box display={'flex'} justifyContent={'space-between'}>
             <Text>Diskon</Text>
@@ -504,9 +522,14 @@ export function OrderDetail() {
           fontSize={'24px'}
         >
           <Text>Total Penjualan</Text>
-          <Text>Rp.200.000</Text>
+          <Text>  Rp.{`${(data.order.totalPrice).toLocaleString("id-ID")}`}</Text>
         </Box>
       </Box>
     </Box>
   );
-}
+})
+): (
+  <Text>Tidak ada pesanan</Text>
+)}
+</>
+  )}

@@ -4,7 +4,7 @@ import { CopyrightIcon } from "lucide-react";
 
 export default function SellerFooter(){
     return (
-        <footer className="w-full bg-neutral-300 font-poppins">
+        <footer className="w-full bg-[#F4F4FB] font-poppins px-5 lg:px-10">
                 <Box maxW="7xl" mx="auto" py="10">
 
                     <Flex justifyContent="space-between" pb="4" borderBottomWidth={2} borderBottomColor="gray.800">
