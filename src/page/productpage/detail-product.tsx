@@ -29,24 +29,23 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate, useParams } from 'react-router';
-import CategoryDropdown from './component-product/category-detail-product';
 import { Variant } from './add-product-component/sub-variant';
+import CategoryDropdown from './component-product/category-detail-product';
 export function Detailproduct() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     setValue,
     watch,
   } = useForm<ProductType>();
 
   const { id } = useParams<{ id: string }>();
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [fetching, setIsFetching] = useState(false);
+  const [, setIsFetching] = useState(false);
   const { user } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { fetchCategories, selectedCategoryId } = useCategoryStore();
+  const { selectedCategoryId } = useCategoryStore();
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null);
   const [previewImages, setPreviewImages] = useState<string[]>(
     Array(5).fill('')
@@ -78,7 +77,7 @@ export function Detailproduct() {
       setValue('stock', product.stock || 0);
       setValue('sku', product.sku || '');
       setValue('weight', product.weight || 0);
-      setValue('minimumOrder', product.minimumOrder || '');
+      setValue('minimumOrder', product.minimumOrder || 0);
       setValue('categoryId', product.categoryId || '');
 
       if (product.attachments && Array.isArray(product.attachments)) {
@@ -118,11 +117,11 @@ export function Detailproduct() {
   //     toast.error('Product ID tidak ditemukan');
   //     return;
   //   }
-  
+
   //   setIsLoading(true);
   //   const storeId = user?.Stores?.id;
   //   const categoryId = selectedCategoryId;
-  
+
   //   const formData = new FormData();
   //   formData.append('name', data.name);
   //   formData.append('url', data.url);
@@ -132,14 +131,14 @@ export function Detailproduct() {
   //   formData.append('sku', data.sku!.toString());
   //   formData.append('weight', data.weight!.toString());
   //   formData.append('minimumOrder', data.minimumOrder!.toString());
-  
+
   //   if (storeId) {
   //     formData.append('storeId', storeId);
   //   }
   //   if (categoryId) {
   //     formData.append('categoryId', categoryId);
   //   }
-  
+
   //   console.log('Selected Files sebelum submit:', selectedFiles);
   //   let allAttachments: (File | string)[] = [];
 
@@ -147,12 +146,12 @@ export function Detailproduct() {
   //   if (product.attachments && Array.isArray(product.attachments)) {
   //     allAttachments = [...product.attachments];
   //   }
-    
+
   //   // Pastikan selectedFiles tidak null sebelum spread
   //   if (selectedFiles && selectedFiles.length > 0) {
   //     allAttachments = [...selectedFiles];
   //   }
-    
+
   //   // Pastikan attachments tetap ada jika tidak ada file baru
   //   allAttachments.forEach((attachment) => {
   //     if (attachment instanceof File) {
@@ -161,8 +160,7 @@ export function Detailproduct() {
   //       formData.append('existingAttachments', attachment); // Kirim URL gambar lama ke backend
   //     }
   //   });
-    
-  
+
   //   toast
   //     .promise(
   //       updateProduct(formData, product.id)
@@ -183,7 +181,6 @@ export function Detailproduct() {
   //       setIsLoading(false);
   //     });
   // };
-  
 
   // const handleFileChange = (
   //   event: React.ChangeEvent<HTMLInputElement>,
@@ -215,76 +212,76 @@ export function Detailproduct() {
   //   }
   // };
 
-const onSubmit = async (data: ProductType) => {
-  if (!product) {
-    toast.error('Product ID tidak ditemukan');
-    return;
-  }
-
-  setIsLoading(true);
-  const storeId = user?.Stores?.id;
-  const categoryId = selectedCategoryId;
-
-  const formData = new FormData();
-  formData.append('name', data.name);
-  formData.append('url', data.url);
-  formData.append('description', data.description);
-  formData.append('price', data.price!.toString());
-  formData.append('stock', data.stock!.toString());
-  formData.append('sku', data.sku!.toString());
-  formData.append('weight', data.weight!.toString());
-  formData.append('minimumOrder', data.minimumOrder!.toString());
-
-  if (storeId) {
-    formData.append('storeId', storeId);
-  }
-  if (categoryId) {
-    formData.append('categoryId', categoryId);
-  }
-
-  console.log('Selected Files sebelum submit:', selectedFiles);
-  let allAttachments: (File | string)[] = [];
-
-  // Gabungkan gambar lama
-  if (product.attachments && Array.isArray(product.attachments)) {
-    allAttachments = [...product.attachments];
-  }
-
-  // Gabungkan gambar baru jika ada
-  if (selectedFiles && selectedFiles.length > 0) {
-    allAttachments = [...allAttachments, ...selectedFiles]; // Gabungkan dengan gambar baru
-  }
-
-  // Tambahkan ke formData
-  allAttachments.forEach((attachments) => {
-    if (attachments instanceof File) {
-      formData.append('attachments', attachments); // Tambahkan gambar baru
-    } else {
-      formData.append('existingAttachments', attachments); // Kirim URL gambar lama ke backend
+  const onSubmit = async (data: ProductType) => {
+    if (!product) {
+      toast.error('Product ID tidak ditemukan');
+      return;
     }
-  });
 
-  console.log('allattachments:', allAttachments)
-  toast
-    .promise(
-      updateProduct(formData, product.id)
-        .then((response) => {
-          setProducts(response.data);
-          navigate('/product');
-        })
-        .catch((error) => {
-          throw error;
-        }),
-      {
-        loading: 'Memperbarui Produk...',
-        success: 'Produk berhasil diperbarui',
-        error: 'Gagal memperbarui produk',
+    setIsLoading(true);
+    const storeId = user?.Stores?.id;
+    const categoryId = selectedCategoryId;
+
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('url', data.url);
+    formData.append('description', data.description);
+    formData.append('price', data.price!.toString());
+    formData.append('stock', data.stock!.toString());
+    formData.append('sku', data.sku!.toString());
+    formData.append('weight', data.weight!.toString());
+    formData.append('minimumOrder', data.minimumOrder!.toString());
+
+    if (storeId) {
+      formData.append('storeId', storeId);
+    }
+    if (categoryId) {
+      formData.append('categoryId', categoryId);
+    }
+
+    console.log('Selected Files sebelum submit:', selectedFiles);
+    let allAttachments: (File | string)[] = [];
+
+    // Gabungkan gambar lama
+    if (product.attachments && Array.isArray(product.attachments)) {
+      allAttachments = [...product.attachments];
+    }
+
+    // Gabungkan gambar baru jika ada
+    if (selectedFiles && selectedFiles.length > 0) {
+      allAttachments = [...allAttachments, ...selectedFiles]; // Gabungkan dengan gambar baru
+    }
+
+    // Tambahkan ke formData
+    allAttachments.forEach((attachments) => {
+      if (attachments instanceof File) {
+        formData.append('attachments', attachments); // Tambahkan gambar baru
+      } else {
+        formData.append('existingAttachments', attachments); // Kirim URL gambar lama ke backend
       }
-    )
-    .finally(() => {
-      setIsLoading(false);
     });
-};
+
+    console.log('allattachments:', allAttachments);
+    toast
+      .promise(
+        updateProduct(formData, product.id)
+          .then((response) => {
+            setProducts(response.data);
+            navigate('/product');
+          })
+          .catch((error) => {
+            throw error;
+          }),
+        {
+          loading: 'Memperbarui Produk...',
+          success: 'Produk berhasil diperbarui',
+          error: 'Gagal memperbarui produk',
+        }
+      )
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -293,29 +290,29 @@ const onSubmit = async (data: ProductType) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const newFile = files[0];
-  
+
       const newPreviewImages = [...previewImages];
       newPreviewImages[index] = URL.createObjectURL(newFile);
       setPreviewImages(newPreviewImages);
-  
+
       const newFiles = selectedFiles ? [...selectedFiles] : [];
       newFiles[index] = newFile;
       setSelectedFiles(newFiles);
     }
   };
-  
+
   const handleRemoveImage = (index: number) => {
     const newPreviewImages = [...previewImages];
     newPreviewImages[index] = '';
     setPreviewImages(newPreviewImages);
-  
+
     if (selectedFiles) {
       const newFiles = [...selectedFiles];
       newFiles.splice(index, 1);
       setSelectedFiles(newFiles);
     }
   };
-  
+
   return (
     <Box>
       <BreadcrumbRoot p={3} m={4} pb={0}>
@@ -486,7 +483,7 @@ const onSubmit = async (data: ProductType) => {
               </Button>
             </Link>
           </Box>
-        <Variant/>
+          <Variant />
         </Box>
         <Box
           p={3}

@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { MenuRoot, MenuItem, MenuContent, Box, Text, Button, MenuTrigger, VStack, HStack, Circle } from '@chakra-ui/react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useCategoryStore } from '@/features/auth/store/category-store';
+import {
+  Box,
+  Button,
+  Circle,
+  HStack,
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 type Category = {
   id: string;

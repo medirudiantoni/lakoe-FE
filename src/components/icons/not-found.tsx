@@ -1,6 +1,6 @@
-import Lottie from 'lottie-react';
 import animationData from '@/assets/404-not-found.json';
 import { Box } from '@chakra-ui/react';
+import Lottie from 'lottie-react';
 
 const LottieNotFound = () => {
   return (

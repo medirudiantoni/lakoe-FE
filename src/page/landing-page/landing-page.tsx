@@ -1,4 +1,10 @@
+import Independensi from '@/assets/independensi.png';
+import kendaliPenuh from '@/assets/kendali-penuh.png';
+import loyalitas from '@/assets/loyalitas.png';
+import RippleButton from '@/components/Button/Ripple.button';
 import CurveSection from '@/components/curve-section/curve-section';
+import Footer from '@/components/landingPage/Footer';
+import Navbar_Landing_page from '@/components/landingPage/Navbar_Landing_page';
 import {
   Badge,
   Box,
@@ -10,12 +16,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router';
-import kendaliPenuh from '@/assets/kendali-penuh.png';
-import loyalitas from '@/assets/loyalitas.png';
-import Independensi from '@/assets/independensi.png';
-import Navbar_Landing_page from '@/components/landingPage/Navbar_Landing_page';
-import Footer from '@/components/landingPage/Footer';
-import RippleButton from '@/components/Button/Ripple.button';
 
 const Button_MulaiSekarang = () => {
   const navigate = useNavigate();

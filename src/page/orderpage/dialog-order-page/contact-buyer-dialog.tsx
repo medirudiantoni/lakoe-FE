@@ -1,18 +1,16 @@
-import React from 'react';
 import {
-  
-    DialogBody,
-    DialogCloseTrigger,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogRoot,
-    DialogTrigger,
-  } from '@/components/ui/dialog';
-  import { Textarea, Button, } from '@chakra-ui/react';
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button, Textarea } from '@chakra-ui/react';
+import React from 'react';
 
-
-  interface ContactBuyerDialogProps {
+interface ContactBuyerDialogProps {
   isOpen: boolean;
   onClose: () => void;
   message: string;
@@ -24,7 +22,7 @@ const ContactBuyerDialog: React.FC<ContactBuyerDialogProps> = ({
   message,
 }) => {
   const handleCopy = () => {
-    navigator.clipboard.writeText(message); 
+    navigator.clipboard.writeText(message);
     alert('Pesan disalin ke clipboard!');
   };
 

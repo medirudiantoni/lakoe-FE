@@ -1,32 +1,46 @@
-import { useState, useEffect } from "react";
-import { Box, Button, MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@chakra-ui/react";
-import { ChevronDown } from "lucide-react";
-import { Field } from "@/components/ui/field";
-import { fetchDistrict } from "@/features/auth/services/data-territory";
-import Cookies from "js-cookie";
-import { VillageSelector } from "./village-selector";
+import { Field } from '@/components/ui/field';
+import { fetchDistrict } from '@/features/auth/services/data-territory';
+import {
+  Box,
+  Button,
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@chakra-ui/react';
+import Cookies from 'js-cookie';
+import { ChevronDown } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { VillageSelector } from './village-selector';
 
 interface DistrictSelectorProps {
   citiesId: string | null;
   selectedDistrict: { id: string; name: string } | null;
   setSelectedDistrict: (district: { id: string; name: string } | null) => void;
-  selectedVillage: { id: string; name: string; postal_code:string; } | null;
-  setSelectedVillage: (village: { id: string; name: string; postal_code:string } | null) => void;
+  selectedVillage: { id: string; name: string; postal_code: string } | null;
+  setSelectedVillage: (
+    village: { id: string; name: string; postal_code: string } | null
+  ) => void;
 }
 
-export function DistrictSelector({ citiesId, selectedDistrict, setSelectedDistrict, selectedVillage, setSelectedVillage  }: DistrictSelectorProps) {
+export function DistrictSelector({
+  citiesId,
+  selectedDistrict,
+  setSelectedDistrict,
+  selectedVillage,
+  setSelectedVillage,
+}: DistrictSelectorProps) {
   const [district, setDistrict] = useState<{ id: string; name: string }[]>([]);
   const [loadingdistrict, setLoadingdistrict] = useState(false);
 
-
   useEffect(() => {
-    if (!citiesId) return; 
+    if (!citiesId) return;
 
     const fetchDistrictData = async () => {
       setLoadingdistrict(true);
-      const token = Cookies.get("token");
+      const token = Cookies.get('token');
       if (!token) {
-        console.error("No token found");
+        console.error('No token found');
         setLoadingdistrict(false);
         return;
       }
@@ -42,7 +56,7 @@ export function DistrictSelector({ citiesId, selectedDistrict, setSelectedDistri
           );
         }
       } catch (error) {
-        console.error("Failed to fetch district:", error);
+        console.error('Failed to fetch district:', error);
       } finally {
         setLoadingdistrict(false);
       }
@@ -53,42 +67,56 @@ export function DistrictSelector({ citiesId, selectedDistrict, setSelectedDistri
 
   return (
     <Box>
-      <MenuRoot >
-      <MenuTrigger asChild mt={5}>
-        <Field label="Kecamatan" required>
-          <Button
-            variant="outline"
-            width="100%"
-            display="flex"
-            justifyContent="space-between"
-            disabled={!citiesId} 
+      <MenuRoot>
+        <MenuTrigger asChild mt={5}>
+          <Field label="Kecamatan" required>
+            <Button
+              variant="outline"
+              width="100%"
+              display="flex"
+              justifyContent="space-between"
+              disabled={!citiesId}
+            >
+              <span className="font-normal">
+                {loadingdistrict
+                  ? 'Loading...'
+                  : selectedDistrict?.name || 'Pilih Kecamatan'}
+              </span>
+              <ChevronDown />
+            </Button>
+          </Field>
+        </MenuTrigger>
+        {citiesId && (
+          <MenuContent
+            position="absolute"
+            width="full"
+            maxHeight="200px"
+            overflowY="auto"
+            bg="white"
           >
-            <span className="font-normal">
-              {loadingdistrict ? "Loading..." : selectedDistrict?.name || "Pilih Kecamatan"}
-            </span>
-            <ChevronDown />
-          </Button>
-        </Field>
-      </MenuTrigger>
-      {citiesId && (
-        <MenuContent position="absolute" width="full" maxHeight="200px" overflowY="auto" bg="white">
-          {district.length > 0 ? (
-            district.map((district) => (
-              <MenuItem value="item" key={district.id} onClick={() => setSelectedDistrict(district)}>
-                {district.name}
+            {district.length > 0 ? (
+              district.map((district) => (
+                <MenuItem
+                  value="item"
+                  key={district.id}
+                  onClick={() => setSelectedDistrict(district)}
+                >
+                  {district.name}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem value="item" disabled>
+                {loadingdistrict ? 'Memuat...' : 'Tidak ada data tersedia'}
               </MenuItem>
-            ))
-          ) : (
-            <MenuItem value="item" disabled>{loadingdistrict ? "Memuat..." : "Tidak ada data tersedia"}</MenuItem>
-          )}
-        </MenuContent>
-      )}
-    </MenuRoot>
-    <VillageSelector districtId={selectedDistrict?.id || null}
-      selectedVillage={selectedVillage}
-      setSelectedVillage={setSelectedVillage}
-    />
+            )}
+          </MenuContent>
+        )}
+      </MenuRoot>
+      <VillageSelector
+        districtId={selectedDistrict?.id || null}
+        selectedVillage={selectedVillage}
+        setSelectedVillage={setSelectedVillage}
+      />
     </Box>
-
   );
 }

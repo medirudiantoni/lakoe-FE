@@ -14,12 +14,12 @@ import { Box, Button, Grid, GridItem, Text, Textarea } from '@chakra-ui/react';
 import { NotebookPen, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 
 import LoadingButtonLottie from '@/components/icons/loading-button';
+import { Switch } from '@/components/ui/switch';
 import {
   createLocationBuyer,
   deleteLocationBuyer,
@@ -27,10 +27,9 @@ import {
   updateLocationBuyer,
 } from '@/features/auth/services/location-buyer-service';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
+import { useSellerStore } from '@/hooks/store';
 import MapComponent from '@/page/settingpage/component-setting/locationApi';
 import { LocationSelector } from '@/page/settingpage/data-territory/province';
-import { Switch } from '@/components/ui/switch';
-import { useSellerStore } from '@/hooks/store';
 
 interface Location {
   id: string;
@@ -72,8 +71,8 @@ export function LocationSetting() {
   const [editLocationId, setEditLocationId] = useState<string | null>(null);
   const [editAddress, setEditAddress] = useState('');
   const [editName, setEditName] = useState('');
-  const [editCityDistrict, setEditCityDistrict] = useState('');
-  const [editPostalCode, setEditPostalCode] = useState('');
+  const [editCityDistrict] = useState('');
+  const [editPostalCode] = useState('');
   const [editCoordinates, setEditCoordinates] = useState<
     [number, number] | null
   >(null);
@@ -82,10 +81,8 @@ export function LocationSetting() {
   const [name, setName] = useState('');
   const queryClient = useQueryClient();
   const { buyer } = useAuthBuyerStore();
-  const { user } = useAuthStore();
   const { store } = useSellerStore();
   const token = Cookies.get(`token-buyer-${store?.name}`);
-  const storeId = user?.Stores?.id;
   const buyerId = buyer?.id;
   const { data, isLoading, isError } = useQuery({
     queryKey: ['locations-buyer', buyerId],
@@ -208,39 +205,39 @@ export function LocationSetting() {
   const removeMainLocationMutation = useMutation({
     mutationFn: async (locationId: string) => {
       if (!token) throw new Error('Unauthorized');
-  
+
       const formData = new FormData();
       formData.append('isMainLocation', 'false');
-  
+
       return updateLocationBuyer(formData, locationId, token);
     },
   });
-  
+
   const setMainLocationMutation = useMutation({
     mutationFn: async (locationId: string) => {
       if (!token) throw new Error('Unauthorized');
-  
+
       const formData = new FormData();
       formData.append('isMainLocation', 'true');
-  
+
       return updateLocationBuyer(formData, locationId, token);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations-buyer'] });
     },
   });
-  
+
   const handleToggleMainLocation = async (locationId: string) => {
     const previousMainLocation = data.locations.find(
       (location: Location) => location.isMainLocation
     );
-  
+
     await toast.promise(
       (async () => {
         if (previousMainLocation) {
           await removeMainLocationMutation.mutateAsync(previousMainLocation.id);
         }
-  
+
         await setMainLocationMutation.mutateAsync(locationId);
       })(),
       {
@@ -250,8 +247,6 @@ export function LocationSetting() {
       }
     );
   };
-  
-  
 
   const handleOpenEdit = (location: Location) => {
     setEditLocationId(location.id);
@@ -382,18 +377,18 @@ export function LocationSetting() {
                 </Box>
 
                 {location.isMainLocation && (
-                    <Box
-                      bg={'#3E5879'}
-                      color={'white'}
-                      py={'2'}
-                      px={'5'}
-                      fontSize={'12px'}
-                      width={'180px'}
-                      borderRadius={'7px'}
-                    >
-                      <Text textAlign={'center'}>Alamat Utama</Text>
-                    </Box>
-                  )}
+                  <Box
+                    bg={'#3E5879'}
+                    color={'white'}
+                    py={'2'}
+                    px={'5'}
+                    fontSize={'12px'}
+                    width={'180px'}
+                    borderRadius={'7px'}
+                  >
+                    <Text textAlign={'center'}>Alamat Utama</Text>
+                  </Box>
+                )}
               </GridItem>
 
               <GridItem>
@@ -496,12 +491,8 @@ export function LocationSetting() {
                     checked={location.isMainLocation}
                     onChange={() => handleToggleMainLocation(location.id)}
                   />
-
-
                 </Box>
-                <Box display="flex" justifyContent="end" gap={2} pr={3}>
-      
-                </Box>
+                <Box display="flex" justifyContent="end" gap={2} pr={3}></Box>
               </GridItem>
             </Grid>
           ))

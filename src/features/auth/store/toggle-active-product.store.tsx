@@ -15,7 +15,9 @@ export const useProductStore = create<ProductStore>((set) => ({
     set((state) => ({
       products: state.products
         ? state.products.map((product) =>
-            product.id === productId ? { ...product, isActive: newStatus } : product
+            product.id === productId
+              ? { ...product, isActive: newStatus }
+              : product
           )
         : null,
     })),

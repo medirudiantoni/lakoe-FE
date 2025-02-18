@@ -11,21 +11,21 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import SellerFooter from '../components/footer';
 import { useNavigate } from 'react-router';
+import SellerFooter from '../components/footer';
 // import { Radio, RadioGroup } from '@/components/ui/radio';
 // import { eWallets, virtualAccount } from '@/page/payment-page/PaymentPage';
-import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, CheckIcon } from 'lucide-react';
 import LoadingButtonLottie from '@/components/icons/loading-button';
+import { ArrowLeft, CheckIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 // import toast from 'react-hot-toast';
-import { useSellerStore } from '@/hooks/store';
-import axios from 'axios';
-import { apiURL } from '@/utils/baseurl';
-import { LocationSettingCheckout } from './user/location-checkout';
-import { useMutation } from '@tanstack/react-query';
-import { formatRupiah } from '@/lib/rupiah';
 import { useProductStore } from '@/features/auth/store/product-store';
+import { useSellerStore } from '@/hooks/store';
+import { formatRupiah } from '@/lib/rupiah';
+import { apiURL } from '@/utils/baseurl';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { LocationSettingCheckout } from './user/location-checkout';
 
 type Courier = {
   courier_name: string;
@@ -58,8 +58,11 @@ const SellerCheckoutPage = () => {
   const { products } = useProductStore();
 
   useEffect(() => {
-    const total = products.reduce((prev, curr) => prev + curr.price * curr.quantity, 0)
-    setTotalProductPrice(total)
+    const total = products.reduce(
+      (prev, curr) => prev + curr.price * curr.quantity,
+      0
+    );
+    setTotalProductPrice(total);
   }, [products]);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -96,14 +99,14 @@ const SellerCheckoutPage = () => {
         return;
       }
 
-      let dataOrderItem: { name: string, value: number }[] = [];
-      products.map(item => {
+      let dataOrderItem: { name: string; value: number }[] = [];
+      products.map((item) => {
         const itemToOrder = {
           name: item.name,
-          value: item.price * item.quantity
+          value: item.price * item.quantity,
         };
-        dataOrderItem.push(itemToOrder)
-      })
+        dataOrderItem.push(itemToOrder);
+      });
 
       const body = {
         origin_postal_code: selectedLocation.postalCode,
@@ -211,7 +214,7 @@ const SellerCheckoutPage = () => {
                 Produk yang ingin dicheckout
               </Heading>
 
-              {products.map(product => (
+              {products.map((product) => (
                 <Box display={'flex'} alignItems={'center'} gap={5} mb={2}>
                   <Image src={product?.image} width={'70px'} />
                   <Box
@@ -227,7 +230,9 @@ const SellerCheckoutPage = () => {
                       <Text color={'gray.400'}>{product?.category}</Text>
                     </Box>
                     <HStack w={'2/6'} justifyContent="space-between">
-                      <Text fontWeight={'medium'} color={'gray.600'}>{product.quantity}x</Text>
+                      <Text fontWeight={'medium'} color={'gray.600'}>
+                        {product.quantity}x
+                      </Text>
                       <Text fontSize={'18px'} fontWeight={'semibold'}>
                         {formatRupiah(`${product?.price * product.quantity}`)}
                       </Text>
@@ -235,7 +240,6 @@ const SellerCheckoutPage = () => {
                   </Box>
                 </Box>
               ))}
-
             </Box>
 
             {/* Alamat Pengiriman start */}
@@ -301,7 +305,8 @@ const SellerCheckoutPage = () => {
                                 </span>
                               </Text>
                               <Text fontSize={'12px'} color={'gray.500'}>
-                                Estimasi: {c.duration.replace('days', 'hari')}{' '}
+                                Estimasi:{' '}
+                                {c.duration.replace('days', 'hari')}{' '}
                               </Text>
                             </Box>
                           ))}
@@ -359,7 +364,7 @@ const SellerCheckoutPage = () => {
                           (c) =>
                             c.courier_name === courier.courier_name &&
                             c.courier_service_name ===
-                            courier.courier_service_name
+                              courier.courier_service_name
                         ) && <CheckIcon />}
                       </HStack>
                     ))}
@@ -436,7 +441,10 @@ const SellerCheckoutPage = () => {
                   >
                     {formatRupiah(
                       (totalProductPrice ?? 0) +
-                      selectedCouriers.reduce((total, c) => total + (c.price ?? 0), 0)
+                        selectedCouriers.reduce(
+                          (total, c) => total + (c.price ?? 0),
+                          0
+                        )
                     )}
                   </Table.ColumnHeader>
                 </Table.Row>

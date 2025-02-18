@@ -1,9 +1,9 @@
+import { useSellerStore } from '@/hooks/store';
+import { Button } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 import React from 'react';
 import { toast } from 'react-hot-toast';
-import { Button } from '@chakra-ui/react';
 import { useNavigate } from 'react-router';
-import Cookies from 'js-cookie';
-import { useSellerStore } from '@/hooks/store';
 
 interface LogoutButtonProps {
   onClick?: () => void;
@@ -11,11 +11,11 @@ interface LogoutButtonProps {
 
 const LogoutButtonBuyer: React.FC<LogoutButtonProps> = ({ onClick }) => {
   const navigate = useNavigate();
-  const {store} = useSellerStore();
+  const { store } = useSellerStore();
 
   const handleLogout = () => {
     Cookies.remove(`token-buyer-${store?.name}`);
-  
+
     toast.success('Anda telah Logout', {
       style: {
         background: '#FFFF',
@@ -31,7 +31,12 @@ const LogoutButtonBuyer: React.FC<LogoutButtonProps> = ({ onClick }) => {
   };
 
   return (
-    <Button outline={'none'} colorPalette={'red'} onClick={handleLogout} mb={'24'}>
+    <Button
+      outline={'none'}
+      colorPalette={'red'}
+      onClick={handleLogout}
+      mb={'24'}
+    >
       <span>Logout</span>
     </Button>
   );

@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { OrderItemType, ProductType, VariantOptionValueType } from "../types/prisma-types";
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { OrderItemType, VariantOptionValueType } from '../types/prisma-types';
 
 interface ProductSelectionState {
   selectedProducts: string[];
@@ -15,7 +15,9 @@ interface ProductStore {
   selectedVariantOption?: VariantOptionValueType;
   setProducts: (products: OrderItemType[]) => void;
   setSelectedProduct: (product: OrderItemType | undefined) => void;
-  setSelectedVariantOption: (variant: VariantOptionValueType | undefined) => void;
+  setSelectedVariantOption: (
+    variant: VariantOptionValueType | undefined
+  ) => void;
 }
 
 export const useCheckboxStore = create(
@@ -36,7 +38,7 @@ export const useCheckboxStore = create(
         })),
     }),
     {
-      name: "checkbox-store",
+      name: 'checkbox-store',
       storage: createJSONStorage(() => localStorage), // ✅ Perbaikan di sini
     }
   )
@@ -50,10 +52,11 @@ export const useProductStore = create(
       selectedVariantOption: undefined,
       setProducts: (products) => set({ products }),
       setSelectedProduct: (product) => set({ selectedProduct: product }),
-      setSelectedVariantOption: (variant) => set({ selectedVariantOption: variant }),
+      setSelectedVariantOption: (variant) =>
+        set({ selectedVariantOption: variant }),
     }),
     {
-      name: "product-store",
+      name: 'product-store',
       storage: createJSONStorage(() => localStorage), // ✅ Perbaikan di sini
     }
   )

@@ -1,35 +1,26 @@
 import {
-  DialogActionTrigger,
   DialogBody,
   DialogCloseTrigger,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogRoot,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Field } from '@/components/ui/field';
-import { Box, Button, Grid, GridItem, Text, Textarea } from '@chakra-ui/react';
-import { NotebookPen, Trash } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Box, Button, Grid, GridItem, Text } from '@chakra-ui/react';
+import { useEffect } from 'react';
 
-import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 
 import LoadingButtonLottie from '@/components/icons/loading-button';
+import { Switch } from '@/components/ui/switch';
 import {
-  createLocationBuyer,
-  deleteLocationBuyer,
   fetchLocationByIdBuyer,
   updateLocationBuyer,
 } from '@/features/auth/services/location-buyer-service';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
-import MapComponent from '@/page/settingpage/component-setting/locationApi';
-import { LocationSelector } from '@/page/settingpage/data-territory/province';
-import { Switch } from '@/components/ui/switch';
 import { useSellerStore } from '@/hooks/store';
 
 interface Location {
@@ -55,45 +46,10 @@ interface LocationSettingCheckoutProps {
 export function LocationSettingCheckout({
   onLocationSelect,
 }: LocationSettingCheckoutProps) {
-  const [open, setOpen] = useState(false);
-  const [openDialogDelete, setOpenDialogDelete] = useState(false);
-  const [openDialogUpdate, setOpenDialogUpdate] = useState(false);
-  const [selectedProvince, setSelectedProvince] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [selectedCity, setSelectedCity] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [selectedVillage, setSelectedVillage] = useState<{
-    id: string;
-    name: string;
-    postal_code: string;
-  } | null>(null);
-  const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
 
-  const [editLocationId, setEditLocationId] = useState<string | null>(null);
-  const [editAddress, setEditAddress] = useState('');
-  const [editName, setEditName] = useState('');
-  const [editCityDistrict, setEditCityDistrict] = useState('');
-  const [editPostalCode, setEditPostalCode] = useState('');
-  const [editCoordinates, setEditCoordinates] = useState<
-    [number, number] | null
-  >(null);
-
-  const [type, setType] = useState('');
-  const [address, setAddress] = useState('');
-  const [name, setName] = useState('');
   const queryClient = useQueryClient();
   const { buyer } = useAuthBuyerStore();
-  const { user } = useAuthStore();
-  const { store } = useSellerStore()
-  const storeId = user?.Stores?.id;
+  const { store } = useSellerStore();
   const buyerId = buyer?.id;
   const token = Cookies.get(`token-buyer-${store?.name}`);
 
@@ -122,10 +78,10 @@ export function LocationSettingCheckout({
           latitude: mainLocation.latitude,
           longitude: mainLocation.longitude,
         };
-        setCoordinates([
-          parseFloat(mainLocation.latitude),
-          parseFloat(mainLocation.longitude),
-        ]);
+        // setCoordinates([
+        //   parseFloat(mainLocation.latitude),
+        //   parseFloat(mainLocation.longitude),
+        // ]);
         onLocationSelect && onLocationSelect(locationData);
       }
     }
@@ -233,9 +189,7 @@ export function LocationSettingCheckout({
                             borderColor={'gray.200'}
                             py={3}
                           >
-                            <GridItem
-                              gap={3}
-                            >
+                            <GridItem gap={3}>
                               <Box>
                                 <Text>{location.address}</Text>
                                 <Text>
@@ -269,7 +223,7 @@ export function LocationSettingCheckout({
                           </Grid>
                         ))}
                       </DialogBody>
-                     
+
                       <DialogCloseTrigger />
                     </DialogContent>
                   </DialogRoot>

@@ -1,10 +1,10 @@
+import { useAuthStore } from '@/features/auth/store/auth-store';
 import { Box, Flex, Grid, GridItem, Image, Text } from '@chakra-ui/react';
 import { BoxIcon, CircleDollarSign, ShoppingCart, Users } from 'lucide-react';
+import { useEffect } from 'react';
 import banner from '../../assets/Banner.png';
 import { ChartComponent } from './chart';
 import { TableDemo } from './table';
-import { useEffect } from 'react';
-import { useAuthStore } from '@/features/auth/store/auth-store';
 
 export function Dashboard() {
   const { user } = useAuthStore();

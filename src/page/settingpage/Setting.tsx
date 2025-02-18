@@ -1,7 +1,16 @@
 import { fetchStore } from '@/features/auth/services/store-service';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { StoreFormProps } from '@/features/auth/types/store-types';
-import { Box, Flex, Grid, GridItem, Skeleton, Stack, Tabs, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  Skeleton,
+  Stack,
+  Tabs,
+  Text,
+} from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';

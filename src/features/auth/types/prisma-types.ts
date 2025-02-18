@@ -1,4 +1,4 @@
-import { BuyerType } from "../store/auth-buyer-store";
+import { BuyerType } from '../store/auth-buyer-store';
 
 export type UserType = {
   id: string;
@@ -221,7 +221,6 @@ export type ProductType = {
   category?: CategoryType;
   variants?: VariantType[];
 };
-
 
 export type VariantType = {
   id?: string;

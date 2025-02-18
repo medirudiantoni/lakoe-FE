@@ -1,3 +1,5 @@
+import { InputGroup } from '@/components/ui/input-group';
+import type { Order } from '@/features/auth/types/order.types';
 import {
   Box,
   Button,
@@ -9,22 +11,20 @@ import {
   MenuItem,
   MenuRoot,
   MenuTrigger,
+  Skeleton,
   Tabs,
   Text,
-  Skeleton,
 } from '@chakra-ui/react';
-import { ChevronDown, NotepadText } from 'lucide-react';
-import { TabAllOrder } from './tab-all-order';
-import { TabNotYetPaidOrder } from './tab-notyetpaid-order';
-import { TabNewOrder } from './tab-new-order';
-import { TabReadyOrder } from './tab-ready-to-ship-order';
-import { TabInDeliveryOrder } from './tab-indelivery-order';
-import { TabOrderComplete } from './tab-order-complete-order';
-import { TabCancelledOrder } from './tab-cancelled-order';
-import { InputGroup } from '@/components/ui/input-group';
 import axios from 'axios';
-import { useState, useEffect, useCallback } from 'react';
-import type { Order } from '@/features/auth/types/order.types';
+import { ChevronDown, NotepadText } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { TabAllOrder } from './tab-all-order';
+import { TabCancelledOrder } from './tab-cancelled-order';
+import { TabInDeliveryOrder } from './tab-indelivery-order';
+import { TabNewOrder } from './tab-new-order';
+import { TabNotYetPaidOrder } from './tab-notyetpaid-order';
+import { TabOrderComplete } from './tab-order-complete-order';
+import { TabReadyOrder } from './tab-ready-to-ship-order';
 
 // Komponen SearchBar
 function SearchBar() {
@@ -115,7 +115,7 @@ export function Order() {
       setOrders(cachedOrders[status]);
       return;
     }
-  
+
     setIsLoading(true);
     try {
       const { data } = await axios.get('http://localhost:5000/api/v1/order', {
@@ -129,13 +129,10 @@ export function Order() {
       setIsLoading(false);
     }
   }, [status, cachedOrders]);
-  
 
-  
   useEffect(() => {
     fetchData();
-  }, [status, fetchData]);  
-
+  }, [status, fetchData]);
 
   if (isLoading) {
     return (
@@ -147,7 +144,12 @@ export function Order() {
     );
   }
 
-  if (error) return <Text>Error: {error.message || "Terjadi kesalahan saat memuat data"}</Text>;
+  if (error)
+    return (
+      <Text>
+        Error: {error.message || 'Terjadi kesalahan saat memuat data'}
+      </Text>
+    );
 
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
@@ -157,11 +159,10 @@ export function Order() {
         </Text>
       </Flex>
 
-  
-      <Tabs.Root 
+      <Tabs.Root
         value={status}
-        mt={5} 
-        onValueChange={(details) => setStatus(details.value)} 
+        mt={5}
+        onValueChange={(details) => setStatus(details.value)}
       >
         <Tabs.List>
           <Tabs.Trigger value="Semua">Semua</Tabs.Trigger>
@@ -173,14 +174,12 @@ export function Order() {
           <Tabs.Trigger value="Dibatalkan">Dibatalkan</Tabs.Trigger>
         </Tabs.List>
 
-     
         <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2} mt={3}>
           <SearchBar />
           <FilterMenu />
           <SortMenu />
         </Grid>
 
-       
         <Tabs.Content value="Semua">
           <TabAllOrder orders={orders} />
         </Tabs.Content>
@@ -188,7 +187,6 @@ export function Order() {
           <TabNotYetPaidOrder orders={orders} />
         </Tabs.Content>
         <Tabs.Content value="Pesanan Baru">
-          
           <TabNewOrder orders={orders} />
         </Tabs.Content>
         <Tabs.Content value="Siap Dikirim">

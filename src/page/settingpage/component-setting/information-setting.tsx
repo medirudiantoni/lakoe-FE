@@ -1,3 +1,11 @@
+import LoadingButtonLottie from '@/components/icons/loading-button';
+import { Field } from '@/components/ui/field';
+import {
+  fetchStore,
+  updateStore,
+} from '@/features/auth/services/store-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { StoreFormProps } from '@/features/auth/types/store-types';
 import {
   Box,
   Button,
@@ -11,18 +19,10 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import Cookies from 'js-cookie';
-import { Field } from '@/components/ui/field';
-import {
-  fetchStore,
-  updateStore,
-} from '@/features/auth/services/store-service';
-import { StoreFormProps } from '@/features/auth/types/store-types';
-import LoadingButtonLottie from '@/components/icons/loading-button';
-import { useAuthStore } from '@/features/auth/store/auth-store';
 
 export function InformationSetting() {
   const {
@@ -35,7 +35,7 @@ export function InformationSetting() {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [storeData, setStoreData] = useState<StoreFormProps>();
-  const [isFetching, setIsFetching] = useState(true); 
+  const [isFetching, setIsFetching] = useState(true);
   const { user, setUser } = useAuthStore();
   const [previewLogoUrl, setPreviewLogoUrl] = useState<string | null>(null);
   const [previewBannerUrl, setPreviewBannerUrl] = useState<string | null>(null);
@@ -45,8 +45,8 @@ export function InformationSetting() {
   const storeId = user?.Stores!.id;
 
   useEffect(() => {
-    const token = Cookies.get("token")
-    console.log("storeId: ", storeId)
+    const token = Cookies.get('token');
+    console.log('storeId: ', storeId);
     if (storeId) {
       setIsFetching(true);
       fetchStore(storeId, token!)
@@ -145,35 +145,35 @@ export function InformationSetting() {
       </Flex>
       {isFetching ? (
         <Box>
-            <Grid templateColumns={'repeat(2, 1fr)'} gap={3} py={'5'}>
+          <Grid templateColumns={'repeat(2, 1fr)'} gap={3} py={'5'}>
+            <GridItem>
+              <Box>
+                <Stack gap="4" align="flex-start" width={'full'}>
+                  <Skeleton height="25px" width={'full'} />
+                  <Skeleton height="25px" width={'full'} />
+                </Stack>
+              </Box>
+            </GridItem>
+            <GridItem>
+              <Skeleton height="66px" width={'full'} />
+            </GridItem>
+          </Grid>
+          <Grid templateColumns={'1fr 4fr'}>
+            <GridItem>
+              <Skeleton height="25px" width={'120px'} />
+              <Box display={'flex'} width={'full'} gap={3} mt={3}>
+                <Skeleton height="185px" width={'90%'} />
+              </Box>
+            </GridItem>
+            <GridItem>
               <GridItem>
-                <Box>
-                  <Stack gap="4" align="flex-start" width={'full'}>
-                    <Skeleton height="25px" width={'full'} />
-                    <Skeleton height="25px" width={'full'} />
-                  </Stack>
-                </Box>
-              </GridItem>
-              <GridItem>
-                <Skeleton height="66px" width={'full'} />
-              </GridItem>
-            </Grid>
-            <Grid templateColumns={'1fr 4fr'}>
-              <GridItem>
-                <Skeleton height="25px" width={'120px'} />
+                <Skeleton height="25px" width={'140px'} />
                 <Box display={'flex'} width={'full'} gap={3} mt={3}>
-                  <Skeleton height="185px" width={'90%'} />
+                  <Skeleton height="185px" width={'full'} />
                 </Box>
               </GridItem>
-              <GridItem>
-                <GridItem>
-                  <Skeleton height="25px" width={'140px'} />
-                  <Box display={'flex'} width={'full'} gap={3} mt={3}>
-                    <Skeleton height="185px" width={'full'} />
-                  </Box>
-                </GridItem>
-              </GridItem>
-            </Grid>
+            </GridItem>
+          </Grid>
         </Box>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
@@ -311,7 +311,10 @@ export function InformationSetting() {
           </Grid>
 
           <Box textAlign="right" mt={10}>
-            <Button onClick={toggleEdit} colorPalette={isEditing ? 'red' : 'blue'}>
+            <Button
+              onClick={toggleEdit}
+              colorPalette={isEditing ? 'red' : 'blue'}
+            >
               {isEditing ? 'Batal' : 'Edit'}
             </Button>
             {isEditing && (

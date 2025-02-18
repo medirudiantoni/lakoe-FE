@@ -1,15 +1,15 @@
 import { apiURL } from '@/utils/baseurl';
 import axios, { AxiosResponse } from 'axios';
 
-export const fetchLocationById = async (storeId:string, token: string) => {
+export const fetchLocationById = async (storeId: string, token: string) => {
   try {
     const res: AxiosResponse = await axios.get(apiURL + `location/${storeId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    
-    console.log("res Data:", res.data);
+
+    console.log('res Data:', res.data);
 
     return res.data;
   } catch (error) {
@@ -23,7 +23,7 @@ export const fetchLocationById = async (storeId:string, token: string) => {
 };
 
 export const createLocation = async (data: FormData, token: string) => {
-    console.log("Data yang dikirim ke backend:", Object.fromEntries(data));
+  console.log('Data yang dikirim ke backend:', Object.fromEntries(data));
 
   try {
     const res: AxiosResponse = await axios.post(apiURL + `location/`, data, {
@@ -65,9 +65,11 @@ export const deleteLocation = async (locationId: string, token: string) => {
   }
 };
 
-
-export const updateLocation = async (data: FormData, locationId: string, token: string) => {
-  
+export const updateLocation = async (
+  data: FormData,
+  locationId: string,
+  token: string
+) => {
   try {
     const res: AxiosResponse = await axios.put(
       apiURL + `location/${locationId}`,
