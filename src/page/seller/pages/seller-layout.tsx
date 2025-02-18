@@ -34,6 +34,7 @@ const SellerPage = () => {
   });
 
   useEffect(() => {
+    console.log("buyerrrrrrr:  =====", buyer)
     if (buyer === null) {
       retrieveCurrentBuyer();
     }
@@ -59,7 +60,7 @@ const SellerPage = () => {
         .catch((error) => {
           console.log(error);
         });
-  }
+  };
   function retrieveBuyerCart(){
     const tokenBuyer = Cookies.get(`token-buyer-${store?.name}`)
     if(tokenBuyer)

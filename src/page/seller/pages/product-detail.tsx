@@ -31,7 +31,7 @@ const SellerProductDetail = () => {
   const [selectedOption, setSelectedOption] = useState<VariantOptionType | null>(null);
   const [choosenOptions, setChoosenOptions] = useState<SelectedOptionValue[]>([]);
   const { store } = useSellerStore()
-  const { setSelectedProduct } = useProductStore();
+  const { setSelectedProduct, setProducts } = useProductStore();
   const [isLoadingPage, setIsLoadingPage] = useState<boolean>(true);
   const [tokenBuyer, setTokenBuyer] = useState("");
 
@@ -68,14 +68,15 @@ const SellerProductDetail = () => {
       return;
     }
 
-    setSelectedProduct({
+    setProducts([{
       name: product.name,
-      price: product.variants?.[0]?.variantOptions?.[0]?.variantOptionValues?.[0]?.price || 0,
+      price: priceNumber,
       productId: product.id,
       quantity: 1,
       category: product.category?.name,
       image: product.attachments[0],
-    });
+    }]);
+
     navigate(`/${store?.name}/checkout`);
   };
 

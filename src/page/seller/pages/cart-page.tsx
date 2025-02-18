@@ -7,19 +7,38 @@ import { formatRupiah } from "@/lib/rupiah";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { useSellerStore } from "@/hooks/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import EmptyCartLottie from "@/components/icons/lottie-empty-cart";
-import { fetchBuyerCart } from "@/features/auth/services/cart-service";
-import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store";
-import { CartItemType, CartType } from "@/features/auth/types/prisma-types";
-import Cookies from "js-cookie";
+import { CartItemType, OrderItemType } from "@/features/auth/types/prisma-types";
+import { useProductStore } from "@/features/auth/store/product-store";
 
 const SellerCartPage = () => {
     const navigate = useNavigate();
+    const [selectedItem, setSelectedItem] = useState<CartItemType[]>([]);
     
     const { store } = useSellerStore();
     // const { buyer } = useAuthBuyerStore();
     const { cart, totalPrice, totalQuantity } = useCart();
+    const { setProducts, products } = useProductStore();
+
+    useEffect(() => {
+        setSelectedItem(cart)
+    }, [cart]);
+
+    useEffect(() => {
+        let data:OrderItemType[] = []
+        selectedItem.map(item => {
+            const dataItem: OrderItemType = {
+                name: item.name,
+                image: `${item.product?.attachments[0]}`,
+                price: item.price,
+                productId: String(item.product?.id),
+                quantity: item.quantity,
+            };
+            data.push(dataItem);
+        });
+        setProducts(data);
+    }, [selectedItem])
 
     const handleCheckout = () => {
         if (cart.length === 0) {

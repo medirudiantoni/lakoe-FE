@@ -18,13 +18,13 @@ import toast from 'react-hot-toast';
 export function DialogDelete() {
   const [open, setOpen] = useState(false);
   const { selectedProducts, setSelectedProducts } = useCheckboxStore();
-  const { deleteProduct } = useProductStore();
+  // const { deleteProduct } = useProductStore();
   const [ loading, setIsLoading ] = useState(false)
 
   const handleDelete = async () => {
     setIsLoading(true)
     try {
-      await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
+      // await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
       toast.success(`${selectedProducts.length} produk telah dihapus.`);
       setSelectedProducts([]); 
       setOpen(false);

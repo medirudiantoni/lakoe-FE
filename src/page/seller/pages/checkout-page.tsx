@@ -1,11 +1,11 @@
 import {
   Box,
   Button,
-  Flex,
+  // Flex,
   Heading,
   HStack,
   Image,
-  RadioGroupRoot,
+  // RadioGroupRoot,
   Spacer,
   Table,
   Text,
@@ -13,12 +13,12 @@ import {
 } from '@chakra-ui/react';
 import SellerFooter from '../components/footer';
 import { useNavigate } from 'react-router';
-import { Radio, RadioGroup } from '@/components/ui/radio';
-import { eWallets, virtualAccount } from '@/page/payment-page/PaymentPage';
+// import { Radio, RadioGroup } from '@/components/ui/radio';
+// import { eWallets, virtualAccount } from '@/page/payment-page/PaymentPage';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, CheckIcon } from 'lucide-react';
 import LoadingButtonLottie from '@/components/icons/loading-button';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 import { useSellerStore } from '@/hooks/store';
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
@@ -37,30 +37,30 @@ type Courier = {
 const SellerCheckoutPage = () => {
   const navigate = useNavigate();
   const { store } = useSellerStore();
-  const [isPaymentMethod, setIsPaymentMethod] = useState('');
+  // const [isPaymentMethod, setIsPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
 
   const [couriers, setCouriers] = useState<Courier[]>([]);
-  const [selectedCourier, setSelectedCourier] = useState<string>('');
-  const [selectedCourierName, setSelectedCourierName] =
-    useState<string>('Pilih Kurir');
-  const [selectedCourierImage, setSelectedCourierImage] = useState<string>('');
+  // const [selectedCourier, setSelectedCourier] = useState<string>('');
+  // const [selectedCourierName, setSelectedCourierName] = useState<string>('Pilih Kurir');
+  // const [selectedCourierImage, setSelectedCourierImage] = useState<string>('');
   const [selectedCouriers, setSelectedCouriers] = useState<Courier[]>([]);
-  const [finalCourier, setFinalCourier] = useState<Courier | null>(null);
+  // const [finalCourier, setFinalCourier] = useState<Courier | null>(null);
 
-  const [selectedCourierForNext, setSelectedCourierForNext] =
-    useState<Courier | null>(null);
+  // const [selectedCourierForNext, setSelectedCourierForNext] = useState<Courier | null>(null);
   const [isOpenFirst, setIsOpenFirst] = useState(false);
-  const [isOpenSecond, setIsOpenSecond] = useState(false);
-  const [isOpenFirstDropdown, setIsOpenFirstDropdown] = useState(false);
-  const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
+  // const [isOpenSecond, setIsOpenSecond] = useState(false);
+  // const [isOpenFirstDropdown, setIsOpenFirstDropdown] = useState(false);
+  // const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
+  const [totalProductPrice, setTotalProductPrice] = useState<number>(0);
 
-  const { selectedProduct, selectedVariantOption } = useProductStore();
+  const { products } = useProductStore();
 
   useEffect(() => {
-    console.log('priceeeeeee', selectedProduct?.price);
-  }, [selectedProduct?.price]);
+    const total = products.reduce((prev, curr) => prev + curr.price * curr.quantity, 0)
+    setTotalProductPrice(total)
+  }, [products]);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -96,22 +96,21 @@ const SellerCheckoutPage = () => {
         return;
       }
 
+      let dataOrderItem: { name: string, value: number }[] = [];
+      products.map(item => {
+        const itemToOrder = {
+          name: item.name,
+          value: item.price * item.quantity
+        };
+        dataOrderItem.push(itemToOrder)
+      })
+
       const body = {
         origin_postal_code: selectedLocation.postalCode,
         destination_latitude: selectedLocation.latitude,
         destination_longitude: selectedLocation.longitude,
         couriers: 'tiki,jne,pos,ninja,jnt,paxel,sicepat',
-        items: [
-          {
-            name: selectedProduct?.name,
-            value: selectedProduct?.price,
-            // length: 30,
-            // width: 15,
-            // height: 20,
-            // weight: 200,
-            // quantity: 2,
-          },
-        ],
+        items: dataOrderItem,
       };
 
       console.log('Mengirim request ke API dengan data:', body);
@@ -162,7 +161,7 @@ const SellerCheckoutPage = () => {
 
   const toggleCourier = (courier: Courier) => {
     setSelectedCouriers(
-      (prev) => (isCourierSelected(courier) ? [] : [courier]) // Hanya satu kurir yang bisa dipilih
+      () => (isCourierSelected(courier) ? [] : [courier]) // Hanya satu kurir yang bisa dipilih
     );
   };
 
@@ -199,7 +198,7 @@ const SellerCheckoutPage = () => {
               Checkout
             </Heading>
 
-            <Box width={'full'} mb={'8'}>
+            <Box width={'full'} mb={10}>
               <Heading
                 size="xl"
                 fontWeight="medium"
@@ -212,26 +211,31 @@ const SellerCheckoutPage = () => {
                 Produk yang ingin dicheckout
               </Heading>
 
-              <Box display={'flex'} alignItems={'center'} gap={'3'}>
-                <Image src={selectedProduct?.image} width={'150px'} />
-                <Box
-                  display={'flex'}
-                  alignItems={'center'}
-                  justifyContent={'space-between'}
-                  width={'full'}
-                >
-                  <Box>
-                    <Text fontSize={'20px'} fontWeight={'semibold'}>
-                      {selectedProduct?.name}
-                    </Text>
-                    <Text color={'gray.400'}>{selectedProduct?.category}</Text>
+              {products.map(product => (
+                <Box display={'flex'} alignItems={'center'} gap={5} mb={2}>
+                  <Image src={product?.image} width={'70px'} />
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    justifyContent={'space-between'}
+                    width={'full'}
+                  >
+                    <Box flex={1}>
+                      <Text fontSize={'lg'} fontWeight={'medium'}>
+                        {product?.name}
+                      </Text>
+                      <Text color={'gray.400'}>{product?.category}</Text>
+                    </Box>
+                    <HStack w={'2/6'} justifyContent="space-between">
+                      <Text fontWeight={'medium'} color={'gray.600'}>{product.quantity}x</Text>
+                      <Text fontSize={'18px'} fontWeight={'semibold'}>
+                        {formatRupiah(`${product?.price * product.quantity}`)}
+                      </Text>
+                    </HStack>
                   </Box>
-
-                  <Text fontSize={'18px'} fontWeight={'semibold'}>
-                    {formatRupiah(`${selectedProduct?.price}`)}
-                  </Text>
                 </Box>
-              </Box>
+              ))}
+
             </Box>
 
             {/* Alamat Pengiriman start */}
@@ -355,7 +359,7 @@ const SellerCheckoutPage = () => {
                           (c) =>
                             c.courier_name === courier.courier_name &&
                             c.courier_service_name ===
-                              courier.courier_service_name
+                            courier.courier_service_name
                         ) && <CheckIcon />}
                       </HStack>
                     ))}
@@ -395,7 +399,7 @@ const SellerCheckoutPage = () => {
                 <Table.Row>
                   <Table.Cell px="0">{'Subtotal'}</Table.Cell>
                   <Table.Cell px="0" textAlign="end">
-                    {formatRupiah(`${selectedProduct?.price}`)}
+                    {formatRupiah(`${totalProductPrice}`)}
                   </Table.Cell>
                 </Table.Row>
                 {selectedCouriers.map((c, index) => (
@@ -430,10 +434,10 @@ const SellerCheckoutPage = () => {
                     textAlign="end"
                     fontWeight="semibold"
                   >
-            {formatRupiah(
-        (selectedProduct?.price ?? 0) +
-        selectedCouriers.reduce((total, c) => total + (c.price ?? 0), 0)
-      )}
+                    {formatRupiah(
+                      (totalProductPrice ?? 0) +
+                      selectedCouriers.reduce((total, c) => total + (c.price ?? 0), 0)
+                    )}
                   </Table.ColumnHeader>
                 </Table.Row>
               </Table.Footer>
