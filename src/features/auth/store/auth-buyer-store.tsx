@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
-import { StoreFormProps } from '@/features/auth/types/store-types';
 
 export interface BuyerType {
   id: string;
@@ -12,7 +11,7 @@ interface AuthState {
   buyer: BuyerType | null;
   setBuyer: (buyer: BuyerType | null) => void;
   clearAuth: () => void;
-  logout: () => void;
+  logout: (tokenBuyer: string) => void;
 }
 
 export const useAuthBuyerStore = create<AuthState>((set) => ({
@@ -23,8 +22,8 @@ export const useAuthBuyerStore = create<AuthState>((set) => ({
   clearAuth: () => {
     set({ buyer: null });
   },
-  logout: () => {
-    Cookies.remove('token-buyer');
+  logout: (tokenBuyer) => {
+    Cookies.remove(`token-buyer-${tokenBuyer}`);
     set({ buyer: null });
     if (typeof window !== 'undefined') {
       window.location.href = '/login';

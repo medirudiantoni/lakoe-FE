@@ -12,30 +12,14 @@ import EmptyCartLottie from "@/components/icons/lottie-empty-cart";
 import { fetchBuyerCart } from "@/features/auth/services/cart-service";
 import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store";
 import { CartItemType, CartType } from "@/features/auth/types/prisma-types";
+import Cookies from "js-cookie";
 
 const SellerCartPage = () => {
     const navigate = useNavigate();
     
     const { store } = useSellerStore();
-    const { buyer } = useAuthBuyerStore();
-    const { cart, setManyCart, totalPrice, totalQuantity } = useCart();
-
-    useEffect(() => {
-        if(cart.length === 0 && buyer){
-            retrieveBuyerCart();
-        }
-    }, [cart, buyer]);
-
-    function retrieveBuyerCart(){
-        fetchBuyerCart()
-            .then((res: CartType) => {
-                const data: CartItemType[] = res.cartItems ? res.cartItems : [];
-                setManyCart(data);
-            })
-            .catch((error) => {
-                toast.error(error);
-            })
-    }
+    // const { buyer } = useAuthBuyerStore();
+    const { cart, totalPrice, totalQuantity } = useCart();
 
     const handleCheckout = () => {
         if (cart.length === 0) {

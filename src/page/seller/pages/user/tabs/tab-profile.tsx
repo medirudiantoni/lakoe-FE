@@ -2,17 +2,18 @@ import { Field } from '@/components/ui/field';
 import { Box, Button, Grid, GridItem, Input, Text } from '@chakra-ui/react';
 import { LocationSetting } from '../location';
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserById, updateDataBuyer } from '@/features/auth/services/buyer';
 import Cookies from 'js-cookie';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import toast from 'react-hot-toast';
 import LogoutButtonBuyer from '../logout';
+import { useSellerStore } from '@/hooks/store';
 
 export function TabsProfile() {
   const { buyer } = useAuthBuyerStore();
-  const token = Cookies.get('token-buyer');
+  const { store } = useSellerStore();
+  const token = Cookies.get(`token-buyer-${store?.name}`);
   const queryClient = useQueryClient();
   
   const [isEditing, setIsEditing] = useState(false); // State untuk mode edit
