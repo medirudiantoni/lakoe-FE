@@ -1,24 +1,30 @@
-import { LoadingScreen } from "@/components/loading-screen/loading-screen"
 import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store"
-import { StoreType } from "@/features/auth/types/prisma-types"
+import { CartItemType, CartType, StoreType } from "@/features/auth/types/prisma-types"
 import { useSellerStore } from "@/hooks/store"
 import { apiURL } from "@/utils/baseurl"
 import { Box } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import {
   Navigate,
   Outlet,
+  useNavigate,
   useParams
 } from "react-router";
 import Cookies from "js-cookie"
 import { fetchCurrentUserBuyerData } from "@/features/auth/services/buyer"
 import toast from "react-hot-toast"
+import { LoadingScreenBuyer } from "@/components/loading-screen/loading-screen-buyer"
+import useCart from "@/hooks/cart-store"
+import { fetchBuyerCart } from "@/features/auth/services/cart-service"
 
 const SellerPage = () => {
+  const { setStore, store } = useSellerStore();
   const { storeName } = useParams();
   const { setBuyer, buyer } = useAuthBuyerStore();
+  const { cart, setManyCart, totalPrice, totalQuantity } = useCart();
+  const navigate = useNavigate();
   const { data, error, isLoading } = useQuery<StoreType>({
     queryKey: ["store"],
     queryFn: async () => {
@@ -33,6 +39,12 @@ const SellerPage = () => {
     }
   }, [buyer]);
 
+  useEffect(() => {
+    if(cart.length === 0 && buyer){
+        retrieveBuyerCart();
+    }
+}, [cart, buyer]);
+
   function retrieveCurrentBuyer() {
     const token = Cookies.get(`token-buyer-${storeName}`);
     if (token)
@@ -41,24 +53,35 @@ const SellerPage = () => {
           const emailWithStoreName = res.user.email;
           const buyerStoreName = emailWithStoreName.split("-").slice(1).join("-");
           if(storeName === buyerStoreName){
-            toast.success(`Selamat datang kembali ${res.user.name}`)
-            setBuyer(res.user);
+            setBuyer(res.user)
           }
         })
         .catch((error) => {
           console.log(error);
-          toast.error('Oops!, Something went wrong');
         });
   }
+  function retrieveBuyerCart(){
+    const tokenBuyer = Cookies.get(`token-buyer-${store?.name}`)
+    if(tokenBuyer)
+    fetchBuyerCart(tokenBuyer)
+        .then((res: CartType) => {
+            const data: CartItemType[] = res.cartItems ? res.cartItems : [];
+            setManyCart(data);
+        })
+        .catch((error) => {
+            toast.error(error);
+        });
+    else
+    navigate(`/${store?.name}/login-buyer`);
+}
 
-  const { setStore } = useSellerStore();
   useEffect(() => {
     if (data) {
       setStore(data);
     }
   }, [data])
 
-  if (isLoading) return <LoadingScreen />
+  if (isLoading) return <LoadingScreenBuyer />
   if (error) return <Navigate to="/not-found" />
   return (
     <Box w="full" minH="100vh">

@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import { apiURL } from '@/utils/baseurl';
 import { PasswordInput } from '@/components/ui/password-input';
-import { useEffect } from 'react';
+import { fetchInitCart } from '@/features/auth/services/cart-service';
 
 const loginSchema = z.object({
   email: z.string().email('Email yang anda masukan salah'),
@@ -23,7 +23,7 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 export function LoginBuyer() {
   const { store } = useSellerStore();
   const navigate = useNavigate();
-  const{setBuyer} = useAuthBuyerStore();
+  const { setBuyer } = useAuthBuyerStore();
 
   const {
     register,
@@ -45,10 +45,9 @@ export function LoginBuyer() {
         loading: 'Sedang login...',
         success: (res) => {
           const data = res.data;
-          console.log('dataaanya mana woiii', res)
           setBuyer(data.buyer);
-          console.log('Data Buyer setelah login:', data.buyer); // Debugging
           Cookies.set(`token-buyer-${store?.name}`, data.token);
+          initOrCheckBuyerCart(data.buyer.id, String(store?.id), data.token)
           navigate(`/${store?.name}/`);
           return data.message;
         },
@@ -68,11 +67,22 @@ export function LoginBuyer() {
         },
       }
     );
-};
-   const onClickGoogle = () => {
+  };
+  const onClickGoogle = () => {
     //   setIsLoading(true);
-      window.location.href = `${apiURL}auth-buyer/google/`;
-    };
+    window.location.href = `${apiURL}auth-buyer/google/`;
+  };
+
+
+  function initOrCheckBuyerCart(buyerId: string, storeId: string, tokenBuyer: string) {
+    fetchInitCart(buyerId, storeId, tokenBuyer)
+      .then(res => {
+        console.log("res init cart: ", res)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
 
   return (
     <Box>
@@ -92,51 +102,51 @@ export function LoginBuyer() {
             </Text>
           </VStack>
           <form onSubmit={handleSubmit(onSubmit)}>
-          <Box display={'flex'} flexDirection={'column'} gap={5}>
-            <Field label="Email">
-              <Input placeholder="Masukan Email" {...register('email')}/>
-              {errors.email && (
-                <Text    color="red.500"
-                fontSize="xs"
-                textAlign={'left'}
-                marginTop="1.5">
+            <Box display={'flex'} flexDirection={'column'} gap={5}>
+              <Field label="Email">
+                <Input placeholder="Masukan Email" {...register('email')} />
+                {errors.email && (
+                  <Text color="red.500"
+                    fontSize="xs"
+                    textAlign={'left'}
+                    marginTop="1.5">
                     {errors.email.message}
-                </Text>
-              )}
-            </Field>
-            <Field label="Password">
-              <PasswordInput placeholder="Masukan Password" {...register('password')} />
-              {errors.password && (
-                <Text
-                color="red.500"
-                fontSize="xs"
-                textAlign={'left'}
-                marginTop="1.5">
+                  </Text>
+                )}
+              </Field>
+              <Field label="Password">
+                <PasswordInput placeholder="Masukan Password" {...register('password')} />
+                {errors.password && (
+                  <Text
+                    color="red.500"
+                    fontSize="xs"
+                    textAlign={'left'}
+                    marginTop="1.5">
                     {errors.password.message}
+                  </Text>
+                )}
+              </Field>
+              <Box>
+                <Button width={'full'} type='submit'>Login</Button>
+                <Button
+                  bg="white"
+                  color="black"
+                  width={'full'}
+                  borderRadius={'7px'}
+                  type="button"
+                  mt={2}
+                  onClick={onClickGoogle}
+                >
+                  <Image w="10" h="10" src="/google-icon.webp"></Image>
+                </Button>
+                <Text textAlign={'center'} mt={2}>
+                  Belum punya akun? silakan{' '}
+                  <Link to={`/${store?.name}/register-buyer`} className="text-blue-400">
+                    daftar di sini
+                  </Link>
                 </Text>
-              )}
-            </Field>
-            <Box>
-              <Button width={'full'} type='submit'>Login</Button>
-              <Button
-                bg="white"
-                color="black"
-                width={'full'}
-                borderRadius={'7px'}
-                type="button"
-                mt={2}
-                onClick={onClickGoogle}
-              >
-                <Image w="10" h="10" src="/google-icon.webp"></Image>
-              </Button>
-              <Text textAlign={'center'} mt={2}>
-                Belum punya akun? silakan{' '}
-                <Link to={`/${store?.name}/register-buyer`} className="text-blue-400">
-                  daftar di sini
-                </Link>
-              </Text>
+              </Box>
             </Box>
-          </Box>
           </form>
         </Box>
       </Box>

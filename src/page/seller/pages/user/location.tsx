@@ -30,6 +30,7 @@ import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import MapComponent from '@/page/settingpage/component-setting/locationApi';
 import { LocationSelector } from '@/page/settingpage/data-territory/province';
 import { Switch } from '@/components/ui/switch';
+import { useSellerStore } from '@/hooks/store';
 
 interface Location {
   id: string;
@@ -82,7 +83,8 @@ export function LocationSetting() {
   const queryClient = useQueryClient();
   const { buyer } = useAuthBuyerStore();
   const { user } = useAuthStore();
-  const token = Cookies.get('token-buyer');
+  const { store } = useSellerStore();
+  const token = Cookies.get(`token-buyer-${store?.name}`);
   const storeId = user?.Stores?.id;
   const buyerId = buyer?.id;
   const { data, isLoading, isError } = useQuery({

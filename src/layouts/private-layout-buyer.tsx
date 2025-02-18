@@ -15,7 +15,7 @@ const PrivateRouteBuyer = () => {
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = Cookies.get('token-buyer');
+      const token = Cookies.get(`token-buyer-${store?.name}`);
       if (!token) {
         setIsAuthenticated(false);
         return;

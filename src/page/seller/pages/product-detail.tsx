@@ -1,11 +1,10 @@
 import { Box, Button, Flex, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react"
 import SellerNavbar from "../components/navbar"
 import SellerFooter from "../components/footer";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { formatRupiah } from "@/lib/rupiah";
 import useCart from "@/hooks/cart-store";
-import { LoadingScreen } from "@/components/loading-screen/loading-screen";
 import toast from "react-hot-toast";
 import { CartItemType, ProductType, VariantOptionType } from "@/features/auth/types/prisma-types";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -14,6 +13,8 @@ import { fetchAddToCart } from "@/features/auth/services/cart-service";
 import { useAuthBuyerStore } from "@/features/auth/store/auth-buyer-store";
 import { useProductStore } from "@/features/auth/store/product-store";
 import { useSellerStore } from "@/hooks/store";
+import { LoadingScreenBuyer } from "@/components/loading-screen/loading-screen-buyer";
+import Cookies from "js-cookie";
 
 interface SelectedOptionValue {
   name: string;
@@ -30,7 +31,14 @@ const SellerProductDetail = () => {
   const [selectedOption, setSelectedOption] = useState<VariantOptionType | null>(null);
   const [choosenOptions, setChoosenOptions] = useState<SelectedOptionValue[]>([]);
   const { store } = useSellerStore()
-  const { setSelectedProduct } = useProductStore()
+  const { setSelectedProduct } = useProductStore();
+  const [isLoadingPage, setIsLoadingPage] = useState<boolean>(true);
+  const [tokenBuyer, setTokenBuyer] = useState("");
+
+  useEffect(() => {
+    const tokenBuyerString = Cookies.get(`token-buyer-${store?.name}`);
+    setTokenBuyer(String(tokenBuyerString));
+  }, []);
 
   const navigate = useNavigate()
 
@@ -40,16 +48,26 @@ const SellerProductDetail = () => {
   });
 
   const handleBuyNow = () => {
-    if (!product || !selectedOption) return;
-  
-    // ✅ Ambil variantOptionValue yang sesuai
-    const selectedVariantOptionValue = selectedOption.variantOptionValues?.[0]; 
-  
+    if (!buyer) {
+      console.log("belum loginnnnnn")
+      toast.error("Lu belum login kocak!, login dulu sana")
+      return;
+    }
+    if (!product) {
+      return;
+    }
+    if (!selectedOption) {
+      toast.error("Kamu belum memilih varian produk");
+      return;
+    }
+
+    const selectedVariantOptionValue = selectedOption.variantOptionValues?.[0];
+
     if (!selectedVariantOptionValue) {
       console.error("Tidak ada variant option value yang dipilih!");
       return;
     }
-  
+
     setSelectedProduct({
       name: product.name,
       price: product.variants?.[0]?.variantOptions?.[0]?.variantOptionValues?.[0]?.price || 0,
@@ -58,21 +76,18 @@ const SellerProductDetail = () => {
       category: product.category?.name,
       image: product.attachments[0],
     });
-    navigate(`/${store?.name}/checkout`); 
+    navigate(`/${store?.name}/checkout`);
   };
-  
 
-
-  const mutation = useMutation({
-    mutationFn: (data: CartItemType) => fetchAddToCart(data).then(res => console.log("res mutate: ", res))
-  })
+  // const mutation = useMutation({
+  //   mutationFn: (data: CartItemType) => fetchAddToCart(data, tokenBuyer).then(res => console.log("res mutate: ", res))
+  // })
 
   useEffect(() => {
     if (product?.variants && selectedOptionName) {
       const optionName = selectedOptionName.join(" ")
       const finalIndex = Number(product.variants.findIndex(e => e.name === "final"));
       const theOption = product.variants[finalIndex].variantOptions?.find(e => e.name === optionName);
-      console.log("theOption: ", theOption)
       if (theOption && theOption.variantOptionValues) {
         setSelectedOption(theOption);
         setPriceDisplay(formatRupiah(theOption.variantOptionValues[0].price));
@@ -130,6 +145,7 @@ const SellerProductDetail = () => {
     const highPrice = Math.max(...prices);
     if (prices.length <= 1) {
       setPriceDisplay(formatRupiah(lowPrice || highPrice))
+      setPriceNumber(lowPrice);
     } else {
       if (lowPrice === highPrice) {
         setPriceDisplay(formatRupiah(lowPrice))
@@ -146,74 +162,77 @@ const SellerProductDetail = () => {
   }
 
   useEffect(() => {
-    if(product?.variants && product.variants.length === 1){
-      if(product.variants[0].variantOptions){
+    if (product) {
+      setTimeout(() => {
+        setIsLoadingPage(false);
+      }, 500);
+    }
+    if (product?.variants && product.variants.length === 1) {
+      if (product.variants[0].variantOptions) {
         setSelectedOption(product.variants[0].variantOptions[0])
       }
-    };
+    } else {
+      setSelectedOption(null);
+    }
   }, [product]);
 
   function handleAddToCart() {
-    if(product?.variants && product?.variants.length < 2){
-      // const category =
-      //   product?.category?.parent ?
-      //     product.category.parent.parent ?
-      //       `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
-      //       : `${product.category.parent.name}/${product.category.name}`
-      //     : `${product?.category?.name}`;
+    if (!buyer) {
+      console.log("belum loginnnnnn")
+      toast.error("Lu belum login kocak!, login dulu sana")
+      return;
+    }
+    if (product?.variants && product?.variants.length < 2) {
       const data: CartItemType = {
         buyerId: buyer?.id,
         variantOptionValueId: selectedOption?.variantOptionValues && selectedOption.variantOptionValues[0].id,
         productId: String(product?.id),
         storeId: product?.storeId,
-        name: String(selectedOptionName),
+        name: `${product.name}`,
         quantity: 1,
         price: priceNumber,
         product: product
-        // categoryName: category,
       }
       console.log("datanya: ", data);
-      addCart(data);
+      // addCart(data);
       toast.success("Produk Telah ditambahkan ke keranjang");
-      mutation.mutate(data);
+      fetchAddToCart(data, tokenBuyer).then(res => {
+        console.log("add cart sukses: ", res.cartItem);
+        const dataWithIdCart: CartItemType = { ...data, id: res.cartItem.id }
+        addCart(dataWithIdCart)
+      })
+      // mutation.mutate(data);
     } else {
       if (selectedOption) {
-        // const category =
-        //   product?.category?.parent ?
-        //     product.category.parent.parent ?
-        //       `${product.category.parent.parent.name}/${product.category.parent.name}/${product.category.name}`
-        //       : `${product.category.parent.name}/${product.category.name}`
-        //     : `${product?.category?.name}`;
         const data: CartItemType = {
           buyerId: buyer?.id,
           variantOptionValueId: selectedOption.variantOptionValues && selectedOption.variantOptionValues[0].id,
           productId: String(product?.id),
           storeId: product?.storeId,
-          name: String(selectedOptionName),
+          name: `${product?.name} - ${selectedOptionName.join(" ")}`,
           quantity: 1,
           price: priceNumber,
           product
-          // categoryName: category,
         }
         console.log("datanya: ", data);
         addCart(data);
         toast.success("Produk Telah ditambahkan ke keranjang");
-        mutation.mutate(data);
+        fetchAddToCart(data, tokenBuyer).then(res => {
+          console.log("add cart sukses: ", res.cartItem);
+          const dataWithIdCart: CartItemType = { ...data, id: res.cartItem.id }
+          addCart(dataWithIdCart)
+        })
+        // mutation.mutate(data);
       }
     }
-  } 
-
-  
-
-
-
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
 
-  if (isLoading) {
-    return <LoadingScreen />
+  if (isLoading || isLoadingPage) {
+    return <LoadingScreenBuyer />
   }
   return (
     <Box w="full" minH="100vh" className="font-poppins">
@@ -253,28 +272,28 @@ const SellerProductDetail = () => {
               </Box>
             </Box>
             <HStack w="full" py="5">
-            {product?.variants && product.variants.length < 2 ? (
-               <>
-               <Button
-                 flex={1}
-                 _active={{ transform: "scale(0.95)" }}
-                 bg="white"
-                 color="blue.600"
-                 borderColor="blue.600"
-                 onClick={handleBuyNow}
-               >
-                 Beli Langsung
-               </Button>
-               <Button
-                 flex={1}
-                 _active={{ transform: "scale(0.95)" }}
-                 className="bg-blue-700"
-                 onClick={handleAddToCart}
-               >
-                 + Keranjang
-               </Button>
-             </>
-            ) : (
+              {product?.variants && product.variants.length < 2 ? (
+                <>
+                  <Button
+                    flex={1}
+                    _active={{ transform: "scale(0.95)" }}
+                    bg="white"
+                    color="blue.600"
+                    borderColor="blue.600"
+                    onClick={handleBuyNow}
+                  >
+                    Beli Langsung
+                  </Button>
+                  <Button
+                    flex={1}
+                    _active={{ transform: "scale(0.95)" }}
+                    className="bg-blue-700"
+                    onClick={handleAddToCart}
+                  >
+                    + Keranjang
+                  </Button>
+                </>
+              ) : (
                 selectedOption === null ? (
                   <>
                     <Button flex={1} disabled bg="white" color="blue.600" borderColor="blue.600">Beli Langsung</Button>

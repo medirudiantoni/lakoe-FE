@@ -57,7 +57,7 @@ export function LoadingScreenBuyer() {
   useEffect(() => {
     if (params !== null) {
       setBuyer(params);
-      Cookies.set('token-buyer', params.token);
+      Cookies.set(`token-buyer-${store?.name}`, params.token);
 
       toast.success(
         <Box display="flex" alignItems="center" gap="10px">
@@ -75,7 +75,7 @@ export function LoadingScreenBuyer() {
 
   return (
     <Stack display={'flex'} alignItems={'center'} justifyContent={'center'} h={'100vh'}>
-      {store && <Image src={store.logoAttachment} width={140} />}
+      {store && <Image src={store.logoAttachment} width={140} mb={20} />}
       <LoadingLottieBuyer />
     </Stack>
   );

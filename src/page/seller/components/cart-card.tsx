@@ -6,6 +6,8 @@ import { formatRupiah } from "@/lib/rupiah";
 import useCart from "@/hooks/cart-store";
 import { CategoryType } from "@/features/auth/types/prisma-types";
 import { removeCartItem, updateCartItemQty } from "@/features/auth/services/cart-service";
+import Cookies from "js-cookie";
+import { useSellerStore } from "@/hooks/store";
 
 interface CartCardProps {
     cartItemId?: string,
@@ -17,17 +19,15 @@ interface CartCardProps {
 };
 
 const CartCard: React.FC<CartCardProps> = ({ cartItemId, imageUrl, productName, category, price, quantity }) => {
+    const { store } = useSellerStore();
     const { increase, decrease, removeCart, cart } = useCart();
     const [decreaseAble, setDecreaseAble] = useState<boolean>(true);
     const [cat, setCat] = useState<string>("");
-    const [pendingUpdate, setPendingUpdate] = useState<{case: "plus" | "minus", quantity: number}>({
-        case: "plus",
-        quantity: 0
-    });
+    const [pendingUpdate, setPendingUpdate] = useState<{case: "plus" | "minus", quantity: number} | null>(null);
 
-    useEffect(() => {
-        setPendingUpdate({...pendingUpdate, quantity: quantity})
-    }, [quantity]);
+    // useEffect(() => {
+    //     setPendingUpdate({ case: "plus" , quantity: quantity})
+    // }, [quantity]);
 
     useEffect(() => {
         const productIndex = cart.findIndex(e => e.name === productName);
@@ -50,11 +50,12 @@ const CartCard: React.FC<CartCardProps> = ({ cartItemId, imageUrl, productName, 
     }, [category]);
 
     useEffect(() => {
-        if (!pendingUpdate) return;
+        const tokenBuyer = Cookies.get(`token-buyer-${store?.name}`)
+        if (pendingUpdate === null) return;
         const timeoutId = setTimeout(async () => {
-            if(cartItemId){
-                console.log("cartIid: ", cartItemId);
-                updateCartItemQty( (pendingUpdate.quantity), cartItemId )
+            if(cartItemId && tokenBuyer){
+                console.log("cartItemId====: ", cartItemId);
+                updateCartItemQty( (pendingUpdate.quantity), cartItemId, tokenBuyer )
             }
         }, 500);
         return () => clearTimeout(timeoutId);
@@ -62,16 +63,17 @@ const CartCard: React.FC<CartCardProps> = ({ cartItemId, imageUrl, productName, 
 
     function handleIncrease(productName: string) {
         increase(productName);
-        setPendingUpdate(prev => ({ case: "plus", quantity: prev.quantity + 1 }))
+        setPendingUpdate(prev => (prev ? ({ case: "plus", quantity: prev.quantity + 1 }) : ({ case: "plus", quantity: quantity + 1 })))
     }
     function handleDecrease(productName: string) {
         decrease(productName);
-        setPendingUpdate(prev => ({ case: "minus", quantity: ( prev.quantity < 2 ? prev.quantity - 1 : 1 ) }))
+        setPendingUpdate(prev => prev ? ({ case: "minus", quantity: ( prev.quantity < 2 ? prev.quantity - 1 : 1 ) }) : ({ case: "minus", quantity: ( quantity < 2 ? quantity - 1 : 1 ) }))
     }
     function handleRemove(productName: string) {
+        const tokenBuyer = Cookies.get(`token-buyer-${store?.name}`)
         removeCart(productName);
-        if(cartItemId){
-            removeCartItem(cartItemId);
+        if(cartItemId && tokenBuyer){
+            removeCartItem(cartItemId, tokenBuyer);
         };
     };
     return (

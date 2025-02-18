@@ -36,9 +36,9 @@ import {
   import { useSellerStore } from '@/hooks/store';
 export function Keep(){
     const { buyer } = useAuthBuyerStore();
-    const token = Cookies.get('token-buyer');
     const queryClient = useQueryClient();
     const { store } = useSellerStore();
+    const token = Cookies.get(`token-buyer-${store?.name}`);
   
     useEffect(() => {
       console.log('buyer iniii', buyer);

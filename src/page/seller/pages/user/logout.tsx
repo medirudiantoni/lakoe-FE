@@ -14,7 +14,7 @@ const LogoutButtonBuyer: React.FC<LogoutButtonProps> = ({ onClick }) => {
   const {store} = useSellerStore();
 
   const handleLogout = () => {
-    Cookies.remove('token-buyer');
+    Cookies.remove(`token-buyer-${store?.name}`);
   
     toast.success('Anda telah Logout', {
       style: {
