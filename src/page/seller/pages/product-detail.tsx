@@ -69,6 +69,7 @@ const SellerProductDetail = () => {
     }
 
     setSelectedProduct({
+      id: product.id,
       name: product.name,
       price: product.variants?.[0]?.variantOptions?.[0]?.variantOptionValues?.[0]?.price || 0,
       productId: product.id,

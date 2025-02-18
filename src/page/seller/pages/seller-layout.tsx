@@ -23,7 +23,7 @@ const SellerPage = () => {
   const { setStore, store } = useSellerStore();
   const { storeName } = useParams();
   const { setBuyer, buyer } = useAuthBuyerStore();
-  const { cart, setManyCart, totalPrice, totalQuantity } = useCart();
+  // const { cart, setManyCart, totalPrice, totalQuantity } = useCart();
   const navigate = useNavigate();
   const { data, error, isLoading } = useQuery<StoreType>({
     queryKey: ["store"],
@@ -34,16 +34,17 @@ const SellerPage = () => {
   });
 
   useEffect(() => {
+    console.log('buyerr', buyer)
     if (buyer === null) {
       retrieveCurrentBuyer();
     }
   }, [buyer]);
 
-  useEffect(() => {
-    if(cart.length === 0 && buyer){
-        retrieveBuyerCart();
-    }
-}, [cart, buyer]);
+//   useEffect(() => {
+//     if(cart.length === 0 && buyer){
+//         retrieveBuyerCart();
+//     }
+// }, [cart, buyer]);
 
   function retrieveCurrentBuyer() {
     const token = Cookies.get(`token-buyer-${storeName}`);
@@ -60,20 +61,20 @@ const SellerPage = () => {
           console.log(error);
         });
   }
-  function retrieveBuyerCart(){
-    const tokenBuyer = Cookies.get(`token-buyer-${store?.name}`)
-    if(tokenBuyer)
-    fetchBuyerCart(tokenBuyer)
-        .then((res: CartType) => {
-            const data: CartItemType[] = res.cartItems ? res.cartItems : [];
-            setManyCart(data);
-        })
-        .catch((error) => {
-            toast.error(error);
-        });
-    else
-    navigate(`/${store?.name}/login-buyer`);
-}
+//   function retrieveBuyerCart(){
+//     const tokenBuyer = Cookies.get(`token-buyer-${store?.name}`)
+//     if(tokenBuyer)
+//     fetchBuyerCart(tokenBuyer)
+//         .then((res: CartType) => {
+//             const data: CartItemType[] = res.cartItems ? res.cartItems : [];
+//             setManyCart(data);
+//         })
+//         .catch((error) => {
+//             toast.error(error);
+//         });
+//     else
+//     navigate(`/${store?.name}/login-buyer`);
+// }
 
   useEffect(() => {
     if (data) {
