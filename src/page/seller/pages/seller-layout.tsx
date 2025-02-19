@@ -37,7 +37,6 @@ const SellerPage = () => {
   });
 
   useEffect(() => {
-    console.log('buyerrrrrrr:  =====', buyer);
     if (buyer === null) {
       retrieveCurrentBuyer();
     }

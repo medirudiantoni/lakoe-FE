@@ -46,7 +46,11 @@ export function LoginBuyer() {
         success: (res) => {
           const data = res.data;
           setBuyer(data.buyer);
-          Cookies.set(`token-buyer-${store?.name}`, data.token);
+          Cookies.set(`token-buyer-${store?.name}`, data.token, {
+            secure: true,
+            sameSite: "None",
+            expires: 7
+          });
           initOrCheckBuyerCart(data.buyer.id, String(store?.id), data.token);
           navigate(`/${store?.name}/`);
           return data.message;

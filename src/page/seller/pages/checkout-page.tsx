@@ -20,12 +20,16 @@ import { ArrowLeft, CheckIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 // import toast from 'react-hot-toast';
 import { useProductStore } from '@/features/auth/store/product-store';
-import { useSellerStore } from '@/hooks/store';
 import { formatRupiah } from '@/lib/rupiah';
 import { apiURL } from '@/utils/baseurl';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { LocationSettingCheckout } from './user/location-checkout';
+import { v4 as uuidv4 } from 'uuid';
+import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
+import { useSellerStore } from '@/hooks/store';
+import { fetchClearCart } from '@/features/auth/services/cart-service';
+import Cookies from 'js-cookie';
 
 type Courier = {
   courier_name: string;
@@ -33,6 +37,14 @@ type Courier = {
   price: number;
   duration: string;
 };
+
+// interface OrderItemMidtrans {
+//   productId: string,
+//   quantity: number,
+//   price: number,
+//   name: string,
+//   image: string
+// }
 
 const SellerCheckoutPage = () => {
   const navigate = useNavigate();
@@ -55,7 +67,8 @@ const SellerCheckoutPage = () => {
   // const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
   const [totalProductPrice, setTotalProductPrice] = useState<number>(0);
 
-  const { products } = useProductStore();
+  const { products, selectedVariantOption } = useProductStore();
+  const { buyer } = useAuthBuyerStore();
 
   useEffect(() => {
     const total = products.reduce(
@@ -90,6 +103,9 @@ const SellerCheckoutPage = () => {
     postalCode: string;
     latitude: string;
     longitude: string;
+    address: string;
+    cityDistrict: string;
+    village: string;
   } | null>(null);
 
   const postCourierRates = useMutation({
@@ -140,13 +156,196 @@ const SellerCheckoutPage = () => {
     }
   }, [selectedLocation]);
 
-  const handlePlaceOrder = () => {
+  // const postCheckout = useMutation({
+  //   mutationFn: async () => {
+  //     setLoading(true)
+  //     const formData = new FormData();
+
+  //     const selectedCourier = selectedCouriers[0];
+
+  //     let dataOrderItem: OrderItemMidtrans[] = [];
+
+  //     products.map(item => {
+  //       const data: OrderItemMidtrans = {
+  //         productId: item.productId,
+  //         name: item.name,
+  //         quantity: item.quantity,
+  //         image: item.image,
+  //         price: item.price,
+  //       };
+  //       dataOrderItem.push(data);
+  //     })
+
+  //     formData.append('buyerId', buyer?.id || '');
+  //     formData.append(
+  //       'orderItems',
+  //       JSON.stringify(dataOrderItem)
+  //     );
+  //     formData.append(
+  //       'recipient',
+  //       JSON.stringify({
+  //         receiverName: buyer?.name,
+  //         receiverDistrict: selectedLocation?.cityDistrict,
+  //         receiverVillage: selectedLocation?.village,
+  //         receiverAddress: selectedLocation?.address,
+  //         receiverPhone: buyer?.phone,
+  //         receiverEmail: buyer?.email.split('-')[0],
+  //         receiverLatitude: selectedLocation?.latitude,
+  //         receiverLongitude: selectedLocation?.longitude,
+  //       })
+  //     );
+
+  //     formData.append('courier', selectedCourier.courier_name);
+  //     formData.append('shippingCost', selectedCourier.price.toString());
+
+  //     return toast.promise(checkout(formData), {
+  //       loading: 'Memproses pesanan...',
+  //       success: 'Pesanan berhasil dibuat!',
+  //       error: 'Gagal membuat pesanan!',
+  //     });
+  //   },
+  //   onSuccess: (data) => {
+  //     setLoading(false)
+  //     queryClient.invalidateQueries({ queryKey: ['locations-buyer'] });
+  //     if (data?.snapRedirectUrl) {
+  //       window.location.href = data.snapRedirectUrl;
+  //     }
+
+  //     console.log('redirect_url', data);
+  //   },
+  //   onError: (error) => {
+  //     setLoading(false)
+  //     console.error('Error menambahkan lokasi:', error);
+  //     toast.error('Gagal menambahkan lokasi!');
+  //   },
+  // });
+
+  // // const handlePlaceOrder = () => {
+  // //   setLoading(true);
+  // //   setTimeout(() => {
+  // //     navigate(`/${store?.name}/payment`);
+  // //     setLoading(false);
+  // //     alert('Pesanan anda telah dibuat');
+  // //   }, 2000);
+  // // };
+
+  // const handlePayment = async () => {
+  //   setLoading(true)
+  //   const formData = new FormData();
+
+  //   const selectedCourier = selectedCouriers[0];
+
+  //   const dataOrderItem: OrderItemMidtrans[] = products.map(item => ({
+  //     productId: item.productId,
+  //     name: item.name,
+  //     quantity: item.quantity,
+  //     image: item.image,
+  //     price: item.price,
+  //   }));
+    
+
+  //   formData.append('buyerId', buyer?.id || '');
+  //   formData.append(
+  //     'orderItems',
+  //     JSON.stringify(dataOrderItem)
+  //   );
+  //   formData.append(
+  //     'recipient',
+  //     JSON.stringify({
+  //       receiverName: buyer?.name,
+  //       receiverDistrict: selectedLocation?.cityDistrict,
+  //       receiverVillage: selectedLocation?.village,
+  //       receiverAddress: selectedLocation?.address,
+  //       receiverPhone: buyer?.phone,
+  //       receiverEmail: buyer?.email.split('-')[0],
+  //       receiverLatitude: selectedLocation?.latitude,
+  //       receiverLongitude: selectedLocation?.longitude,
+  //     })
+  //   );
+
+  //   formData.append('courier', selectedCourier.courier_name);
+  //   formData.append('shippingCost', selectedCourier.price.toString());
+
+  //   const cartItemIds = products.map(e => String(e.cartItemId));
+
+  //   console.log("productsss: ", cartItemIds);
+
+
+  //   const data: DataRequestOrder = {
+  //     buyerId: String(buyer?.id),
+  //     cartItemIds: JSON.stringify(cartItemIds),
+  //     courier: selectedCourier.courier_name,
+  //     recipient: JSON.stringify({
+  //       receiverName: buyer?.name,
+  //       receiverDistrict: selectedLocation?.cityDistrict,
+  //       receiverVillage: selectedLocation?.village,
+  //       receiverAddress: selectedLocation?.address,
+  //       receiverPhone: buyer?.phone,
+  //       receiverEmail: buyer?.email ? buyer?.email.split('-')[0] : '',
+  //       receiverLatitude: selectedLocation?.latitude,
+  //       receiverLongitude: selectedLocation?.longitude,
+  //     }),
+  //     shippingCost: selectedCourier.price.toString(),
+  //     singleQuantity: products.length === 1 ? products[0].quantity : 1,
+  //     variantOptionId: String(selectedVariantOption?.id)
+  //   }
+
+  //   const res = await createOrder(data);
+
+  //   console.log("ressssssssss", res.data);
+
+  //   if (res.status === 201) {
+  //     console.log("suksess coy!! -----");
+  //     setOnSnap(true);
+  //     setSnapToken(res.data.data.snap_token);
+
+  //   }
+  // }
+
+  const handleCreateOrder = async () => {
     setLoading(true);
-    setTimeout(() => {
-      navigate(`/${store?.name}/payment`);
-      setLoading(false);
-      alert('Pesanan anda telah dibuat');
-    }, 2000);
+    const selectedCourier = selectedCouriers[0];
+  
+    const dataOrderItem = products.map(item => ({
+      productId: item.productId,
+      name: item.name,
+      quantity: item.quantity,
+      image: item.image,
+      price: item.price,
+    }));
+  
+    const orderData = {
+      buyerId: String(buyer?.id),
+      cartItemIds: JSON.stringify(products.map(e => String(e.cartItemId))),
+      courier: selectedCourier.courier_name,
+      recipient: JSON.stringify({
+        receiverName: buyer?.name,
+        receiverDistrict: selectedLocation?.cityDistrict,
+        receiverVillage: selectedLocation?.village,
+        receiverAddress: selectedLocation?.address,
+        receiverPhone: buyer?.phone,
+        receiverEmail: buyer?.email ? buyer?.email.split('-')[0] : '',
+        receiverLatitude: selectedLocation?.latitude,
+        receiverLongitude: selectedLocation?.longitude,
+      }),
+      shippingCost: selectedCourier.price.toString(),
+      singleQuantity: products.length === 1 ? products[0].quantity : 1,
+      variantOptionId: String(selectedVariantOption?.id),
+      storeName: store?.name
+    };
+
+    const localOrderId = uuidv4();
+  
+    // Menyimpan lebih banyak detail ke localStorage
+    localStorage.setItem(`pendingOrder-${localOrderId}`, JSON.stringify({
+      orderData,
+      totalAmount: totalProductPrice + selectedCourier.price,
+      products: dataOrderItem,
+      shippingDetails: selectedCourier,
+      subtotal: totalProductPrice
+    }));
+
+    navigate(`/${store?.name}/payment/${localOrderId}`);
   };
 
   useEffect(() => {
@@ -163,9 +362,7 @@ const SellerCheckoutPage = () => {
     );
 
   const toggleCourier = (courier: Courier) => {
-    setSelectedCouriers(
-      () => (isCourierSelected(courier) ? [] : [courier]) // Hanya satu kurir yang bisa dipilih
-    );
+    setSelectedCouriers(() => (isCourierSelected(courier) ? [] : [courier]));
   };
 
   useEffect(() => {
@@ -186,6 +383,8 @@ const SellerCheckoutPage = () => {
         <ArrowLeft />
         {/* <Text>Back</Text> */}
       </Button>
+
+      {/* <PaymentButtonMidtrans onPopup={onSnap} snapToken={snapToken} /> */}
 
       <Box w="full" maxW="6xl" mx="auto" py="20">
         <HStack
@@ -313,7 +512,7 @@ const SellerCheckoutPage = () => {
                         </Text>
                       </Box>
                     ) : (
-                      <Text>Pilih Kurir</Text>
+                      <Text>Pilih Kurir <span className='text-red-500'>*</span></Text>
                     )}
                   </HStack>
                 </Box>
@@ -364,7 +563,7 @@ const SellerCheckoutPage = () => {
                           (c) =>
                             c.courier_name === courier.courier_name &&
                             c.courier_service_name ===
-                              courier.courier_service_name
+                            courier.courier_service_name
                         ) && <CheckIcon />}
                       </HStack>
                     ))}
@@ -441,17 +640,22 @@ const SellerCheckoutPage = () => {
                   >
                     {formatRupiah(
                       (totalProductPrice ?? 0) +
-                        selectedCouriers.reduce(
-                          (total, c) => total + (c.price ?? 0),
-                          0
-                        )
+                      selectedCouriers.reduce(
+                        (total, c) => total + (c.price ?? 0),
+                        0
+                      )
                     )}
                   </Table.ColumnHeader>
                 </Table.Row>
               </Table.Footer>
             </Table.Root>
 
-            <Button w="full" onClick={handlePlaceOrder} mt={'5'}>
+            <Button
+              w="full"
+              onClick={() => handleCreateOrder()}
+              mt="5"
+              disabled={selectedCouriers.length === 0}
+            >
               {loading ? <LoadingButtonLottie /> : 'Buat Pesanan'}
             </Button>
           </Box>

@@ -37,6 +37,8 @@ import AddProductForm from './page/productpage/add-product';
 import { LoginBuyer } from './page/seller/pages/login-page';
 import SellerProductDetail from './page/seller/pages/product-detail';
 import { RegisterBuyer } from './page/seller/pages/register-page';
+import PaymentCheckingPage from './page/seller/pages/payment-checking';
+import { LoadingScreenBuyerGoogle } from './components/loading-screen/loading-screen-buyer-google';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -98,8 +100,8 @@ function App() {
       HydrateFallback: Fallback,
     },
     {
-      path: 'loading-screen-buyer',
-      Component: LoadingScreenBuyer,
+      path: '/loading-screen-buyer',
+      Component: LoadingScreenBuyerGoogle,
       HydrateFallback: Fallback,
     },
     {
@@ -128,6 +130,11 @@ function App() {
           HydrateFallback: Fallback,
         },
         {
+          path: 'payment-checking',
+          Component: PaymentCheckingPage,
+          HydrateFallback: Fallback,
+        },
+        {
           path: '',
           element: <PrivateRouteBuyer />,
           children: [
@@ -137,12 +144,17 @@ function App() {
               HydrateFallback: Fallback,
             },
             {
-              path: 'payment',
+              path: 'payment/:orderId',
               Component: SellerBillingPage,
               HydrateFallback: Fallback,
             },
             {
               path: 'buyer',
+              Component: BuyerLayout,
+              HydrateFallback: Fallback,
+            },
+            {
+              path: 'buyer/order',
               Component: BuyerLayout,
               HydrateFallback: Fallback,
             },

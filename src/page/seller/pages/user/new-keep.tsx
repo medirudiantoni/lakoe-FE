@@ -8,16 +8,23 @@ import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { TabsPesanan } from './tabs/tab-pesanan';
 import { TabsProfile } from './tabs/tab-profile';
+import { useLocation } from 'react-router';
 
 export function NewKeep() {
   const { buyer } = useAuthBuyerStore();
   // const queryClient = useQueryClient();
   const { store } = useSellerStore();
   const token = Cookies.get(`token-buyer-${store?.name}`);
+  const { pathname } = useLocation();
 
-  useEffect(() => {
-    console.log('buyer iniii', buyer);
-  }, [buyer]);
+  // useEffect(() => {
+  //   console.log('location iniii', pathname);
+  //   if(pathname.includes('order')){
+  //     console.log("order true")
+  //   } else {
+  //     console.log("order false")
+  //   }
+  // }, [pathname]);
 
   const { data } = useQuery({
     queryKey: ['user-buyer', buyer?.id],
@@ -82,7 +89,7 @@ export function NewKeep() {
         Informasi Profile
       </Text>
 
-      <Tabs.Root defaultValue="profile" variant={'subtle'}>
+      <Tabs.Root defaultValue={`${pathname.includes('order') ? 'pesanan' : 'profile'}`} variant={'subtle'}>
         <Tabs.List>
           <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
           <Tabs.Trigger value="pesanan">Pesanan</Tabs.Trigger>

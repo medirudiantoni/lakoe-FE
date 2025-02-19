@@ -40,6 +40,9 @@ interface LocationSettingCheckoutProps {
     postalCode: string;
     latitude: string;
     longitude: string;
+    address: string;
+    cityDistrict: string;
+    village: string
   }) => void;
 }
 
@@ -77,6 +80,10 @@ export function LocationSettingCheckout({
           postalCode: mainLocation.postalCode,
           latitude: mainLocation.latitude,
           longitude: mainLocation.longitude,
+          address: mainLocation.address,
+          cityDistrict: mainLocation.cityDistrict,
+          village: mainLocation.postalCode
+          
         };
         // setCoordinates([
         //   parseFloat(mainLocation.latitude),

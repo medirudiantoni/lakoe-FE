@@ -47,7 +47,7 @@ const SellerProductDetail = () => {
     []
   );
   const { store } = useSellerStore();
-  const { setProducts } = useProductStore();
+  const { setProducts, setSelectedVariantOption } = useProductStore();
   const [isLoadingPage, setIsLoadingPage] = useState<boolean>(true);
   const [tokenBuyer, setTokenBuyer] = useState('');
 
@@ -92,8 +92,10 @@ const SellerProductDetail = () => {
         quantity: 1,
         category: product.category?.name,
         image: product.attachments[0],
+        cartItemId: product.id
       },
     ]);
+    setSelectedVariantOption(selectedVariantOptionValue);
 
     navigate(`/${store?.name}/checkout`);
   };
@@ -221,6 +223,7 @@ const SellerProductDetail = () => {
         name: `${product.name}`,
         quantity: 1,
         price: priceNumber,
+        image: String(product?.attachments[0]),
         product: product,
       };
       console.log('datanya: ', data);
@@ -244,6 +247,7 @@ const SellerProductDetail = () => {
           name: `${product?.name} - ${selectedOptionName.join(' ')}`,
           quantity: 1,
           price: priceNumber,
+          image: String(product?.attachments[0]),
           product,
         };
         toast.success('Produk Telah ditambahkan ke keranjang');

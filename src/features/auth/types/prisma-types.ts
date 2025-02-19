@@ -52,6 +52,7 @@ export type CartItemType = {
   quantity: number;
   price: number;
   name: string;
+  image: string;
   product?: ProductType;
   productId?: string;
   cartId?: string;
@@ -291,4 +292,5 @@ export type OrderItemType = {
   weight?: number;
   width?: number;
   image: string;
+  cartItemId: string;
 };

@@ -29,7 +29,6 @@ const SellerCartPage = () => {
   const [selectedItem, setSelectedItem] = useState<CartItemType[]>([]);
 
   const { store } = useSellerStore();
-  // const { buyer } = useAuthBuyerStore();
   const { cart, totalPrice, totalQuantity } = useCart();
   const { setProducts } = useProductStore();
 
@@ -46,6 +45,7 @@ const SellerCartPage = () => {
         price: item.price,
         productId: String(item.product?.id),
         quantity: item.quantity,
+        cartItemId: String(item.id)
       };
       data.push(dataItem);
     });
