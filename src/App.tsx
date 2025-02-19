@@ -37,11 +37,30 @@ import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-b
 import AddProductForm from './page/productpage/add-product';
 import PrivateRouteBuyer from './layouts/private-layout-buyer';
 import SellerProductDetail from './page/seller/pages/product-detail';
+import { Admin } from './page/admin/pages/admin-page';
+import { AdminLogin } from './page/admin/pages/login-admin-page';
+import PrivateRouteAdmin from './layouts/private-layout-admin';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
   
   const router = createBrowserRouter([
+    {
+      path: '/login-admin',
+      Component: AdminLogin,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '',
+      element: <PrivateRouteAdmin/>,
+      children: [
+        {
+          path: '/admin',
+          Component: Admin,
+          HydrateFallback: Fallback
+        },
+      ]
+    },
     {
       path: '/tanstack',
       Component: CobaTanstack,

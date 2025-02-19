@@ -23,9 +23,10 @@ import { TabOrderComplete } from './tab-order-complete-order';
 import { TabCancelledOrder } from './tab-cancelled-order';
 import { InputGroup } from '@/components/ui/input-group';
 import { fetchOrders } from '@/features/auth/services/order.service';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Order } from '@/features/auth/types/order.types';
-
+import { useSellerStore } from '@/hooks/store';
+import Cookies from 'js-cookie';
 
 function SearchBar() {
   return (
@@ -104,36 +105,42 @@ function SortMenu() {
 export function Order() {
   const [status, setStatus] = useState('Semua');
   const [orders, setOrders] = useState<Order[]>([]);
-  const [cachedOrders, setCachedOrders] = useState<Record<string, Order[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const token = Cookies.get('token');
+  const { store } = useSellerStore();
+  const storeId = store?.id; // Pastikan mengambil storeId dengan aman
+  console.log(token);
+  console.log('✅ Store ID dari useSellerStore:', storeId); // 🔍 Debugging storeId
 
-
-  const fetchData = useCallback(async () => {
-    if (cachedOrders[status]) {
-      setOrders(cachedOrders[status]);
+  useEffect(() => {
+    if (!storeId) {
+      console.warn('⚠️ Tidak ada storeId, hentikan fetch.');
       return;
     }
-  
-    setIsLoading(true);
-    try {
-      const orders = await fetchOrders(status);
-      setOrders(orders);
-      setCachedOrders((prev) => ({ ...prev, [status]: orders })); 
-    } catch (error: any) {
-      setError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [status, cachedOrders]);
-  
-  
 
-  
-  useEffect(() => {
+    const fetchData = async () => {
+      setOrders([]); // 🔥 Reset orders sebelum fetch baru untuk menghindari tampilan data toko sebelumnya
+      setIsLoading(true);
+
+      try {
+        const orders = await fetchOrders(token || '');
+
+        console.log(
+          `📦 Data orders setelah fetch untuk store ${storeId}:`,
+          orders
+        );
+
+        setOrders(orders);
+      } catch (error: any) {
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
-  }, [status, fetchData]);  
-
+  }, [storeId, status]);
 
   if (isLoading) {
     return (
@@ -145,7 +152,13 @@ export function Order() {
     );
   }
 
-  if (error) return <Text>Error: {error.message || "Terjadi kesalahan saat memuat data"}</Text>;
+  if (error) {
+    return (
+      <Text>
+        Error: {error.message || 'Terjadi kesalahan saat memuat data'}
+      </Text>
+    );
+  }
 
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
@@ -155,11 +168,10 @@ export function Order() {
         </Text>
       </Flex>
 
-  
-      <Tabs.Root 
+      <Tabs.Root
         value={status}
-        mt={5} 
-        onValueChange={(details) => setStatus(details.value)} 
+        mt={5}
+        onValueChange={(details) => setStatus(details.value)}
       >
         <Tabs.List>
           <Tabs.Trigger value="Semua">Semua</Tabs.Trigger>
@@ -171,14 +183,12 @@ export function Order() {
           <Tabs.Trigger value="Dibatalkan">Dibatalkan</Tabs.Trigger>
         </Tabs.List>
 
-     
         <Grid templateColumns="repeat(3, 1fr)" width={'100%'} gap={2} mt={3}>
           <SearchBar />
           <FilterMenu />
           <SortMenu />
         </Grid>
 
-       
         <Tabs.Content value="Semua">
           <TabAllOrder orders={orders} />
         </Tabs.Content>
@@ -186,7 +196,6 @@ export function Order() {
           <TabNotYetPaidOrder orders={orders} />
         </Tabs.Content>
         <Tabs.Content value="Pesanan Baru">
-          
           <TabNewOrder orders={orders} />
         </Tabs.Content>
         <Tabs.Content value="Siap Dikirim">

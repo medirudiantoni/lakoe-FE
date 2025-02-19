@@ -1,5 +1,3 @@
-// order-types.ts
-
 export type Product = {
     name: string;
     attachments?: string[];
@@ -14,16 +12,24 @@ export type Product = {
   
  export interface Order {
   invoice?: {
+
+    buyerId: string
     invoiceNumber: string;
     receiverName: string;
     receiverPhone: string;
     serviceCharge: number;
     price: number
     waybill: string;
+
   };
+  storeId: string
+  trackingId: string
   orderItems: OrderItem[];
   totalPrice: number;
-  id: number;
+  buyer: {
+    id:string
+  }
+  id: string;
   courier: string;
   status: string;
   recipientAddress: string;

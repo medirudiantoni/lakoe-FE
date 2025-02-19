@@ -2,16 +2,10 @@ import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { Order } from '@/features/auth/types/order.types'; 
 import { useEffect, useState } from 'react';
 import ContactBuyerDialog from '../../orderpage/dialog-order-page/contact-buyer-dialog';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import { useMessageTemplate } from '@/features/auth/services/template-service';
 interface TabNewOrderProps {
   orders: Order[]; 
 }
-
-
-
-
-
 export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -27,26 +21,11 @@ export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
     setNotYetPaid(filteredOrders);
   }, [orders]); 
 
-  const handleContactBuyer = async (order:any) => {
+  const handleContactBuyer = async (order: any) => {
     try {
-      const token = Cookies.get('token'); 
-      const templateId = '8a6d8c7e-2826-4747-8869-ff47440d50e5';
-      const storeName = order.store.name; 
-      const { data } = await axios.post(
-        `http://localhost:5000/api/v1/message-template/${templateId}/use/`,
-        {
-          buyerName: order.recipientName,
-          productName: order.orderItems?.[0]?.product?.name,
-          storeName: storeName
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        }
-      );
-  
-      setMessage(data.message);
+      const templateId = 'f3c0193b-ee1f-4a27-9e36-1e76bb0bf232';
+      const message = await useMessageTemplate(templateId, order);
+      setMessage(message);
       setIsOpen(true);
     } catch (error) {
       console.error('Gagal memuat template pesan:', error);
@@ -85,14 +64,14 @@ export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
           onClick={() => handleContactBuyer(order)} >
                       {order.status === 'Menunggu Pembayaran' ? 'Hubungi Pembeli' : 'Lihat Detail'}
                     </Button>
-                    <ContactBuyerDialog
+             
+
+                  </Box>
+                  <ContactBuyerDialog
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         message={message}
       />
-
-                  </Box>
-
                   <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center">
                       <Image
