@@ -1,15 +1,11 @@
 import LogoIcon from '@/components/icons/logo';
 import Layout from '@/components/layout/Layout';
-import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { Center, VStack } from '@chakra-ui/react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router';
 
 import LoadingLottie from '@/components/icons/lottie';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
