@@ -37,6 +37,7 @@ const SellerPage = () => {
   });
 
   useEffect(() => {
+    console.log('buyerr', buyer)
     if (buyer === null) {
       retrieveCurrentBuyer();
     }
@@ -46,7 +47,7 @@ const SellerPage = () => {
     if (cart.length === 0 && buyer) {
       retrieveBuyerCart();
     }
-  }, [cart, buyer]);
+  }, [cart, buyer]);;
 
   function retrieveCurrentBuyer() {
     const token = Cookies.get(`token-buyer-${storeName}`);
@@ -79,6 +80,7 @@ const SellerPage = () => {
         });
     else navigate(`/${store?.name}/login-buyer`);
   }
+
 
   useEffect(() => {
     if (data) {

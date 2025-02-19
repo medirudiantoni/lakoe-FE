@@ -1,36 +1,33 @@
-import LogoIcon from '@/components/icons/logo';
-import Layout from '@/components/layout/Layout';
+
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { Center, VStack } from '@chakra-ui/react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router';
+import LogoIcon from '@/components/icons/logo';
 
-import LoadingLottie from '@/components/icons/lottie';
-import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
-import { useAuthStore } from '@/features/auth/store/auth-store';
+import { fetchCurrentAdminData } from '@/features/auth/services/auth-admin';
 import toast from 'react-hot-toast';
+import LoadingLottie from '@/components/icons/lottie';
+import { useAdminAuthStore } from '@/features/auth/store/auth-admin-store';
+import LayoutAdmin from '@/components/layout/layout-admin';
 
-const PrivateRoute = () => {
-  const { setUser, user } = useAuthStore();
+const PrivateRouteAdmin = () => {
+  const { setAdmin, admin } = useAdminAuthStore();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (user === null) {
-      retrieveCurrentUser();
+    if (admin === null) {
+      retrieveCurrentAdmin();
     }
-  }, [user]);
+  }, [admin]);
 
-  function retrieveCurrentUser() {
-    const token = Cookies.get('token');
-    fetchCurrentUserData(token!)
+  function retrieveCurrentAdmin() {
+    const token = Cookies.get('token-admin');
+    fetchCurrentAdminData(token!)
       .then((res) => {
-        setUser(res.user);
+        setAdmin(res.admin);
       })
       .catch((error) => {
         console.log(error);
@@ -40,14 +37,14 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     const validateToken = async () => {
-      const token = Cookies.get('token');
+      const token = Cookies.get('token-admin');
       if (!token) {
         setIsAuthenticated(false);
         return;
       }
 
       try {
-        await axios.post(apiURL + 'auth/validate-token', { token });
+        await axios.post(apiURL + 'admin/validate-token', { token });
         setTimeout(() => {
           setIsAuthenticated(true);
         }, 500);
@@ -71,7 +68,7 @@ const PrivateRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Layout /> : <Navigate to="/login" replace />;
+  return isAuthenticated ? <LayoutAdmin /> : <Navigate to="/login-admin" replace />;
 };
 
-export default PrivateRoute;
+export default PrivateRouteAdmin;

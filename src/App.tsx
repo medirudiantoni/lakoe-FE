@@ -39,11 +39,30 @@ import SellerProductDetail from './page/seller/pages/product-detail';
 import { RegisterBuyer } from './page/seller/pages/register-page';
 import PaymentCheckingPage from './page/seller/pages/payment-checking';
 import { LoadingScreenBuyerGoogle } from './components/loading-screen/loading-screen-buyer-google';
+import { Admin } from './page/admin/pages/admin-page';
+import { AdminLogin } from './page/admin/pages/login-admin-page';
+import PrivateRouteAdmin from './layouts/private-layout-admin';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
 
   const router = createBrowserRouter([
+    {
+      path: '/login-admin',
+      Component: AdminLogin,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '',
+      element: <PrivateRouteAdmin/>,
+      children: [
+        {
+          path: '/admin',
+          Component: Admin,
+          HydrateFallback: Fallback
+        },
+      ]
+    },
     {
       path: '/tanstack',
       Component: CobaTanstack,

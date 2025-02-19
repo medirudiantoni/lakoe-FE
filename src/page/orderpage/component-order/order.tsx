@@ -25,8 +25,14 @@ import { TabNewOrder } from './tab-new-order';
 import { TabNotYetPaidOrder } from './tab-notyetpaid-order';
 import { TabOrderComplete } from './tab-order-complete-order';
 import { TabReadyOrder } from './tab-ready-to-ship-order';
+import { TabCancelledOrder } from './tab-cancelled-order';
+import { InputGroup } from '@/components/ui/input-group';
+import { fetchOrders } from '@/features/auth/services/order.service';
+import { useState, useEffect } from 'react';
+import type { Order } from '@/features/auth/types/order.types';
+import { useSellerStore } from '@/hooks/store';
+import Cookies from 'js-cookie';
 
-// Komponen SearchBar
 function SearchBar() {
   return (
     <GridItem position={'relative'}>
@@ -104,35 +110,42 @@ function SortMenu() {
 export function Order() {
   const [status, setStatus] = useState('Semua');
   const [orders, setOrders] = useState<Order[]>([]);
-  const [cachedOrders, setCachedOrders] = useState<Record<string, Order[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const token = Cookies.get('token');
+  const { store } = useSellerStore();
+  const storeId = store?.id; // Pastikan mengambil storeId dengan aman
+  console.log(token);
+  console.log('✅ Store ID dari useSellerStore:', storeId); // 🔍 Debugging storeId
 
-  // Fungsi untuk mengambil data pesanan
-  const fetchData = useCallback(async () => {
-    if (cachedOrders[status]) {
-      // Jika data sudah ada di cache, gunakan data tersebut
-      setOrders(cachedOrders[status]);
+  useEffect(() => {
+    if (!storeId) {
+      console.warn('⚠️ Tidak ada storeId, hentikan fetch.');
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const { data } = await axios.get('http://localhost:5000/api/v1/order', {
-        params: { status: status === 'Semua' ? undefined : status },
-      });
-      setOrders(data.orders);
-      setCachedOrders((prev) => ({ ...prev, [status]: data.orders })); // Simpan data ke cache
-    } catch (error: any) {
-      setError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [status, cachedOrders]);
+    const fetchData = async () => {
+      setOrders([]); // 🔥 Reset orders sebelum fetch baru untuk menghindari tampilan data toko sebelumnya
+      setIsLoading(true);
 
-  useEffect(() => {
+      try {
+        const orders = await fetchOrders(token || '');
+
+        console.log(
+          `📦 Data orders setelah fetch untuk store ${storeId}:`,
+          orders
+        );
+
+        setOrders(orders);
+      } catch (error: any) {
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
-  }, [status, fetchData]);
+  }, [storeId, status]);
 
   if (isLoading) {
     return (
@@ -144,12 +157,13 @@ export function Order() {
     );
   }
 
-  if (error)
+  if (error) {
     return (
       <Text>
         Error: {error.message || 'Terjadi kesalahan saat memuat data'}
       </Text>
     );
+  }
 
   return (
     <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>

@@ -1,13 +1,27 @@
-import { useAuthStore } from '@/features/auth/store/auth-store';
 import { Box, Flex, Grid, GridItem, Image, Text } from '@chakra-ui/react';
 import { BoxIcon, CircleDollarSign, ShoppingCart, Users } from 'lucide-react';
 import { useEffect } from 'react';
 import banner from '../../assets/Banner.png';
 import { ChartComponent } from './chart';
 import { TableDemo } from './table';
+import { useEffect } from 'react';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useSellerStore } from '@/hooks/store';
+import Cookies from 'js-cookie';
+import { useQuery } from '@tanstack/react-query';
+import { fetchBalance } from '@/features/auth/services/store-service';
+import WithdrawForm from './withdraw';
 
 export function Dashboard() {
   const { user } = useAuthStore();
+  const { store } = useSellerStore();
+  const token = Cookies.get('token')
+
+  const { data: balance, isLoading, isError } = useQuery({
+    queryKey: ['balance', store?.id],
+    queryFn: async () => fetchBalance(store!.id, token!),
+    enabled: !!store?.id, 
+  });
   useEffect(() => {
     console.log('dashboardedsfsfrr:', user);
   }, [user]);
@@ -54,11 +68,23 @@ export function Dashboard() {
             p={4}
           >
             <Flex flexDirection={'column'} alignItems={'center'}>
-              <Text fontWeight={'semibold'}>Saldo</Text>
-              <Text fontWeight={'bold'}>Rp 78.365.000,-</Text>
+            <Text fontWeight={'semibold'}>Saldo</Text>
+            {isLoading ? (
+              <Text fontWeight="bold">Loading...</Text>
+            ) : isError || balance === undefined ? (
+              <Text fontWeight="bold" color="red.500">
+                Gagal Memuat
+              </Text>
+            ) : (
+              <Text fontWeight="bold">
+              Rp {balance?.balance?.toLocaleString('id-ID') || '0'}
+            </Text>
+            
+            )}
             </Flex>
           </GridItem>
         </Grid>
+            <WithdrawForm storeId={store!.id}/>
         <Grid templateColumns="repeat(2, 1fr)" gap={4} mt={5}>
           <Box>
             <Grid templateColumns="repeat(2, 1fr)" gap={4} height="100%">

@@ -45,7 +45,7 @@ export function TemplateSetting() {
     enabled: !!storeId, // Query hanya dijalankan jika storeId ada
   });
 
-  // Mutation untuk menyimpan template
+  
   const mutation = useMutation({
     mutationFn: async (data: TemplateFormProps) => {
       const token = Cookies.get('token') || '';
@@ -67,7 +67,7 @@ export function TemplateSetting() {
         }
       );
 
-      // **🔥 Tetap invalidasi cache agar data tetap akurat**
+
       queryClient.invalidateQueries({ queryKey: ['templates', storeId] });
     },
     onError: (error: Error) => {
@@ -128,7 +128,7 @@ export function TemplateSetting() {
                   borderRadius={'50px'}
                   bg={'white'}
                   color={'black'}
-                  onClick={() => handleAddText('[Nama Customer]')}
+                  onClick={() => handleAddText('{NamaCustomer}')}
                 >
                   Customer Name
                 </Button>
@@ -137,7 +137,7 @@ export function TemplateSetting() {
                   borderRadius={'50px'}
                   bg={'white'}
                   color={'black'}
-                  onClick={() => handleAddText('[Nama Produk]')}
+                  onClick={() => handleAddText('{NamaProduk}')}
                 >
                   Product Name
                 </Button>
@@ -146,7 +146,7 @@ export function TemplateSetting() {
                   borderRadius={'50px'}
                   bg={'white'}
                   color={'black'}
-                  onClick={() => handleAddText('[Nama Toko]')}
+                  onClick={() => handleAddText('{NamaToko}')}
                 >
                   Store Name
                 </Button>
