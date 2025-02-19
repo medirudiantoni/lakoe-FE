@@ -14,11 +14,11 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
-import Cookies from 'js-cookie';
 import BankDropdown from './dropdown';
 // import BankForm from './formBank';
 
@@ -27,7 +27,6 @@ type Bank = {
   id: string;
   name: string;
 };
-
 
 export function RegisterStore() {
   const {

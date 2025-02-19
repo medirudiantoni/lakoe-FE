@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { LoginFormProps, RegisterFormProps } from '../types/auth-types';
 import { apiURL } from '@/utils/baseurl';
+import { LoginFormProps, RegisterFormProps } from '../types/auth-types';
 
 export const fetchLogin = async (data: LoginFormProps) => {
   try {
@@ -47,14 +47,11 @@ export const fetchRegister = async (data: RegisterFormProps) => {
 
 export const fetchCurrentUserData = async (token: string) => {
   try {
-    const res: AxiosResponse = await axios.get(
-      apiURL + 'auth/current',
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res: AxiosResponse = await axios.get(apiURL + 'auth/current', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return res.data;
   } catch (error) {
@@ -66,4 +63,3 @@ export const fetchCurrentUserData = async (token: string) => {
     throw error;
   }
 };
-

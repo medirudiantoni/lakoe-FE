@@ -1,9 +1,7 @@
-import {
-  Box,
-} from '@chakra-ui/react';
-import SellerNavbar from '../../components/navbar';
-import SellerFooter from '../../components/footer';
+import { Box } from '@chakra-ui/react';
 import { useEffect } from 'react';
+import SellerFooter from '../../components/footer';
+import SellerNavbar from '../../components/navbar';
 import { NewKeep } from './new-keep';
 
 const BuyerLayout = () => {
@@ -14,7 +12,7 @@ const BuyerLayout = () => {
   return (
     <Box w="full" minH="100vh" className="font-poppins" overflowX="hidden">
       <SellerNavbar />
-        <NewKeep/>
+      <NewKeep />
       <SellerFooter />
     </Box>
   );

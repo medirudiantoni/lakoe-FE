@@ -3,22 +3,15 @@ import { fetchProduct } from '@/features/auth/services/product-service';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useCheckboxStore } from '@/features/auth/store/product-store';
 import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
-import {
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Input,
-  Text
-} from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Input, Text } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 import { PackageSearch } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import Category from '../component-product/category';
+// import Category from '../component-product/category';
 import SelectAllCheckbox from '../component-product/checkbox';
 import ProductCardDashboard from '../component-product/product-card-dashboard';
-import SortingDropdown from '../component-product/sorting';
+// import SortingDropdown from '../component-product/sorting';
 import { DialogDelete } from '../dialog-product/dialog-delete';
 
 export function TabContentNonActive() {
@@ -65,21 +58,19 @@ export function TabContentNonActive() {
         </GridItem>
         <GridItem>
           <Box position={'relative'}>
-            <Category />
+            {/* <Category /> */}
           </Box>
         </GridItem>
         <GridItem>
           <Box position={'relative'}>
-            <SortingDropdown />
+            {/* <SortingDropdown /> */}
           </Box>
         </GridItem>
       </Grid>
-      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3} >
+      <Flex justifyContent={'space-between'} alignItems={'center'} mt={3}>
         <Text color={'gray.400'}>{nonActiveProducts.length} Produk</Text>
         <Box display={'flex'} alignItems={'center'} gap={2} color={'#75757C'}>
-          {isAnyProductSelected && (
-            <DialogDelete />
-          )}
+          {isAnyProductSelected && <DialogDelete />}
           <SelectAllCheckbox allProductIds={products?.map((p) => p.id) || []} />
         </Box>
       </Flex>

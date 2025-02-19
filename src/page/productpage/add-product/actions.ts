@@ -1,8 +1,11 @@
+import {
+  addNewProduct,
+  updateProductById,
+} from '@/features/auth/services/product-service';
+import { VariantType } from '@/features/auth/types/prisma-types';
+import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import { ProductFormInputs } from './schema';
-import Cookies from 'js-cookie';
-import { addNewProduct, updateProductById } from '@/features/auth/services/product-service';
-import { VariantType } from '@/features/auth/types/prisma-types';
 // import { VariantType } from './variant';
 
 export default async function handleSubmitAddProduct(
@@ -17,7 +20,7 @@ export default async function handleSubmitAddProduct(
   attachmentsUrl?: string[]
 ) {
   setIsLoading(true);
-  console.log("executed 2")
+  console.log('executed 2');
 
   if (!selectedCategoryId) {
     toast.error('Pilih kategori terlebih dahulu!');
@@ -25,7 +28,7 @@ export default async function handleSubmitAddProduct(
     return;
   }
 
-  if (!productId && !data.attachments || data.attachments?.length === 0) {
+  if ((!productId && !data.attachments) || data.attachments?.length === 0) {
     setError('attachments', {
       type: 'manual',
       message: 'Silakan unggah minimal satu foto produk!',
@@ -48,8 +51,8 @@ export default async function handleSubmitAddProduct(
   formData.append('categoryId', categoryId);
   formData.append('variants', variante);
 
-  if(productId){
-    formData.append('attachmentsUrl', JSON.stringify(attachmentsUrl))
+  if (productId) {
+    formData.append('attachmentsUrl', JSON.stringify(attachmentsUrl));
   }
 
   if (data.size) {
@@ -65,10 +68,13 @@ export default async function handleSubmitAddProduct(
   // console.log(formData);
   const token = Cookies.get('token');
 
-  console.log("form data: ", formData)
+  console.log('form data: ', formData);
 
   toast
-    .promise( productId ? updateProductById(formData, productId) : addNewProduct(formData, token!),
+    .promise(
+      productId
+        ? updateProductById(formData, productId)
+        : addNewProduct(formData, token!),
       {
         loading: 'Sedang menambahkan produk baru...',
         success: (res) => {

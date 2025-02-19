@@ -5,65 +5,65 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "../../../@/components/ui/table";
+  TableRow,
+} from '../../../@/components/ui/table';
 
 const invoices = [
   {
-    idOrder: "ORD-231020-005-001",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaos",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-001',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaos',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
   {
-    idOrder: "ORD-231020-005-002",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaos",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-002',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaos',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
   {
-    idOrder: "ORD-231020-005-002",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaos",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-002',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaos',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
   {
-    idOrder: "ORD-231020-005-001",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaos",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-001',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaos',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
   {
-    idOrder: "ORD-231020-005-001",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaos",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-001',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaos',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
   {
-    idOrder: "ORD-231020-005-001",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaos",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-001',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaos',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
   {
-    idOrder: "ORD-231020-005-001",
-    product: "KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]",
-    kategori: "Kaossss",
-    tanggal: "18/08/2024",
-    pembeli: "marco",
-    status: "Belum bayar",
+    idOrder: 'ORD-231020-005-001',
+    product: 'KAOS BASIC COTTON KENARI - DUSTY ROSE [ COTTON COMBED 30S ]',
+    kategori: 'Kaossss',
+    tanggal: '18/08/2024',
+    pembeli: 'marco',
+    status: 'Belum bayar',
   },
 ];
 
@@ -77,26 +77,41 @@ export function TableDemo() {
           </TableCaption>
           <TableHeader>
             <TableRow className="bg-gray-100">
-              <TableHead className="w-[170px] px-4 py-2 text-gray-700">OrderId</TableHead>
+              <TableHead className="w-[170px] px-4 py-2 text-gray-700">
+                OrderId
+              </TableHead>
               <TableHead className="px-4 py-2 text-gray-700">Produk</TableHead>
-              <TableHead className="px-4 py-2 text-gray-700">Kategori</TableHead>
-              <TableHead className="px-4 py-2 text-right text-gray-700">Tanggal</TableHead>
-              <TableHead className="px-4 py-2 text-right text-gray-700">Pembeli</TableHead>
-              <TableHead className="px-4 py-2 text-right text-gray-700">Status</TableHead>
+              <TableHead className="px-4 py-2 text-gray-700">
+                Kategori
+              </TableHead>
+              <TableHead className="px-4 py-2 text-right text-gray-700">
+                Tanggal
+              </TableHead>
+              <TableHead className="px-4 py-2 text-right text-gray-700">
+                Pembeli
+              </TableHead>
+              <TableHead className="px-4 py-2 text-right text-gray-700">
+                Status
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {invoices.map((invoice) => (
-              <TableRow
-                
-                className="hover:bg-gray-50 even:bg-gray-50"
-              >
-                <TableCell className="px-4 py-2 font-medium">{invoice.idOrder}</TableCell>
-                <TableCell className="px-4 py-2 truncate max-w-36">{invoice.product}</TableCell>
+              <TableRow className="hover:bg-gray-50 even:bg-gray-50">
+                <TableCell className="px-4 py-2 font-medium">
+                  {invoice.idOrder}
+                </TableCell>
+                <TableCell className="px-4 py-2 truncate max-w-36">
+                  {invoice.product}
+                </TableCell>
                 <TableCell className="px-4 py-2">{invoice.kategori}</TableCell>
                 <TableCell className="px-4 py-2">{invoice.tanggal}</TableCell>
-                <TableCell className="px-4 py-2 text-right">{invoice.pembeli}</TableCell>
-                <TableCell className="px-4 py-2 text-right">{invoice.status}</TableCell>
+                <TableCell className="px-4 py-2 text-right">
+                  {invoice.pembeli}
+                </TableCell>
+                <TableCell className="px-4 py-2 text-right">
+                  {invoice.status}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

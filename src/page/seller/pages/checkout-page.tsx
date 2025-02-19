@@ -1,33 +1,36 @@
 import {
   Box,
   Button,
-  Flex,
+  // Flex,
   Heading,
   HStack,
   Image,
-  RadioGroupRoot,
+  // RadioGroupRoot,
   Spacer,
   Table,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import SellerFooter from '../components/footer';
 import { useNavigate } from 'react-router';
-import { Radio, RadioGroup } from '@/components/ui/radio';
-import { eWallets, virtualAccount } from '@/page/payment-page/PaymentPage';
-import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, CheckIcon } from 'lucide-react';
+import SellerFooter from '../components/footer';
+// import { Radio, RadioGroup } from '@/components/ui/radio';
+// import { eWallets, virtualAccount } from '@/page/payment-page/PaymentPage';
 import LoadingButtonLottie from '@/components/icons/loading-button';
-import toast from 'react-hot-toast';
-import { useSellerStore } from '@/hooks/store';
-import axios from 'axios';
-import { apiURL } from '@/utils/baseurl';
-import { LocationSettingCheckout } from './user/location-checkout';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { formatRupiah } from '@/lib/rupiah';
+import { ArrowLeft, CheckIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+// import toast from 'react-hot-toast';
 import { useProductStore } from '@/features/auth/store/product-store';
-import { checkout } from '@/features/auth/services/checkout-services';
+import { formatRupiah } from '@/lib/rupiah';
+import { apiURL } from '@/utils/baseurl';
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { LocationSettingCheckout } from './user/location-checkout';
+import { v4 as uuidv4 } from 'uuid';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
+import { useSellerStore } from '@/hooks/store';
+import { fetchClearCart } from '@/features/auth/services/cart-service';
+import Cookies from 'js-cookie';
+
 
 type Courier = {
   courier_name: string;
@@ -36,26 +39,45 @@ type Courier = {
   duration: string;
 };
 
+// interface OrderItemMidtrans {
+//   productId: string,
+//   quantity: number,
+//   price: number,
+//   name: string,
+//   image: string
+// }
+
 const SellerCheckoutPage = () => {
   const navigate = useNavigate();
- 
+  const { store } = useSellerStore();
+  // const [isPaymentMethod, setIsPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
-
+  // const [isOpen, setIsOpen] = useState(false);
 
   const [couriers, setCouriers] = useState<Courier[]>([]);
-
+  // const [selectedCourier, setSelectedCourier] = useState<string>('');
+  // const [selectedCourierName, setSelectedCourierName] = useState<string>('Pilih Kurir');
+  // const [selectedCourierImage, setSelectedCourierImage] = useState<string>('');
   const [selectedCouriers, setSelectedCouriers] = useState<Courier[]>([]);
+  // const [finalCourier, setFinalCourier] = useState<Courier | null>(null);
 
+  // const [selectedCourierForNext, setSelectedCourierForNext] = useState<Courier | null>(null);
   const [isOpenFirst, setIsOpenFirst] = useState(false);
-  const { buyer } = useAuthBuyerStore();
-  const { store } = useSellerStore();
+  // const [isOpenSecond, setIsOpenSecond] = useState(false);
+  // const [isOpenFirstDropdown, setIsOpenFirstDropdown] = useState(false);
+  // const [isOpenSecondDropdown, setIsOpenSecondDropdown] = useState(false);
+  const [totalProductPrice, setTotalProductPrice] = useState<number>(0);
 
-  const { selectedProduct, selectedVariantOption } = useProductStore();
-  const queryClient = useQueryClient();
+  const { products, selectedVariantOption } = useProductStore();
+  const { buyer } = useAuthBuyerStore();
 
   useEffect(() => {
-    console.log('priceeeeeee', selectedProduct?.price);
-  }, [selectedProduct?.price]);
+    const total = products.reduce(
+      (prev, curr) => prev + curr.price * curr.quantity,
+      0
+    );
+    setTotalProductPrice(total);
+  }, [products]);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -94,22 +116,21 @@ const SellerCheckoutPage = () => {
         return;
       }
 
+      let dataOrderItem: { name: string; value: number }[] = [];
+      products.map((item) => {
+        const itemToOrder = {
+          name: item.name,
+          value: item.price * item.quantity,
+        };
+        dataOrderItem.push(itemToOrder);
+      });
+
       const body = {
         origin_postal_code: selectedLocation.postalCode,
         destination_latitude: selectedLocation.latitude,
         destination_longitude: selectedLocation.longitude,
         couriers: 'tiki,jne,pos,ninja,jnt,paxel,sicepat',
-        items: [
-          {
-            name: selectedProduct?.name,
-            value: selectedProduct?.price,
-            // length: 30,
-            // width: 15,
-            // height: 20,
-            // weight: 200,
-            // quantity: 2,
-          },
-        ],
+        items: dataOrderItem,
       };
 
       console.log('Mengirim request ke API dengan data:', body);
@@ -136,74 +157,197 @@ const SellerCheckoutPage = () => {
     }
   }, [selectedLocation]);
 
-  const postCheckout = useMutation({
-    mutationFn: async () => {
-      setLoading(true)
-      const formData = new FormData();
+  // const postCheckout = useMutation({
+  //   mutationFn: async () => {
+  //     setLoading(true)
+  //     const formData = new FormData();
 
-      const selectedCourier = selectedCouriers[0];
-      formData.append('storeId', store?.id || '')
-      formData.append('buyerId', buyer?.id || '');
-      console.log('buyeridcheckout', buyer?.id);
-      formData.append(
-        'orderItems',
-        JSON.stringify([
-          {
-            productId: selectedProduct?.id,
-            quantity: 1,
-            price: selectedProduct?.price,
-            name: selectedProduct?.name,
-            image: selectedProduct?.image,
-          },
-        ])
-      );
-      formData.append(
-        'recipient',
-        JSON.stringify({
-          receiverName: selectedProduct?.name,
-          receiverDistrict: selectedLocation?.cityDistrict,
-          receiverVillage: selectedLocation?.village,
-          receiverAddress: selectedLocation?.address,
-          receiverPhone: buyer?.phone,
-          receiverEmail: buyer?.email.split('-')[0],
-          receiverLatitude: selectedLocation?.latitude,
-          receiverLongitude: selectedLocation?.longitude,
-        })
-      );
+  //     const selectedCourier = selectedCouriers[0];
 
-      formData.append('courier', selectedCourier.courier_name);
-      formData.append('shippingCost', selectedCourier.price.toString());
+  //     let dataOrderItem: OrderItemMidtrans[] = [];
 
-      return toast.promise(checkout(formData), {
-        loading: 'Memproses pesanan...',
-        success: 'Pesanan berhasil dibuat!',
-        error: 'Gagal membuat pesanan!',
-      });
-    },
-    onSuccess: (data) => {
-      setLoading(false)
-      queryClient.invalidateQueries({ queryKey: ['locations-buyer'] });
-      if (data?.snapRedirectUrl) {
-        window.location.href = data.snapRedirectUrl;
-      }
+  //     products.map(item => {
+  //       const data: OrderItemMidtrans = {
+  //         productId: item.productId,
+  //         name: item.name,
+  //         quantity: item.quantity,
+  //         image: item.image,
+  //         price: item.price,
+  //       };
+  //       dataOrderItem.push(data);
+  //     })
 
-      console.log('redirect_url', data);
-    },
-    onError: (error) => {
-      setLoading(false)
-      console.error('Error menambahkan lokasi:', error);
-      toast.error('Gagal menambahkan lokasi!');
-    },
-  });
+  //     formData.append('buyerId', buyer?.id || '');
+  //     formData.append(
+  //       'orderItems',
+  //       JSON.stringify(dataOrderItem)
+  //     );
+  //     formData.append(
+  //       'recipient',
+  //       JSON.stringify({
+  //         receiverName: buyer?.name,
+  //         receiverDistrict: selectedLocation?.cityDistrict,
+  //         receiverVillage: selectedLocation?.village,
+  //         receiverAddress: selectedLocation?.address,
+  //         receiverPhone: buyer?.phone,
+  //         receiverEmail: buyer?.email.split('-')[0],
+  //         receiverLatitude: selectedLocation?.latitude,
+  //         receiverLongitude: selectedLocation?.longitude,
+  //       })
+  //     );
 
-  // const handlePlaceOrder = () => {
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     navigate(`/${store?.name}/payment`);
-  //     setLoading(false);
-  //     alert('Pesanan anda telah dibuat');
-  //   }, 2000);
-  // };
+  //     formData.append('courier', selectedCourier.courier_name);
+  //     formData.append('shippingCost', selectedCourier.price.toString());
+
+  //     return toast.promise(checkout(formData), {
+  //       loading: 'Memproses pesanan...',
+  //       success: 'Pesanan berhasil dibuat!',
+  //       error: 'Gagal membuat pesanan!',
+  //     });
+  //   },
+  //   onSuccess: (data) => {
+  //     setLoading(false)
+  //     queryClient.invalidateQueries({ queryKey: ['locations-buyer'] });
+  //     if (data?.snapRedirectUrl) {
+  //       window.location.href = data.snapRedirectUrl;
+  //     }
+
+  //     console.log('redirect_url', data);
+  //   },
+  //   onError: (error) => {
+  //     setLoading(false)
+  //     console.error('Error menambahkan lokasi:', error);
+  //     toast.error('Gagal menambahkan lokasi!');
+  //   },
+  // });
+
+  // // const handlePlaceOrder = () => {
+  // //   setLoading(true);
+  // //   setTimeout(() => {
+  // //     navigate(`/${store?.name}/payment`);
+  // //     setLoading(false);
+  // //     alert('Pesanan anda telah dibuat');
+  // //   }, 2000);
+  // // };
+
+  // const handlePayment = async () => {
+  //   setLoading(true)
+  //   const formData = new FormData();
+
+  //   const selectedCourier = selectedCouriers[0];
+
+  //   const dataOrderItem: OrderItemMidtrans[] = products.map(item => ({
+  //     productId: item.productId,
+  //     name: item.name,
+  //     quantity: item.quantity,
+  //     image: item.image,
+  //     price: item.price,
+  //   }));
+    
+
+  //   formData.append('buyerId', buyer?.id || '');
+  //   formData.append(
+  //     'orderItems',
+  //     JSON.stringify(dataOrderItem)
+  //   );
+  //   formData.append(
+  //     'recipient',
+  //     JSON.stringify({
+  //       receiverName: buyer?.name,
+  //       receiverDistrict: selectedLocation?.cityDistrict,
+  //       receiverVillage: selectedLocation?.village,
+  //       receiverAddress: selectedLocation?.address,
+  //       receiverPhone: buyer?.phone,
+  //       receiverEmail: buyer?.email.split('-')[0],
+  //       receiverLatitude: selectedLocation?.latitude,
+  //       receiverLongitude: selectedLocation?.longitude,
+  //     })
+  //   );
+
+  //   formData.append('courier', selectedCourier.courier_name);
+  //   formData.append('shippingCost', selectedCourier.price.toString());
+
+  //   const cartItemIds = products.map(e => String(e.cartItemId));
+
+  //   console.log("productsss: ", cartItemIds);
+
+
+  //   const data: DataRequestOrder = {
+  //     buyerId: String(buyer?.id),
+  //     cartItemIds: JSON.stringify(cartItemIds),
+  //     courier: selectedCourier.courier_name,
+  //     recipient: JSON.stringify({
+  //       receiverName: buyer?.name,
+  //       receiverDistrict: selectedLocation?.cityDistrict,
+  //       receiverVillage: selectedLocation?.village,
+  //       receiverAddress: selectedLocation?.address,
+  //       receiverPhone: buyer?.phone,
+  //       receiverEmail: buyer?.email ? buyer?.email.split('-')[0] : '',
+  //       receiverLatitude: selectedLocation?.latitude,
+  //       receiverLongitude: selectedLocation?.longitude,
+  //     }),
+  //     shippingCost: selectedCourier.price.toString(),
+  //     singleQuantity: products.length === 1 ? products[0].quantity : 1,
+  //     variantOptionId: String(selectedVariantOption?.id)
+  //   }
+
+  //   const res = await createOrder(data);
+
+  //   console.log("ressssssssss", res.data);
+
+  //   if (res.status === 201) {
+  //     console.log("suksess coy!! -----");
+  //     setOnSnap(true);
+  //     setSnapToken(res.data.data.snap_token);
+
+  //   }
+  // }
+
+  const handleCreateOrder = async () => {
+    setLoading(true);
+    const selectedCourier = selectedCouriers[0];
+  
+    const dataOrderItem = products.map(item => ({
+      productId: item.productId,
+      name: item.name,
+      quantity: item.quantity,
+      image: item.image,
+      price: item.price,
+    }));
+  
+    const orderData = {
+      buyerId: String(buyer?.id),
+      cartItemIds: JSON.stringify(products.map(e => String(e.cartItemId))),
+      courier: selectedCourier.courier_name,
+      recipient: JSON.stringify({
+        receiverName: buyer?.name,
+        receiverDistrict: selectedLocation?.cityDistrict,
+        receiverVillage: selectedLocation?.village,
+        receiverAddress: selectedLocation?.address,
+        receiverPhone: buyer?.phone,
+        receiverEmail: buyer?.email ? buyer?.email.split('-')[0] : '',
+        receiverLatitude: selectedLocation?.latitude,
+        receiverLongitude: selectedLocation?.longitude,
+      }),
+      shippingCost: selectedCourier.price.toString(),
+      singleQuantity: products.length === 1 ? products[0].quantity : 1,
+      variantOptionId: String(selectedVariantOption?.id),
+      storeName: store?.name
+    };
+
+    const localOrderId = uuidv4();
+  
+    // Menyimpan lebih banyak detail ke localStorage
+    localStorage.setItem(`pendingOrder-${localOrderId}`, JSON.stringify({
+      orderData,
+      totalAmount: totalProductPrice + selectedCourier.price,
+      products: dataOrderItem,
+      shippingDetails: selectedCourier,
+      subtotal: totalProductPrice
+    }));
+
+    navigate(`/${store?.name}/payment/${localOrderId}`);
+  };
 
   useEffect(() => {
     if (selectedLocation) {
@@ -241,6 +385,8 @@ const SellerCheckoutPage = () => {
         {/* <Text>Back</Text> */}
       </Button>
 
+      {/* <PaymentButtonMidtrans onPopup={onSnap} snapToken={snapToken} /> */}
+
       <Box w="full" maxW="6xl" mx="auto" py="20">
         <HStack
           alignItems="start"
@@ -255,7 +401,7 @@ const SellerCheckoutPage = () => {
               Checkout
             </Heading>
 
-            <Box width={'full'} mb={'8'}>
+            <Box width={'full'} mb={10}>
               <Heading
                 size="xl"
                 fontWeight="medium"
@@ -268,26 +414,32 @@ const SellerCheckoutPage = () => {
                 Produk yang ingin dicheckout
               </Heading>
 
-              <Box display={'flex'} alignItems={'center'} gap={'3'}>
-                <Image src={selectedProduct?.image} width={'150px'} />
-                <Box
-                  display={'flex'}
-                  alignItems={'center'}
-                  justifyContent={'space-between'}
-                  width={'full'}
-                >
-                  <Box>
-                    <Text fontSize={'20px'} fontWeight={'semibold'}>
-                      {selectedProduct?.name}
-                    </Text>
-                    <Text color={'gray.400'}>{selectedProduct?.category}</Text>
+              {products.map((product) => (
+                <Box display={'flex'} alignItems={'center'} gap={5} mb={2}>
+                  <Image src={product?.image} width={'70px'} />
+                  <Box
+                    display={'flex'}
+                    alignItems={'center'}
+                    justifyContent={'space-between'}
+                    width={'full'}
+                  >
+                    <Box flex={1}>
+                      <Text fontSize={'lg'} fontWeight={'medium'}>
+                        {product?.name}
+                      </Text>
+                      <Text color={'gray.400'}>{product?.category}</Text>
+                    </Box>
+                    <HStack w={'2/6'} justifyContent="space-between">
+                      <Text fontWeight={'medium'} color={'gray.600'}>
+                        {product.quantity}x
+                      </Text>
+                      <Text fontSize={'18px'} fontWeight={'semibold'}>
+                        {formatRupiah(`${product?.price * product.quantity}`)}
+                      </Text>
+                    </HStack>
                   </Box>
-
-                  <Text fontSize={'18px'} fontWeight={'semibold'}>
-                    {formatRupiah(`${selectedProduct?.price}`)}
-                  </Text>
                 </Box>
-              </Box>
+              ))}
             </Box>
 
             {/* Alamat Pengiriman start */}
@@ -353,7 +505,8 @@ const SellerCheckoutPage = () => {
                                 </span>
                               </Text>
                               <Text fontSize={'12px'} color={'gray.500'}>
-                                Estimasi: {c.duration.replace('days', 'hari')}{' '}
+                                Estimasi:{' '}
+                                {c.duration.replace('days', 'hari')}{' '}
                               </Text>
                             </Box>
                           ))}
@@ -411,7 +564,7 @@ const SellerCheckoutPage = () => {
                           (c) =>
                             c.courier_name === courier.courier_name &&
                             c.courier_service_name ===
-                              courier.courier_service_name
+                            courier.courier_service_name
                         ) && <CheckIcon />}
                       </HStack>
                     ))}
@@ -451,7 +604,7 @@ const SellerCheckoutPage = () => {
                 <Table.Row>
                   <Table.Cell px="0">{'Subtotal'}</Table.Cell>
                   <Table.Cell px="0" textAlign="end">
-                    {formatRupiah(`${selectedProduct?.price}`)}
+                    {formatRupiah(`${totalProductPrice}`)}
                   </Table.Cell>
                 </Table.Row>
                 {selectedCouriers.map((c, index) => (
@@ -487,11 +640,11 @@ const SellerCheckoutPage = () => {
                     fontWeight="semibold"
                   >
                     {formatRupiah(
-                      (selectedProduct?.price ?? 0) +
-                        selectedCouriers.reduce(
-                          (total, c) => total + (c.price ?? 0),
-                          0
-                        )
+                      (totalProductPrice ?? 0) +
+                      selectedCouriers.reduce(
+                        (total, c) => total + (c.price ?? 0),
+                        0
+                      )
                     )}
                   </Table.ColumnHeader>
                 </Table.Row>
@@ -500,7 +653,7 @@ const SellerCheckoutPage = () => {
 
             <Button
               w="full"
-              onClick={() => postCheckout.mutate()}
+              onClick={() => handleCreateOrder()}
               mt="5"
               disabled={selectedCouriers.length === 0}
             >

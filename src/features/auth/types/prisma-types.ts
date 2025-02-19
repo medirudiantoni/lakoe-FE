@@ -1,4 +1,4 @@
-import { BuyerType } from "../store/auth-buyer-store";
+import { BuyerType } from '../store/auth-buyer-store';
 
 export type UserType = {
   id: string;
@@ -52,6 +52,7 @@ export type CartItemType = {
   quantity: number;
   price: number;
   name: string;
+  image: string;
   product?: ProductType;
   productId?: string;
   cartId?: string;
@@ -222,7 +223,6 @@ export type ProductType = {
   variants?: VariantType[];
 };
 
-
 export type VariantType = {
   id?: string;
   name: string;
@@ -292,4 +292,5 @@ export type OrderItemType = {
   weight?: number;
   width?: number;
   image: string;
+  cartItemId: string;
 };

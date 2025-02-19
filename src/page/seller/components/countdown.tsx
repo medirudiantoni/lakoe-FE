@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react';
 
 type CountdownProps = {
   targetTime: string;
@@ -9,7 +9,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetTime, isPaid }) => {
   const calculateTimeLeft = (): string => {
     const difference = new Date(targetTime).getTime() - new Date().getTime();
     if (isPaid) {
-      return "Pembayaran selesai";
+      return 'Pembayaran selesai';
     }
     if (difference > 0) {
       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
@@ -17,7 +17,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetTime, isPaid }) => {
       const seconds = Math.floor((difference / 1000) % 60);
       return `${hours} jam ${minutes} menit ${seconds} detik`;
     } else {
-      return "Waktu habis";
+      return 'Waktu habis';
     }
   };
 
@@ -25,7 +25,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetTime, isPaid }) => {
 
   useEffect(() => {
     if (isPaid) {
-      setTimeLeft("Pembayaran selesai");
+      setTimeLeft('Pembayaran selesai');
       return;
     }
     const timer = setInterval(() => {

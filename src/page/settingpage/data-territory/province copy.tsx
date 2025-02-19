@@ -24,7 +24,6 @@
 //   const [address, setAddress] = useState('');
 //   const [open, setOpen] = useState(false);
 
-
 //   useEffect(() => {
 //     const fetchProvince = async () => {
 //       setLoadingProvinces(true);
@@ -40,7 +39,7 @@
 //         if (response?.data) {
 //           setProvinces(
 //             response.data.map((prov: { name: string; code: string }) => ({
-//               id: prov.code, 
+//               id: prov.code,
 //               name: prov.name,
 //             }))
 //           );
@@ -89,12 +88,12 @@
 //         </MenuContent>
 //       </MenuRoot>
 
-//       <CitySelector 
-//         provinceId={selectedProvince?.id || null} 
-//         selectedCity={selectedCity} 
-//         setSelectedCity={setSelectedCity}  
-//         selectedDistrict={selectedDistrict} 
-//         setSelectedDistrict={setSelectedDistrict} 
+//       <CitySelector
+//         provinceId={selectedProvince?.id || null}
+//         selectedCity={selectedCity}
+//         setSelectedCity={setSelectedCity}
+//         selectedDistrict={selectedDistrict}
+//         setSelectedDistrict={setSelectedDistrict}
 //       />
 //     </Box>
 //   );

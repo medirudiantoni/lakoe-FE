@@ -1,3 +1,4 @@
+import { Link } from 'react-router'; // Pastikan menggunakan `react-router-dom`
 import { useEffect, useState, useRef } from 'react';
 import { Box, Button, Flex, Image, Text, useDisclosure, Spinner } from '@chakra-ui/react';
 import { useSellerStore } from '@/hooks/store';
@@ -16,6 +17,13 @@ export function TabNewOrder({ orders }: TabNewOrderProps) {
   const { open, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
+  // Pastikan data di-filter dengan benar saat data orders berubah
+<!--   useEffect(() => {
+    console.log('Received Orders:', orders); // Log untuk melihat data yang diterima
+    const filteredOrders = orders.filter((order) => {
+      console.log('Order Status:', order.status); // Log status tiap order
+      return order.status === 'Pesanan Baru'; // Periksa status secara langsung
+    }); -->
 
   useEffect(() => {
     const filteredOrders = orders.filter(order => order.status === 'Pesanan Baru');
@@ -73,7 +81,16 @@ export function TabNewOrder({ orders }: TabNewOrderProps) {
 
           if (!product) {
             return (
-              <Box key={order.id} width="full" border="1px solid" borderColor="gray.200" height="190px" borderRadius="10px" mt={3} p={3}>
+              <Box
+                key={order.id}
+                width="full"
+                border="1px solid"
+                borderColor="gray.200"
+                height="190px"
+                borderRadius="10px"
+                mt={3}
+                p={3}
+              >
                 <Text>Produk tidak ditemukan</Text>
               </Box>
             );
@@ -97,7 +114,6 @@ export function TabNewOrder({ orders }: TabNewOrderProps) {
                     {order.status === 'Pesanan Baru' ? 'Proses Pesanan' : 'Lihat Detail'}
                   </Button>
                 </Box>
-
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <Box display="flex" alignItems="center">
                     <Image
@@ -119,7 +135,6 @@ export function TabNewOrder({ orders }: TabNewOrderProps) {
                       </Flex>
                     </Box>
                   </Box>
-
                   <Box display="flex" flexDirection="column" alignItems="end">
                     <Text>Total belanja</Text>
                     <Text fontWeight="semibold">

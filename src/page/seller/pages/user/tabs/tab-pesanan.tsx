@@ -1,14 +1,4 @@
-import { Field } from '@/components/ui/field';
-import {
-  Box,
-  Button,
-  Grid,
-  GridItem,
-  Input,
-  Tabs,
-  Text,
-} from '@chakra-ui/react';
-import { LocationSetting } from '../location';
+import { Box, Tabs } from '@chakra-ui/react';
 import {
   CircleCheck,
   MessageCircleX,
@@ -51,12 +41,24 @@ export function TabsPesanan() {
               dibatalkan
             </Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content value="all"><BuyerAllOrders /></Tabs.Content>
-          <Tabs.Content value="unpaid"><BuyerNullOrders /></Tabs.Content>
-          <Tabs.Content value="processing"><BuyerNullOrders /></Tabs.Content>
-          <Tabs.Content value="shipped"><BuyerNullOrders /></Tabs.Content>
-          <Tabs.Content value="completed"><BuyerAllOrders /></Tabs.Content>
-          <Tabs.Content value="canceled"><BuyerNullOrders /></Tabs.Content>
+          <Tabs.Content value="all">
+            <BuyerAllOrders />
+          </Tabs.Content>
+          <Tabs.Content value="unpaid">
+            <BuyerNullOrders />
+          </Tabs.Content>
+          <Tabs.Content value="processing">
+            <BuyerNullOrders />
+          </Tabs.Content>
+          <Tabs.Content value="shipped">
+            <BuyerNullOrders />
+          </Tabs.Content>
+          <Tabs.Content value="completed">
+            <BuyerAllOrders />
+          </Tabs.Content>
+          <Tabs.Content value="canceled">
+            <BuyerNullOrders />
+          </Tabs.Content>
         </Tabs.Root>
       </Tabs.Root>
     </Box>

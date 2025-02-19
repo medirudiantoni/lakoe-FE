@@ -1,7 +1,7 @@
 import { StoreType } from '@/features/auth/types/prisma-types';
+import Cookies from 'js-cookie';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Cookies from 'js-cookie';
 
 interface StoreHooksType {
   store: StoreType | null;
@@ -15,7 +15,7 @@ export const useSellerStore = create<StoreHooksType>()(
       store: null,
       setStore: (data) => {
         set({ store: data });
-        Cookies.set('store', JSON.stringify(data)); 
+        Cookies.set('store', JSON.stringify(data));
       },
       clearStore: () => {
         set({ store: null });
@@ -23,7 +23,7 @@ export const useSellerStore = create<StoreHooksType>()(
       },
     }),
     {
-      name: 'seller-store', 
+      name: 'seller-store',
     }
   )
 );

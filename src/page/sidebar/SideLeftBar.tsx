@@ -27,20 +27,19 @@ import {
   ShoppingBag,
   User,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import LogoutButton from '../auth/logout';
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const [isActiveButton, setIsActiveButton] = useState(false)
+  const [isActiveButton, setIsActiveButton] = useState(false);
 
   const isActive = (paths: string[]) => {
     return paths.some(
       (path) =>
-        currentPath === path || 
-        (path !== '/' && currentPath.startsWith(path))
+        currentPath === path || (path !== '/' && currentPath.startsWith(path))
     );
   };
 
@@ -124,35 +123,38 @@ const SideBar = () => {
 
           <Box position={'relative'}>
             <MenuRoot positioning={{ placement: 'top-start' }}>
-            <MenuTrigger asChild outline={'none'}>
-          <Box
-            onClick={() => setIsActiveButton((prev) => !prev)}
-            className={`flex items-center my-2 px-5 py-2 z-20 cursor-pointer ${
-              isActiveButton ? 'text-[#0086B4] bg-[#F8F8F8]' : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
-            }`}
-          >
-            <Flex gap={2}>
-              <CircleUser />
-              <span>Profile</span>
-            </Flex>
-          </Box>
-        </MenuTrigger>
+              <MenuTrigger asChild outline={'none'}>
+                <Box
+                  onClick={() => setIsActiveButton((prev) => !prev)}
+                  className={`flex items-center my-2 px-5 py-2 z-20 cursor-pointer ${
+                    isActiveButton
+                      ? 'text-[#0086B4] bg-[#F8F8F8]'
+                      : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
+                  }`}
+                >
+                  <Flex gap={2}>
+                    <CircleUser />
+                    <span>Profile</span>
+                  </Flex>
+                </Box>
+              </MenuTrigger>
               <MenuContent position={'absolute'} top={'-32'} w={'full'}>
-              <Box cursor={'pointer'} border={'none'} outline={'none'} >
+                <Box cursor={'pointer'} border={'none'} outline={'none'}>
                   <Link to={'/profile'}>
-                  <Box
-                    px={3}
-                    py={3}
-                    gap={3}
-                   display={'flex'} alignItems={'center'}
-                   _hover={{ bg: 'gray.200' }}>
-                       <User/>
-                       Profile
-                  </Box>
-                 
+                    <Box
+                      px={3}
+                      py={3}
+                      gap={3}
+                      display={'flex'}
+                      alignItems={'center'}
+                      _hover={{ bg: 'gray.200' }}
+                    >
+                      <User />
+                      Profile
+                    </Box>
                   </Link>
                 </Box>
-                
+
                 {/* <MenuItem value='logout'  cursor={'pointer'} > */}
                 <DialogRoot>
                   <DialogTrigger asChild>

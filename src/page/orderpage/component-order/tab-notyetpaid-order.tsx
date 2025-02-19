@@ -1,25 +1,29 @@
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import ContactBuyerDialog from '../../orderpage/dialog-order-page/contact-buyer-dialog';
 import { Order } from '@/features/auth/types/order.types'; 
 import { useEffect, useState } from 'react';
 import ContactBuyerDialog from '../../orderpage/dialog-order-page/contact-buyer-dialog';
 import { useMessageTemplate } from '@/features/auth/services/template-service';
 interface TabNewOrderProps {
-  orders: Order[]; 
+  orders: Order[];
 }
+
 export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [notYetPaid, setNotYetPaid ]=  useState<Order[]>([]);
+  const [notYetPaid, setNotYetPaid] = useState<Order[]>([]);
   useEffect(() => {
-    console.log('Received Orders:', orders); 
-    const filteredOrders = orders.filter(order => {
-      console.log('Order Status:', order.status); 
-      return order.status === 'Menunggu Pembayaran'; 
+    console.log('Received Orders:', orders);
+    const filteredOrders = orders.filter((order) => {
+      console.log('Order Status:', order.status);
+      return order.status === 'Menunggu Pembayaran';
     });
 
-    console.log('Filtered New Orders:', filteredOrders); 
+    console.log('Filtered New Orders:', filteredOrders);
     setNotYetPaid(filteredOrders);
-  }, [orders]); 
+  }, [orders]);
 
   const handleContactBuyer = async (order: any) => {
     try {
@@ -32,7 +36,6 @@ export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
     }
   };
 
-
   return (
     <>
       {notYetPaid.length > 0 ? (
@@ -41,7 +44,16 @@ export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
 
           if (!product) {
             return (
-              <Box key={order.id} width="full" border="1px solid" borderColor="gray.200" height="190px" borderRadius="10px" mt={3} p={3}>
+              <Box
+                key={order.id}
+                width="full"
+                border="1px solid"
+                borderColor="gray.200"
+                height="190px"
+                borderRadius="10px"
+                mt={3}
+                p={3}
+              >
                 <Text>Produk tidak ditemukan</Text>
               </Box>
             );
@@ -86,24 +98,19 @@ export function TabNotYetPaidOrder({ orders }: TabNewOrderProps) {
                         <Text fontSize="20px" fontWeight="bold">
                           {product.name || "Produk Tidak Diketahui"}
                         </Text>
-                        <Flex fontSize="14px" fontWeight="normal" mt={1}>
-                          <Text fontWeight="semibold">
-                            Barang: {order.orderItems?.[0]?.quantity || 0}
-                          </Text>
-                        </Flex>
-                      </Box>
+                      </Flex>
                     </Box>
+                  </Box>
 
-                    <Box display="flex" flexDirection="column" alignItems="end">
-                      <Text>Total belanja</Text>
-                      <Text fontWeight="semibold">
-                        Rp. {order.totalPrice?.toLocaleString("id-ID") || "0"}
-                      </Text>
-                    </Box>
+                  <Box display="flex" flexDirection="column" alignItems="end">
+                    <Text>Total belanja</Text>
+                    <Text fontWeight="semibold">
+                      Rp. {order.totalPrice?.toLocaleString('id-ID') || '0'}
+                    </Text>
                   </Box>
                 </Box>
               </Box>
-           
+            </Box>
           );
         })
       ) : (

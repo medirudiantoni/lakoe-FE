@@ -1,17 +1,17 @@
 import { Field } from '@/components/ui/field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { fetchLogin } from '@/features/auth/services/auth-buyer-services';
+import { fetchInitCart } from '@/features/auth/services/cart-service';
+import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import { useSellerStore } from '@/hooks/store';
+import { apiURL } from '@/utils/baseurl';
 import { Box, Button, Image, Input, Text, VStack } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
-import Cookies from 'js-cookie';
-import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
-import { apiURL } from '@/utils/baseurl';
-import { PasswordInput } from '@/components/ui/password-input';
-import { fetchInitCart } from '@/features/auth/services/cart-service';
 
 const loginSchema = z.object({
   email: z.string().email('Email yang anda masukan salah'),
@@ -37,8 +37,8 @@ export function LoginBuyer() {
     const requestData = {
       email: data.email,
       password: data.password,
-      storeName: store?.name
-    }
+      storeName: store?.name,
+    };
     toast.promise(
       fetchLogin(requestData),
       {
@@ -46,8 +46,12 @@ export function LoginBuyer() {
         success: (res) => {
           const data = res.data;
           setBuyer(data.buyer);
-          Cookies.set(`token-buyer-${store?.name}`, data.token);
-          initOrCheckBuyerCart(data.buyer.id, String(store?.id), data.token)
+          Cookies.set(`token-buyer-${store?.name}`, data.token, {
+            secure: true,
+            sameSite: "None",
+            expires: 7
+          });
+          initOrCheckBuyerCart(data.buyer.id, String(store?.id), data.token);
           navigate(`/${store?.name}/`);
           return data.message;
         },
@@ -73,15 +77,18 @@ export function LoginBuyer() {
     window.location.href = `${apiURL}auth-buyer/google/`;
   };
 
-
-  function initOrCheckBuyerCart(buyerId: string, storeId: string, tokenBuyer: string) {
+  function initOrCheckBuyerCart(
+    buyerId: string,
+    storeId: string,
+    tokenBuyer: string
+  ) {
     fetchInitCart(buyerId, storeId, tokenBuyer)
-      .then(res => {
-        console.log("res init cart: ", res)
+      .then((res) => {
+        console.log('res init cart: ', res);
       })
       .catch((error) => {
-        console.log(error)
-      })
+        console.log(error);
+      });
   }
 
   return (
@@ -106,28 +113,36 @@ export function LoginBuyer() {
               <Field label="Email">
                 <Input placeholder="Masukan Email" {...register('email')} />
                 {errors.email && (
-                  <Text color="red.500"
+                  <Text
+                    color="red.500"
                     fontSize="xs"
                     textAlign={'left'}
-                    marginTop="1.5">
+                    marginTop="1.5"
+                  >
                     {errors.email.message}
                   </Text>
                 )}
               </Field>
               <Field label="Password">
-                <PasswordInput placeholder="Masukan Password" {...register('password')} />
+                <PasswordInput
+                  placeholder="Masukan Password"
+                  {...register('password')}
+                />
                 {errors.password && (
                   <Text
                     color="red.500"
                     fontSize="xs"
                     textAlign={'left'}
-                    marginTop="1.5">
+                    marginTop="1.5"
+                  >
                     {errors.password.message}
                   </Text>
                 )}
               </Field>
               <Box>
-                <Button width={'full'} type='submit'>Login</Button>
+                <Button width={'full'} type="submit">
+                  Login
+                </Button>
                 <Button
                   bg="white"
                   color="black"
@@ -141,7 +156,10 @@ export function LoginBuyer() {
                 </Button>
                 <Text textAlign={'center'} mt={2}>
                   Belum punya akun? silakan{' '}
-                  <Link to={`/${store?.name}/register-buyer`} className="text-blue-400">
+                  <Link
+                    to={`/${store?.name}/register-buyer`}
+                    className="text-blue-400"
+                  >
                     daftar di sini
                   </Link>
                 </Text>

@@ -1,17 +1,28 @@
 import { Box, Button, Text } from '@chakra-ui/react';
 import L from 'leaflet';
-import "leaflet/dist/leaflet.css";
+import 'leaflet/dist/leaflet.css';
 import { useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMapEvents,
+} from 'react-leaflet';
 
 const customIcon = new L.Icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
-  popupAnchor: [1, -34]
+  popupAnchor: [1, -34],
 });
 
-function LocationMarker({ setCoordinates }: { setCoordinates: (coords: [number, number] | null) => void }) {
+function LocationMarker({
+  setCoordinates,
+}: {
+  setCoordinates: (coords: [number, number] | null) => void;
+}) {
   const [position, setPosition] = useState<[number, number] | null>(null);
 
   useMapEvents({
@@ -31,9 +42,17 @@ function LocationMarker({ setCoordinates }: { setCoordinates: (coords: [number, 
   );
 }
 
-export default function MapComponent({ setCoordinates }: { setCoordinates: (coords: [number, number] | null) => void }) {
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+export default function MapComponent({
+  setCoordinates,
+}: {
+  setCoordinates: (coords: [number, number] | null) => void;
+}) {
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
+  const [selectedCoordinates, setSelectedCoordinates] = useState<
+    [number, number] | null
+  >(null);
 
   const handleGeolocation = () => {
     if (navigator.geolocation) {
@@ -41,11 +60,11 @@ export default function MapComponent({ setCoordinates }: { setCoordinates: (coor
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
-          setCoordinates([latitude, longitude]); 
-          setSelectedCoordinates([latitude, longitude]); 
+          setCoordinates([latitude, longitude]);
+          setSelectedCoordinates([latitude, longitude]);
         },
         (error) => {
-          console.error("Error obtaining location:", error);
+          console.error('Error obtaining location:', error);
         }
       );
     }
@@ -53,7 +72,11 @@ export default function MapComponent({ setCoordinates }: { setCoordinates: (coor
 
   return (
     <Box mt={4}>
-      <MapContainer center={userLocation || [-6.2088, 106.8456]} zoom={13} style={{ height: "300px", width: "100%" }}>
+      <MapContainer
+        center={userLocation || [-6.2088, 106.8456]}
+        zoom={13}
+        style={{ height: '300px', width: '100%' }}
+      >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {userLocation && (
           <Marker position={userLocation} icon={customIcon}>

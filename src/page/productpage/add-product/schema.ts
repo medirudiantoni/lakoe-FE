@@ -39,14 +39,17 @@ export const addproductSchema = z.object({
   price: z.string().nullable().optional(),
   sku: z.string().nullable().optional(),
   stock: z
-    .string().nullable().optional()
+    .string()
+    .nullable()
+    .optional()
     .transform((val) => Number(val)),
   weight: z
-    .string().nullable().optional()
+    .string()
+    .nullable()
+    .optional()
     .transform((val) => Number(val)),
-  attachments: z
-    .array(z.instanceof(File)).nullable().optional(),
-    // .min(1, 'Silakan unggah minimal satu foto produk!'),
+  attachments: z.array(z.instanceof(File)).nullable().optional(),
+  // .min(1, 'Silakan unggah minimal satu foto produk!'),
   size: z
     .object({
       length: z.number().min(1, 'Panjang harus minimal 1 cm'),

@@ -1,6 +1,6 @@
-import Lottie from 'lottie-react';
 import animationData from '@/assets/Animation - 1738913398923.json';
 import { Box } from '@chakra-ui/react';
+import Lottie from 'lottie-react';
 
 const ProfileLottie = () => {
   return (

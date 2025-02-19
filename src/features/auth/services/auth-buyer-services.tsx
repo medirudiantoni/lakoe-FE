@@ -1,6 +1,6 @@
+import { apiURL } from '@/utils/baseurl';
 import axios, { AxiosResponse } from 'axios';
 import { LoginFormProps, RegisterFormProps } from '../types/auth-types';
-import { apiURL } from '@/utils/baseurl';
 
 export const fetchRegister = async (data: RegisterFormProps) => {
   try {

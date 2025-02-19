@@ -1,17 +1,20 @@
-
+import LogoIcon from '@/components/icons/logo';
+import Layout from '@/components/layout/Layout';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
 import { Center, VStack } from '@chakra-ui/react';
-import LogoIcon from '@/components/icons/logo';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router';
 
-import { useAuthStore } from '@/features/auth/store/auth-store';
-import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
-import toast from 'react-hot-toast';
 import LoadingLottie from '@/components/icons/lottie';
-import Layout from '../components/layout/Layout';
+import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import toast from 'react-hot-toast';
 
 const PrivateRoute = () => {
   const { setUser, user } = useAuthStore();

@@ -1,18 +1,18 @@
+import LoadingButtonLottie from '@/components/icons/loading-button';
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { fetchLogin } from '@/features/auth/services/auth-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { apiURL } from '@/utils/baseurl';
 import { Box, Button, Image, Input, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router';
-import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
-import { z } from 'zod';
 import { useState } from 'react';
-import { apiURL } from '@/utils/baseurl';
-import LoadingButtonLottie from '@/components/icons/loading-button';
-import { useAuthStore } from '@/features/auth/store/auth-store';
-import { PasswordInput } from '@/components/ui/password-input';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router';
+import { z } from 'zod';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Invalid email address'),
@@ -42,9 +42,11 @@ export function Login() {
           if (res.status === 200) {
             const data = res.data;
             setUser(data.user);
-            console.log('text', data)
+            console.log('text', data);
             Cookies.set('token', data.token);
-            data.user.Stores ? navigate('/dashboard') : navigate('/register-store')
+            data.user.Stores
+              ? navigate('/dashboard')
+              : navigate('/register-store');
             return data.message;
           }
         })
@@ -73,7 +75,7 @@ export function Login() {
   const onClickGoogle = () => {
     setIsLoading(true);
     window.location.href = `${apiURL}auth/google`;
-  }
+  };
 
   return (
     <Box
@@ -110,8 +112,11 @@ export function Login() {
             )}
           </Field>
           <Field label="Password" mt={5}>
-          <PasswordInput placeholder="Masukan password" {...register('password')}/>
-          
+            <PasswordInput
+              placeholder="Masukan password"
+              {...register('password')}
+            />
+
             {errors.password && (
               <Text
                 color="red.500"
@@ -146,7 +151,7 @@ export function Login() {
             disabled={isLoading}
             onClick={onClickGoogle}
           >
-            <Image w="10" h="10" src='/google-icon.webp'></Image>
+            <Image w="10" h="10" src="/google-icon.webp"></Image>
           </Button>
         </form>
 

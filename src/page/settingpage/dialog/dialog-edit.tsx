@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import LoadingButtonLottie from '@/components/icons/loading-button';
 import {
   DialogActionTrigger,
   DialogBody,
@@ -11,13 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Button, Input, Textarea, Box, Text } from '@chakra-ui/react';
-import { Edit } from 'lucide-react';
-import toast from 'react-hot-toast';
-import Cookies from 'js-cookie';
 import { updateTemplate } from '@/features/auth/services/template-service';
 import { TemplateFormProps } from '@/features/auth/types/template-types';
-import LoadingButtonLottie from '@/components/icons/loading-button';
+import { Box, Button, Input, Text, Textarea } from '@chakra-ui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { Edit } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 interface DialogEditProps {
   template: TemplateFormProps;

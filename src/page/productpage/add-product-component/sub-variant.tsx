@@ -1,5 +1,9 @@
 import { Field } from '@/components/ui/field';
-import { FileUploadDropzone, FileUploadList, FileUploadRoot } from '@/components/ui/file-upload';
+import {
+  FileUploadDropzone,
+  FileUploadList,
+  FileUploadRoot,
+} from '@/components/ui/file-upload';
 import { Switch } from '@/components/ui/switch';
 import { Box, Button, Group, Input, InputAddon, Text } from '@chakra-ui/react';
 import { CirclePlus, NotebookPen } from 'lucide-react';
@@ -70,10 +74,7 @@ export function Variant() {
           </Group>
         </Field>
         <Field label="Stock Produk" mt={5} width={'45%'}>
-          <Input
-            placeholder="Masukan jumlah stock"
-            type="number"
-          />
+          <Input placeholder="Masukan jumlah stock" type="number" />
         </Field>
       </Box>
       <Box display={'flex'} gap={'3'}>

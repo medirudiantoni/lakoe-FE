@@ -9,15 +9,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+// import { useProductStore } from '@/features/auth/store/product-store';
 import { Box, Button, Group, Input, InputAddon } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useProductStore } from '@/features/auth/store/product-store';
 import toast from 'react-hot-toast';
 
-export function DialogPrice({ productId }: { productId: string }) {
+export function DialogPrice({
+  // productId 
+}: { productId: string }) {
   const [open, setOpen] = useState(false);
   const [newPrice, setNewPrice] = useState<number | ''>('');
-  const { updatePrice } = useProductStore();
 
   const handleUpdatePrice = async () => {
     if (!newPrice || Number(newPrice) <= 0) {
@@ -26,8 +27,8 @@ export function DialogPrice({ productId }: { productId: string }) {
     }
 
     try {
-      await updatePrice(productId, Number(newPrice));
-      setOpen(false); 
+      // await updatePrice(productId, Number(newPrice));
+      setOpen(false);
     } catch (error) {
       console.error('Gagal memperbarui harga:', error);
     }
@@ -35,7 +36,11 @@ export function DialogPrice({ productId }: { productId: string }) {
 
   return (
     <Box>
-      <DialogRoot lazyMount open={open} onOpenChange={(details) => setOpen(details.open)}>
+      <DialogRoot
+        lazyMount
+        open={open}
+        onOpenChange={(details) => setOpen(details.open)}
+      >
         <DialogTrigger asChild>
           <Button variant="outline" mt={4} borderRadius="20px">
             Ubah harga
@@ -53,7 +58,9 @@ export function DialogPrice({ productId }: { productId: string }) {
                 type="number"
                 placeholder="Masukkan harga baru"
                 value={newPrice}
-                onChange={(e) => setNewPrice(e.target.value ? Number(e.target.value) : '')}
+                onChange={(e) =>
+                  setNewPrice(e.target.value ? Number(e.target.value) : '')
+                }
                 outlineColor="blue.400"
               />
             </Group>

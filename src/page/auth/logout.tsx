@@ -1,8 +1,8 @@
+import { Button } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 import React from 'react';
 import { toast } from 'react-hot-toast';
-import { Button } from '@chakra-ui/react';
 import { useNavigate } from 'react-router';
-import Cookies from 'js-cookie';
 
 interface LogoutButtonProps {
   onClick?: () => void;
@@ -13,7 +13,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
 
   const handleLogout = () => {
     Cookies.remove('token');
-  
+
     toast.success('Anda telah Logout', {
       style: {
         background: '#FFFF',

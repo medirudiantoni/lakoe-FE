@@ -1,11 +1,11 @@
-import { Box, Image, Stack, Text } from '@chakra-ui/react';
-import LogoIcon from '../icons/logo';
-import { useEffect, useState } from 'react';
-import { useAuthStore, UserType } from '@/features/auth/store/auth-store';
-import { useNavigate } from 'react-router';
-import Cookies from 'js-cookie';
-import toast from 'react-hot-toast';
 import LoadingLottie from '@/components/icons/lottie';
+import { useAuthStore, UserType } from '@/features/auth/store/auth-store';
+import { Box, Image, Stack, Text } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
+import LogoIcon from '../icons/logo';
 
 interface ParamsType extends UserType {
   token: string;
@@ -47,9 +47,11 @@ export function LoadingScreen() {
 
       toast.success(
         <Box display="flex" alignItems="center" gap="10px">
-      
           <Text font={'12px'}>Berhasil login menggunakan Google</Text>
-          <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" width="20px" />
+          <Image
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
+            width="20px"
+          />
         </Box>
       );
       if (params.Stores) {

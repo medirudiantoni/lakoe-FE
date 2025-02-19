@@ -9,15 +9,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+// import { useProductStore } from '@/features/auth/store/product-store';
 import { Box, Button, Input } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useProductStore } from '@/features/auth/store/product-store';
 import toast from 'react-hot-toast';
 
-export function DialogStock({ productId }: { productId: string }) {
+export function DialogStock({ 
+  // productId 
+}: { productId: string }) {
   const [open, setOpen] = useState(false);
   const [newStock, setNewStock] = useState<number | ''>('');
-  const { updateStock } = useProductStore();
+  // const { updateStock } = useProductStore();
 
   const handleUpdateStock = async () => {
     if (newStock === '' || Number(newStock) < 0) {
@@ -26,7 +28,7 @@ export function DialogStock({ productId }: { productId: string }) {
     }
 
     try {
-      await updateStock(productId, Number(newStock));
+      // await updateStock(productId, Number(newStock));
       setOpen(false);
     } catch (error) {
       console.error('Gagal memperbarui stok:', error);
@@ -51,7 +53,9 @@ export function DialogStock({ productId }: { productId: string }) {
               type="number"
               placeholder="Masukkan jumlah stok baru"
               value={newStock}
-              onChange={(e) => setNewStock(e.target.value ? Number(e.target.value) : '')}
+              onChange={(e) =>
+                setNewStock(e.target.value ? Number(e.target.value) : '')
+              }
               outlineColor="blue.400"
             />
           </DialogBody>

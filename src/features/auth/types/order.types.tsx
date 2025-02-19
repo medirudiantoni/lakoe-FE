@@ -1,16 +1,16 @@
 export type Product = {
-    name: string;
-    attachments?: string[];
-  };
-  
-  export type OrderItem = {
-    product: Product;
-    quantity: number;
-    name:string
-    image:string
-  };
-  
- export interface Order {
+  name: string;
+  attachments?: string[];
+};
+
+export type OrderItem = {
+  product: Product;
+  quantity: number;
+  name: string;
+  image: string;
+};
+
+export interface Order {
   invoice?: {
 
     buyerId: string
@@ -42,7 +42,7 @@ export type Product = {
     price: number;
   };
 }
-  
+
 export interface OrderDetailResponse {
   order: Order;
 }
