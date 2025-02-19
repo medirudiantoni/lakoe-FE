@@ -7,6 +7,7 @@ export type StoreFormProps = {
   description: string
   logoAttachment: File | null
   bannerAttachment: File | null
+
 };
 
 export interface StoreType extends StoreFormProps {
