@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-
+import Cookies from "js-cookie";
 import { apiURL } from '@/utils/baseurl';
 import { TemplateFormProps } from '../types/template-types';
 
@@ -102,6 +102,45 @@ export const updateTemplate = async (
       throw new Error(error.response?.data?.message || 'Something went wrong');
     }
     console.error('Unexpected Error:', error);
+    throw error;
+  }
+};
+
+
+
+
+export const useMessageTemplate = async (templateId: string, order: any) => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) throw new Error("Token tidak ditemukan");
+
+    const storeName = order.store?.name;
+    const payload = {
+      namaCustomer: order.recipientName,
+      namaProduk: order.orderItems?.[0]?.product?.name,
+      namaToko: storeName,
+    };
+
+    const res: AxiosResponse = await axios.post(
+      apiURL + `message-template/${templateId}/use/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Response dari API:", res.data); // 🔍 Cek output
+
+    // Pastikan kita mengambil hanya string dari message.content
+    return res.data.message?.content || "Pesan tidak tersedia";
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios Error:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Gagal menggunakan template pesan");
+    }
+    console.error("Unexpected Error:", error);
     throw error;
   }
 };
