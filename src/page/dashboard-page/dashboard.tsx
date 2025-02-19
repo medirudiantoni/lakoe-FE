@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import banner from '../../assets/Banner.png';
 import { ChartComponent } from './chart';
 import { TableDemo } from './table';
-import { useEffect } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useSellerStore } from '@/hooks/store';
 import Cookies from 'js-cookie';

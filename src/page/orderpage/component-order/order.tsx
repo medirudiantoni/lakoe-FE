@@ -1,5 +1,3 @@
-import { InputGroup } from '@/components/ui/input-group';
-import type { Order } from '@/features/auth/types/order.types';
 import {
   Box,
   Button,
@@ -11,20 +9,17 @@ import {
   MenuItem,
   MenuRoot,
   MenuTrigger,
-  Skeleton,
   Tabs,
   Text,
+  Skeleton,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { ChevronDown, NotepadText } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
 import { TabAllOrder } from './tab-all-order';
-import { TabCancelledOrder } from './tab-cancelled-order';
-import { TabInDeliveryOrder } from './tab-indelivery-order';
-import { TabNewOrder } from './tab-new-order';
 import { TabNotYetPaidOrder } from './tab-notyetpaid-order';
-import { TabOrderComplete } from './tab-order-complete-order';
+import { TabNewOrder } from './tab-new-order';
 import { TabReadyOrder } from './tab-ready-to-ship-order';
+import { TabInDeliveryOrder } from './tab-indelivery-order';
+import { TabOrderComplete } from './tab-order-complete-order';
 import { TabCancelledOrder } from './tab-cancelled-order';
 import { InputGroup } from '@/components/ui/input-group';
 import { fetchOrders } from '@/features/auth/services/order.service';
