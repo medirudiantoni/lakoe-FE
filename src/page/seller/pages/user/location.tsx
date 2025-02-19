@@ -491,15 +491,15 @@ export function LocationSetting() {
                       <DialogCloseTrigger />
                     </DialogContent>
                   </DialogRoot>
+
+
+                </Box>
+                <Box display="flex" justifyContent="end" gap={2} pr={3}>
                   <Switch
                     colorScheme="blue"
                     checked={location.isMainLocation}
                     onChange={() => handleToggleMainLocation(location.id)}
                   />
-
-
-                </Box>
-                <Box display="flex" justifyContent="end" gap={2} pr={3}>
       
                 </Box>
               </GridItem>

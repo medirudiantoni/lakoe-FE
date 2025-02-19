@@ -48,6 +48,7 @@ const SellerCheckoutPage = () => {
 
   const [isOpenFirst, setIsOpenFirst] = useState(false);
   const { buyer } = useAuthBuyerStore();
+  const { store } = useSellerStore();
 
   const { selectedProduct, selectedVariantOption } = useProductStore();
   const queryClient = useQueryClient();
@@ -141,6 +142,7 @@ const SellerCheckoutPage = () => {
       const formData = new FormData();
 
       const selectedCourier = selectedCouriers[0];
+      formData.append('storeId', store?.id || '')
       formData.append('buyerId', buyer?.id || '');
       console.log('buyeridcheckout', buyer?.id);
       formData.append(

@@ -41,29 +41,37 @@ export function InformationSetting() {
   const [previewBannerUrl, setPreviewBannerUrl] = useState<string | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [bankAccounts, setBankAccounts] = useState<
+  { id: string; accName: string; accNumber: string; bankName: string }[]
+>([]);
 
   const storeId = user?.Stores!.id;
 
   useEffect(() => {
-    const token = Cookies.get("token")
-    console.log("storeId: ", storeId)
+    const token = Cookies.get("token");
     if (storeId) {
       setIsFetching(true);
       fetchStore(storeId, token!)
         .then((data) => {
           setStoreData(data);
-          setPreviewLogoUrl(data.logoAttachment || null);
-          setPreviewBannerUrl(data.bannerAttachment || null);
+          setBankAccounts(
+            data.bankAccounts.map((bankAcc: any) => ({
+              id: bankAcc.id,
+              accName: bankAcc.accName,
+              accNumber: bankAcc.accNumber,
+              bankName: bankAcc.bank?.name || "Unknown",
+            }))
+          );
         })
         .catch(() => {
-          toast.error('Gagal mengambil data toko.');
+          toast.error("Gagal mengambil data toko.");
         })
         .finally(() => {
           setIsFetching(false);
         });
     }
   }, [storeId]);
-
+  
   useEffect(() => {
     if (storeData) {
       setValue('name', storeData.name || '');
@@ -98,11 +106,14 @@ export function InformationSetting() {
     toast
       .promise(
         updateStore(formData, storeId)
-          .then((response) => {
-            setStoreData(response.data);
-            setUser({ ...user, Stores: response.data });
-            setIsEditing(false);
-          })
+        .then(async (response) => {
+          console.log("Data setelah update:", response.data);
+          setStoreData(response.data);
+          setUser({ ...user, Stores: response.data });
+      
+          const updatedData = await fetchStore(storeId, Cookies.get("token")!);
+          setStoreData(updatedData);
+        })
           .catch((error) => {
             console.error('Gagal memperbarui toko:', error);
             throw error;
@@ -222,8 +233,49 @@ export function InformationSetting() {
                   disabled={!isEditing}
                 />
               </Field>
+
+              
             </GridItem>
           </Grid>
+          {bankAccounts.map((bank, index) => (
+  <Grid templateColumns="repeat(3, 1fr)" gap={3} key={index} my={4}>
+    <GridItem>
+      <Field label="Nama Bank">
+        <Input
+          value={bank.accName}
+          disabled={!isEditing}
+          onChange={(e) => {
+            const updatedBanks = [...bankAccounts];
+            updatedBanks[index].accName = e.target.value;
+            setBankAccounts(updatedBanks);
+          }}
+        />
+      </Field>
+    </GridItem>
+    <GridItem>
+      <Field label="ID Bank">
+        <Input
+          value={bank.bankName}
+          disabled
+        />
+      </Field>
+    </GridItem>
+    <GridItem>
+      <Field label="Nomor Rekening">
+        <Input
+          value={bank.accNumber}
+          disabled={!isEditing}
+          onChange={(e) => {
+            const updatedBanks = [...bankAccounts];
+            updatedBanks[index].accNumber = e.target.value;
+            setBankAccounts(updatedBanks);
+          }}
+        />
+      </Field>
+    </GridItem>
+  </Grid>
+))}
+
           <Grid templateColumns="1fr 4fr">
             <GridItem>
               <Text fontWeight="semibold" fontSize="20px" mb={3}>
