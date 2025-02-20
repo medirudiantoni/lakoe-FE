@@ -9,6 +9,9 @@ import SellerFooter from '../components/footer';
 import { useSellerStore } from '@/hooks/store';
 import LoadingButtonLottie from '@/components/icons/loading-button';
 import Cookies from 'js-cookie';
+import SuccessAnimation from '../components/success-animation';
+import useCart from '@/hooks/cart-store';
+import { LoadingScreenBuyer } from '@/components/loading-screen/loading-screen-buyer';
 
 interface OrderItem {
   productId: string;
@@ -44,6 +47,7 @@ const PAYMENT_DEADLINE_HOURS = 24;
 const SellerBillingPage = () => {
   const { store } = useSellerStore();
   const { orderId } = useParams<{ orderId: string }>();
+  const { clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [onSnap, setOnSnap] = useState(false);
@@ -52,6 +56,7 @@ const SellerBillingPage = () => {
   const [statusPayment, setStatusPayment] = useState("");
   const [countdown, setCountdown] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [loadingSuccess, setLoadingSuccess] = useState(false);
 
   useEffect(() => {
     console.log("statusPayment:", statusPayment);
@@ -124,23 +129,24 @@ const SellerBillingPage = () => {
 
     if (!orderDetails || !orderId) return;
 
+    console.log("order dataaaa: ", orderDetails.orderData);
+
     setLoading(true);
     try {
       const res = await createOrder(orderDetails.orderData);
+
+      console.log("res: ", res);
 
       if (res.status === 201) {
         const newSnapToken = res.data.data.snap_token;
         localStorage.setItem(STORAGE_KEYS.getSnapKey(orderId), newSnapToken);
 
-        // Pastikan token disimpan sebelum mengaktifkan popup
         setSnapToken(newSnapToken);
 
-        // Simpan waktu order untuk countdown jika belum ada
         if (!localStorage.getItem(STORAGE_KEYS.getOrderTimeKey(orderId))) {
           localStorage.setItem(STORAGE_KEYS.getOrderTimeKey(orderId), new Date().toISOString());
         }
 
-        // Delay aktivasi popup untuk memastikan state terupdate
         setTimeout(() => {
           setOnSnap(true);
         }, 300);
@@ -149,9 +155,9 @@ const SellerBillingPage = () => {
       }
     } catch (error) {
       console.error('Payment creation failed:', error);
-      // Tambahkan feedback error ke user di sini
     } finally {
       setLoading(false);
+      clearCart();
     }
   };
 
@@ -165,140 +171,128 @@ const SellerBillingPage = () => {
 
   return (
     <Box w="full" minH="100vh" className="font-poppins">
-      <Button
-        onClick={() => navigate(-1)}
-        position="absolute"
-        top="10"
-        left="10"
-        bg="none"
-        border="none"
-        color="#1D1D1D"
-      >
-        <ArrowLeft />
-      </Button>
+      {isSuccess && (
+        <SuccessAnimation onClick={() => {
+          setLoadingSuccess(true)
+          navigate(`/${store?.name}/buyer/order`)
+        }} />
+      )}
+      {loadingSuccess ? (
+        <LoadingScreenBuyer />
+      ) : (
+        <>
+          <Button
+            onClick={() => navigate(-1)}
+            position="absolute"
+            top="10"
+            left="10"
+            bg="none"
+            border="none"
+            color="#1D1D1D"
+          >
+            <ArrowLeft />
+          </Button>
 
-      <HStack justifyContent="center" w="full" maxW="6xl" mx="auto" py="32">
-        <Box w="full" maxW="xl">
-          <Heading size="2xl" fontWeight="bold" mb="5" className="font-poppins">
-            Pembayaran
-          </Heading>
+          <HStack justifyContent="center" w="full" maxW="6xl" mx="auto" py="32">
+            <Box w="full" maxW="xl">
+              <Heading size="2xl" fontWeight="bold" mb="5" className="font-poppins">
+                Pembayaran
+              </Heading>
 
-          <Table.Root size="lg" mb="5">
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell px="0" colSpan={2}>
-                  <Text fontWeight="semibold" mb="2">Detail Produk</Text>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell px="0">Subtotal Produk</Table.Cell>
-                <Table.Cell px="0" textAlign="end">
-                  {formatRupiah(orderDetails.subtotal)}
-                </Table.Cell>
-              </Table.Row>
+              <Table.Root size="lg" mb="5">
+                <Table.Body>
+                  <Table.Row>
+                    <Table.Cell px="0" colSpan={2}>
+                      <Text fontWeight="semibold" mb="2">Detail Produk</Text>
+                    </Table.Cell>
+                  </Table.Row>
+                  <Table.Row>
+                    <Table.Cell px="0">Subtotal Produk</Table.Cell>
+                    <Table.Cell px="0" textAlign="end">
+                      {formatRupiah(orderDetails.subtotal)}
+                    </Table.Cell>
+                  </Table.Row>
 
-              <Table.Row>
-                <Table.Cell px="0" colSpan={2}>
-                  <Text fontWeight="semibold" mt="4" mb="2">Detail Pengiriman</Text>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell px="0">
-                  <Text>
-                    {orderDetails.shippingDetails.courier_name} - {orderDetails.shippingDetails.courier_service_name}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500">
-                    Estimasi: {orderDetails.shippingDetails.duration.replace('days', 'hari')}
-                  </Text>
-                </Table.Cell>
-                <Table.Cell px="0" textAlign="end">
-                  {formatRupiah(orderDetails.shippingDetails.price)}
-                </Table.Cell>
-              </Table.Row>
+                  <Table.Row>
+                    <Table.Cell px="0" colSpan={2}>
+                      <Text fontWeight="semibold" mt="4" mb="2">Detail Pengiriman</Text>
+                    </Table.Cell>
+                  </Table.Row>
+                  <Table.Row>
+                    <Table.Cell px="0">
+                      <Text>
+                        {orderDetails.shippingDetails.courier_name} - {orderDetails.shippingDetails.courier_service_name}
+                      </Text>
+                      <Text fontSize="sm" color="gray.500">
+                        Estimasi: {orderDetails.shippingDetails.duration.replace('days', 'hari')}
+                      </Text>
+                    </Table.Cell>
+                    <Table.Cell px="0" textAlign="end">
+                      {formatRupiah(orderDetails.shippingDetails.price)}
+                    </Table.Cell>
+                  </Table.Row>
 
-              <Table.Row>
-                <Table.Cell px="0" pt="6">
-                  <Text fontWeight="semibold">Total Pembayaran</Text>
-                </Table.Cell>
-                <Table.Cell px="0" pt="6" textAlign="end">
-                  <Text fontWeight="semibold">{formatRupiah(orderDetails.totalAmount)}</Text>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell px="0">Bayar Sebelum</Table.Cell>
-                <Table.Cell px="0" textAlign="end">
-                  {countdown}
-                </Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table.Root>
+                  <Table.Row>
+                    <Table.Cell px="0" pt="6">
+                      <Text fontWeight="semibold">Total Pembayaran</Text>
+                    </Table.Cell>
+                    <Table.Cell px="0" pt="6" textAlign="end">
+                      <Text fontWeight="semibold">{formatRupiah(orderDetails.totalAmount)}</Text>
+                    </Table.Cell>
+                  </Table.Row>
+                  <Table.Row>
+                    <Table.Cell px="0">Bayar Sebelum</Table.Cell>
+                    <Table.Cell px="0" textAlign="end">
+                      {countdown}
+                    </Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+              </Table.Root>
 
-          <HStack>
-            <Button
-              flex={1}
-              onClick={() => navigate(`/${store?.name}`)}
-              variant="outline"
-              borderWidth={1}
-              borderColor="gray.600"
-            >
-              Lanjut Belanja
-            </Button>
+              <HStack>
+                <Button
+                  flex={1}
+                  onClick={() => navigate(`/${store?.name}`)}
+                  variant="outline"
+                  borderWidth={1}
+                  borderColor="gray.600"
+                >
+                  Lanjut Belanja
+                </Button>
 
-            {isSuccess ? (
-              <Button flex={1}>Halaman Pesanan</Button>
-            ) : snapToken ? (
-              <Box flex={1} display="flex">
-                {loading ? (
-                  <Button flex={1}>
-                    <LoadingButtonLottie />
-                  </Button>
+                {isSuccess ? (
+                  <Button flex={1} onClick={() => navigate(`/${store?.name}/buyer/order`)}>Halaman Pesanan</Button>
+                ) : snapToken ? (
+                  <Box flex={1} display="flex">
+                    {loading ? (
+                      <Button flex={1}>
+                        <LoadingButtonLottie />
+                      </Button>
+                    ) : (
+                      <PaymentButtonMidtrans
+                        onPopup={onSnap}
+                        snapToken={snapToken}
+                        status={setStatusPayment}
+                        onPopupChange={handleSnapPopupChange}
+                      />
+                    )}
+                  </Box>
                 ) : (
-                  <PaymentButtonMidtrans
-                    onPopup={onSnap}
-                    snapToken={snapToken}
-                    status={setStatusPayment}
-                    onPopupChange={handleSnapPopupChange}
-                  />
-                )}
-              </Box>
-            ) : (
-              <Button
-                flex={1}
-                onClick={handlePayment}
-                disabled={loading}
-              >
-                {loading ? <LoadingButtonLottie /> : 'Bayar Sekarang'}
-              </Button>
-            )}
-            {/* {snapToken ? (
-              <Box flex={1} display="flex">
-                {loading ? (
-                  <Button flex={1}>
-                    <LoadingButtonLottie />
+                  <Button
+                    flex={1}
+                    onClick={handlePayment}
+                    disabled={loading}
+                  >
+                    {loading ? <LoadingButtonLottie /> : 'Bayar Sekarang'}
                   </Button>
-                ) : (
-                  <PaymentButtonMidtrans
-                    onPopup={onSnap}
-                    snapToken={snapToken}
-                    status={setStatusPayment}
-                    onPopupChange={handleSnapPopupChange}
-                  />
                 )}
-              </Box>
-            ) : (
-              <Button
-                flex={1}
-                onClick={handlePayment}
-                disabled={loading}
-              >
-                {loading ? <LoadingButtonLottie /> : 'Bayar Sekarang'}
-              </Button>
-            )} */}
 
+              </HStack>
+            </Box>
           </HStack>
-        </Box>
-      </HStack>
-      <SellerFooter />
+          <SellerFooter />
+        </>
+      )}
     </Box>
   );
 };

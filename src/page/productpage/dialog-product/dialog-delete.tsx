@@ -9,22 +9,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { deleteProduct } from '@/features/auth/services/product-service';
 import { useCheckboxStore } from '@/features/auth/store/product-store';
 import { Box, Button, Text } from '@chakra-ui/react';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
+import { useProductStore } from '@/features/auth/store/toggle-active-product.store';
 
 export function DialogDelete() {
   const [open, setOpen] = useState(false);
   const { selectedProducts, setSelectedProducts } = useCheckboxStore();
-  // const { deleteProduct } = useProductStore();
+  const { removeProduct } = useProductStore();
   const [, setIsLoading] = useState(false);
 
   const handleDelete = async () => {
+    const token = await Cookies.get('token');
     setIsLoading(true);
     try {
-      // await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
+      selectedProducts.map((id) => removeProduct(id));
+      await Promise.all(selectedProducts.map((id) => deleteProduct(id, String(token))));
       toast.success(`${selectedProducts.length} produk telah dihapus.`);
       setSelectedProducts([]);
       setOpen(false);

@@ -30,6 +30,7 @@ const SellerCartPage = () => {
 
   const { store } = useSellerStore();
   const { cart, totalPrice, totalQuantity } = useCart();
+  
   const { setProducts } = useProductStore();
 
   useEffect(() => {
@@ -45,7 +46,8 @@ const SellerCartPage = () => {
         price: item.price,
         productId: String(item.product?.id),
         quantity: item.quantity,
-        cartItemId: String(item.id)
+        cartItemId: String(item.id),
+        weight: item.weight
       };
       data.push(dataItem);
     });

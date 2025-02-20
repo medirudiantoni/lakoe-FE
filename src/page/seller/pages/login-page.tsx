@@ -39,11 +39,10 @@ export function LoginBuyer() {
       password: data.password,
       storeName: store?.name,
     };
+  
     toast.promise(
-      fetchLogin(requestData),
-      {
-        loading: 'Sedang login...',
-        success: (res) => {
+      fetchLogin(requestData)
+        .then((res) => {
           const data = res.data;
           setBuyer(data.buyer);
           Cookies.set(`token-buyer-${store?.name}`, data.token, {
@@ -54,24 +53,20 @@ export function LoginBuyer() {
           initOrCheckBuyerCart(data.buyer.id, String(store?.id), data.token);
           navigate(`/${store?.name}/`);
           return data.message;
-        },
-      },
+        })
+        .catch((err) => {
+          
+          const errorMessage = err.response?.message || "Akun tidak ditemukan, silahkan daftar terlebih dahulu";
+          toast.error(errorMessage);
+          throw new Error(errorMessage);
+        }),
       {
-        success: {
-          style: {
-            backgroundColor: '#FFFF',
-            color: '#1d1d1d',
-          },
-        },
-        error: {
-          style: {
-            backgroundColor: '#FFFF',
-            color: '#1d1d1d',
-          },
-        },
+        loading: "Sedang login...",
+        success: "Login berhasil!",
       }
     );
   };
+  
   const onClickGoogle = () => {
     //   setIsLoading(true);
     window.location.href = `${apiURL}auth-buyer/google/`;

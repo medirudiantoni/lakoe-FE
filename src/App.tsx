@@ -48,22 +48,6 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      path: '/login-admin',
-      Component: AdminLogin,
-      HydrateFallback: Fallback
-    },
-    {
-      path: '',
-      element: <PrivateRouteAdmin/>,
-      children: [
-        {
-          path: '/admin',
-          Component: Admin,
-          HydrateFallback: Fallback
-        },
-      ]
-    },
-    {
       path: '/tanstack',
       Component: CobaTanstack,
       HydrateFallback: Fallback,
@@ -257,9 +241,40 @@ function App() {
       HydrateFallback: Fallback,
     },
     {
+      path: '/login-admin',
+      Component: AdminLogin,
+      HydrateFallback: Fallback
+    },
+    {
+      path: '',
+      element: <PrivateRouteAdmin/>,
+      children: [
+        {
+          path: '/admin',
+          Component: Admin,
+          HydrateFallback: Fallback
+        },
+      ]
+    },
+    {
       path: '/*',
       Component: NotFound,
       HydrateFallback: Fallback,
+    },
+    {
+      path: '/login-admin',
+      Component: AdminLogin,
+      HydrateFallback: Fallback
+    },
+    {
+      element: <PrivateRouteAdmin/>,
+      children: [
+        {
+          path: '/admin',
+          Component: Admin,
+          HydrateFallback: Fallback
+        },
+      ]
     },
   ]);
 

@@ -43,6 +43,8 @@ const PricingPage = () => {
           alignSelf="self-start"
           position="absolute"
           left="10"
+          variant={'outline'}
+          border={'none'}
         >
           <ArrowLeft />
           <Text>Back</Text>

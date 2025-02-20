@@ -6,6 +6,7 @@ interface ProductStore {
   products: ProductType[] | null;
   setProducts: (products: ProductType[]) => void;
   updateProductStatus: (productId: string, newStatus: boolean) => void;
+  removeProduct: (id: string) => void;
 }
 
 export const useProductStore = create<ProductStore>((set) => ({
@@ -21,4 +22,5 @@ export const useProductStore = create<ProductStore>((set) => ({
           )
         : null,
     })),
+  removeProduct: (id) => set(state => ({ products: state.products?.filter(e => e.id !== id) }))
 }));

@@ -63,6 +63,10 @@ const SellerProductDetail = () => {
     queryFn: () => fetchProductByUrl(String(productUrl)),
   });
 
+  useEffect(() => {
+    console.log("productttt: ", product);
+  }, [product])
+
   const handleBuyNow = () => {
     if (!buyer) {
       console.log('belum loginnnnnn');
@@ -84,6 +88,17 @@ const SellerProductDetail = () => {
       return;
     }
 
+    // const weight = product.variants && product.variants[0].variantOptions && product.variants[0].variantOptions[0].variantOptionValues && product.variants[0].variantOptions[0].variantOptionValues[0].weight;
+
+    let weight: number = 0;
+    if(product.variants && product.variants.length < 2){
+      weight = Number(product.variants && product.variants[0].variantOptions && product.variants[0].variantOptions[0].variantOptionValues && product.variants[0].variantOptions[0].variantOptionValues[0].weight);
+    } else {
+      weight = selectedVariantOptionValue.weight
+    }
+
+    console.log("weightttttttt: ", weight);
+
     setProducts([
       {
         name: product.name,
@@ -92,7 +107,8 @@ const SellerProductDetail = () => {
         quantity: 1,
         category: product.category?.name,
         image: product.attachments[0],
-        cartItemId: product.id
+        cartItemId: product.id,
+        weight: Number(weight)
       },
     ]);
     setSelectedVariantOption(selectedVariantOptionValue);
@@ -225,6 +241,8 @@ const SellerProductDetail = () => {
         price: priceNumber,
         image: String(product?.attachments[0]),
         product: product,
+        weight: Number(selectedOption?.variantOptionValues &&
+          selectedOption.variantOptionValues[0].id)
       };
       console.log('datanya: ', data);
       // addCart(data);
@@ -237,6 +255,8 @@ const SellerProductDetail = () => {
       // mutation.mutate(data);
     } else {
       if (selectedOption) {
+        console.log("weightttttt: ", selectedOption.variantOptionValues &&
+          selectedOption.variantOptionValues[0].weight)
         const data: CartItemType = {
           buyerId: buyer?.id,
           variantOptionValueId:
@@ -249,6 +269,8 @@ const SellerProductDetail = () => {
           price: priceNumber,
           image: String(product?.attachments[0]),
           product,
+          weight: Number(selectedOption.variantOptionValues &&
+          selectedOption.variantOptionValues[0].weight),
         };
         toast.success('Produk Telah ditambahkan ke keranjang');
         fetchAddToCart(data, tokenBuyer).then((res) => {

@@ -11,10 +11,12 @@ interface LogoutButtonProps {
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
     Cookies.remove('token');
+    queryClient.invalidateQueries({ queryKey: ['balance'] });
+
 
     queryClient.invalidateQueries({queryKey: ['balance']})
     

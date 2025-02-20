@@ -28,9 +28,6 @@ import { LocationSettingCheckout } from './user/location-checkout';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import { useSellerStore } from '@/hooks/store';
-import { fetchClearCart } from '@/features/auth/services/cart-service';
-import Cookies from 'js-cookie';
-
 
 type Courier = {
   courier_name: string;
@@ -70,6 +67,10 @@ const SellerCheckoutPage = () => {
 
   const { products, selectedVariantOption } = useProductStore();
   const { buyer } = useAuthBuyerStore();
+
+  useEffect(() => {
+    console.log("selected var ops: ", selectedVariantOption);
+  }, [selectedVariantOption]);
 
   useEffect(() => {
     const total = products.reduce(

@@ -40,6 +40,10 @@ export function TabContentAll() {
   const [sortValue, setSortValue] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
+  // useEffect(() => {
+  //   setProductsToDisplay(productsZust);
+  // }, [productsZust]);
+
   useEffect(() => {
     restoreProductAfterSearch();
   }, [products]);

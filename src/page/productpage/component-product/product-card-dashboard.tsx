@@ -120,7 +120,7 @@ const ProductCardDashboard: React.FC<Props> = ({
                 Lihat halaman
               </Button>
             </Link>
-            <DialogOption />
+            <DialogOption productId={product.id} />
           </Box>
         </Box>
       </Box>
