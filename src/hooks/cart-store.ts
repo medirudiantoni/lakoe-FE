@@ -10,6 +10,7 @@ interface CartStore {
   increase: (id: string) => void;
   decrease: (id: string) => void;
   removeCart: (id: string) => void;
+  clearCart: () => void;
 }
 
 const calculateTotalPrice = (cart: CartItemType[]) =>
@@ -98,6 +99,7 @@ const useCart = create<CartStore>((set) => ({
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
+    clearCart: () => set({ cart: [], totalPrice: 0, totalQuantity: 0 })
 }));
 
 export default useCart;

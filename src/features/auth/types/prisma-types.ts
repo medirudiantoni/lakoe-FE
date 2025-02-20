@@ -63,6 +63,7 @@ export type CartItemType = {
   buyerId?: string;
   variantOptionValue?: VariantOptionValueType;
   variantOptionValueId?: string;
+  weight: number;
 };
 
 export type InvoiceType = {
@@ -289,7 +290,7 @@ export type OrderItemType = {
   category?: string;
   height?: number;
   length?: number;
-  weight?: number;
+  weight: number;
   width?: number;
   image: string;
   cartItemId: string;
