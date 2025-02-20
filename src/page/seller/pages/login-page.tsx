@@ -55,15 +55,30 @@ export function LoginBuyer() {
           return data.message;
         })
         .catch((err) => {
-          
-          const errorMessage = err.response?.message || "Akun tidak ditemukan, silahkan daftar terlebih dahulu";
-          toast.error(errorMessage);
-          throw new Error(errorMessage);
+          // Menangani error jika akun tidak ditemukan
+          const errorMessage =
+            err.response?.data?.message || "Terjadi kesalahan saat login";
+          toast.error(errorMessage, {
+            style: {
+              backgroundColor: '#FFFF',
+              color: '#1d1d1d',
+            },
+          });
+          throw err; // Agar toast tetap menangani error
         }),
-      {
-        loading: "Sedang login...",
-        success: "Login berhasil!",
-      }
+        {
+          loading: 'Sedang login...',
+          success: (message) => <div>{message}</div>,
+          error: (err) => <div>{err}</div>,
+        },
+        {
+          position: 'top-center',
+          style: {
+            background: '#FFFF',
+            color: '#1d1d1d',
+            fontWeight: 'normal',
+          },
+        }
     );
   };
   

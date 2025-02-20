@@ -39,20 +39,28 @@ const ProductCard: React.FC<ProductCardProps> = (props) => {
       p="3"
       w="full"
       _hover={{ bg: 'gray.100' }}
+      border={'1px solid'}
+      borderColor={'gray.200'}
+      borderRadius={'7px'}
+      cursor={'pointer'}
+
     >
       <Image
-        w="full"
-        aspectRatio="1/1"
+        w="300px"
+        h={'200px'}
+        objectFit={'cover'}
         mb="2"
         src={props.product.attachments[0]}
+        borderRadius={'7px'}
       ></Image>
       <VStack
         alignItems="start"
         justifyContent="space-between"
         className="font-poppins"
+       
       >
         <Box mb="1">
-          <Heading size="lg" fontWeight="semibold">
+          <Heading size="lg" fontWeight="semibold" truncate maxW={'52'}>
             {props.product.name}
           </Heading>
           <Text fontSize="xs" color="gray.600">

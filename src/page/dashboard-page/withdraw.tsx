@@ -19,19 +19,16 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchBalance } from '@/features/auth/services/store-service';
 import { useSellerStore } from '@/hooks/store';
 import Cookies from 'js-cookie';
-import { formatRupiah } from '@/lib/rupiah';
-import { useAuthStore } from '@/features/auth/store/auth-store';
 
 
 function WithdrawForm({ storeId }: { storeId: string }) {
   const [amount, setAmount] = useState<number | ''>('');
   const [error, setError] = useState<string | null>(null);
   const {store} = useSellerStore()
-  const { user } = useAuthStore()
   const token = Cookies.get('token')
-  const storeIdB = user?.Stores?.id
 
-  const { data, isLoading, isError } = useQuery({
+
+  const { data, } = useQuery({
     queryKey: ['balance', storeId], 
     queryFn: async () => {
       const response = await fetchBalance(storeId!, token!);
@@ -42,7 +39,7 @@ function WithdrawForm({ storeId }: { storeId: string }) {
   
   // Pastikan `data` ada sebelum membaca balance & totalRevenue
   const balance = data?.balance ?? 0;
-  const totalRevenue = data?.totalRevenue ?? 0;
+
   
 
   const handleWithdraw = async () => {

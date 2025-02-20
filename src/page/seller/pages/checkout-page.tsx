@@ -425,7 +425,7 @@ const SellerCheckoutPage = () => {
                     width={'full'}
                   >
                     <Box flex={1}>
-                      <Text fontSize={'lg'} fontWeight={'medium'}>
+                      <Text fontSize={'lg'} color={'gray.600'}>
                         {product?.name}
                       </Text>
                       <Text color={'gray.400'}>{product?.category}</Text>

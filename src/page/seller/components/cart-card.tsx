@@ -107,8 +107,8 @@ const CartCard: React.FC<CartCardProps> = ({
   }
   return (
     <Flex py="5" gap="10" w="full" maxW="6xl">
-      <Box w="40" h="40" bg="gray.300">
-        <Image w="full" h="full" src={imageUrl} />
+      <Box w="48" h="40" bg="gray.300">
+        <Image w="full" h="full" objectFit={'cover'} src={imageUrl} />
       </Box>
       <HStack flex={1} borderBottomWidth={1} h="52" pb="12">
         <VStack

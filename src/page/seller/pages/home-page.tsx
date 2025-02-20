@@ -4,12 +4,11 @@ import {
   PaginationPrevTrigger,
   PaginationRoot,
 } from '@/components/ui/pagination';
-import { fetchProductsByStoreId } from '@/features/auth/services/product-service';
+import { fetchProductsByStoreId, searchQuery } from '@/features/auth/services/product-service';
 import { ProductType } from '@/features/auth/types/prisma-types';
 import { useSellerStore } from '@/hooks/store';
 import {
   Box,
-  Center,
   Grid,
   HStack,
   Image,
@@ -19,11 +18,12 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
-import { CategoryType } from '../components/category';
 import SellerFooter from '../components/footer';
 import SellerNavbar from '../components/navbar';
 import ProductCard from '../components/product-card';
 import { Search } from 'lucide-react';
+import Cookies from 'js-cookie';
+import LoadingSearchBuyer from '@/components/icons/loading-search-buyer';
 
 interface ProductsResponse {
   products: ProductType[];
@@ -35,19 +35,24 @@ export default function SellerHomepage() {
   const { store } = useSellerStore();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchSectionRef = useRef<HTMLDivElement>(null);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
-    null
-  );
-  const [selectedSubCategory, setSelectedSubCategory] =
-    useState<CategoryType | null>(null);
-  const [selectedSubSubCategory, setSelectedSubSubCategory] =
-    useState<CategoryType | null>(null);
   const [page, setPage] = useState<number>(1);
+  const [searchQueryInput, setSearchQueryInput] = useState<string>('');
 
   const { data, error, isLoading } = useQuery<ProductsResponse>({
-    queryKey: ['products', page],
+    queryKey: ['products', store?.id, page],
     queryFn: () => fetchProductsByStoreId(String(store?.id), page, 10),
+    enabled: !!store?.id && !searchQueryInput, 
   });
+
+  const token = Cookies.get('token')
+
+  const { data: searchData, isLoading: isSearchLoading } = useQuery<ProductType[]>({
+    queryKey: ['searchProducts', searchQueryInput, store?.id],
+    queryFn: () => searchQuery(searchQueryInput, String(token), String(store?.id)),
+    enabled: !!searchQueryInput,
+  });
+
+
 
   useEffect(() => {
     console.log('total page: ', data?.totalPage);
@@ -77,17 +82,7 @@ export default function SellerHomepage() {
     <Box w="full" h="fit" minH="100vh">
       <SellerNavbar onSearch={() => handleFocusSearch()} />
              
-      <form className="flex-1 pt-28 mb-10 mx-40" >
-            <HStack position="relative">
-              <Search size={20} className="absolute left-3" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                className="w-full h-full bg-[#FFFF] border border-solid border-gray-200 py-2.5 rounded-lg ps-10 pr-2 placeholder:font-normal outline-none focus:ring-2"
-                placeholder="Cari produk"
-              />
-            </HStack>
-          </form>
+ 
 
       {/* Banner start */}
       <VStack
@@ -97,7 +92,7 @@ export default function SellerHomepage() {
         maxW="7xl"
         mx="auto"
         h="fit"
- 
+        pt="28" 
         pb="10"
       >
         <Box w="full" aspectRatio="4/1" overflow="hidden" borderRadius={10}>
@@ -116,6 +111,20 @@ export default function SellerHomepage() {
       <Box px={'40'} fontSize={'2xl'} fontWeight={'semibold'} mb={4}>
              <Text>Semua Produk</Text>
           </Box>
+
+          <form className="flex-1 mb-10 mx-40" onSubmit={(e) => e.preventDefault()}>
+        <HStack position="relative">
+          <Search size={20} className="absolute left-3" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={searchQueryInput}
+            onChange={(e) => setSearchQueryInput(e.target.value)}
+            className="w-full h-full bg-[#FFFF] border border-solid border-gray-200 py-2.5 rounded-lg ps-10 pr-2 placeholder:font-normal outline-none focus:ring-2"
+            placeholder="Cari produk"
+          />
+        </HStack>
+      </form>
       {/* Search Input Start */}
       <HStack px={{ base: '5', lg: '10' }} w="full" maxW="7xl" mx="auto">
         
@@ -207,35 +216,25 @@ export default function SellerHomepage() {
       {/* Title, filter, & sort End */}
 
       {/* Products display Start */}
-      {isLoading ? (
-        <Center w="full" h="20">
-          Loading...
-        </Center> // di sini tempat skeleton
+      {isLoading || isSearchLoading ? (
+        <Text  h="68vh" mx={'24'}><LoadingSearchBuyer/></Text>
       ) : error ? (
-        <Center w="full" h="20">
-          Gagal memuat produk
-        </Center>
-      ) : data?.products ? (
+        <Text h="68vh" mx={'40'}>Gagal memuat produk</Text>
+      ) : (
         <Box w="full" h="fit" maxW="7xl" mx="auto" pb="100px">
-          <Grid
-            px={{ base: '5', lg: '10' }}
-            templateColumns="repeat(4, 1fr)"
-            gapX="16"
-            gapY="10"
-            mb={10}
-          >
-            {data?.products.map((product) => (
+          <Grid px={{ base: '5', lg: '10' }} templateColumns="repeat(4, 1fr)" gapX="12" gapY="10" mb={10} > 
+          {(searchQueryInput ? searchData : data?.products)?.length! > 0 ? (
+            (searchQueryInput ? searchData : data?.products)?.map((product) => (
               <ProductCard key={product.id} product={product} />
-            ))}
+            ))
+          ) : (
+            <Text  h="28vh" w={'500px'}>Produk yang anda cari tidak ditemukan</Text>
+          )}
+
           </Grid>
-          {data.totalPage > 1 && (
+          {!searchQueryInput && data!.totalPage > 1 && (
             <HStack w="full" justifyContent="center">
-              <PaginationRoot
-                count={data.totalPage}
-                onPageChange={(e) => setPage(e.page)}
-                pageSize={1}
-                defaultPage={1}
-              >
+              <PaginationRoot count={data!.totalPage} onPageChange={(e) => setPage(e.page)} pageSize={1} defaultPage={1}>
                 <HStack>
                   <PaginationPrevTrigger />
                   <PaginationItems />
@@ -245,12 +244,8 @@ export default function SellerHomepage() {
             </HStack>
           )}
         </Box>
-      ) : (
-        <Center w="full" h="20" mb="200px">
-          <Text color="gray.500">Belum ada produk</Text>
-        </Center>
-      )}
-
+      ) 
+    }
       {/* Products display End */}
 
       {/* Footer start */}

@@ -3,7 +3,7 @@ import { Field } from '@/components/ui/field';
 import { Box, Button, Input, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { z } from 'zod';
@@ -11,7 +11,6 @@ import { useState } from 'react';
 
 import { PasswordInput } from '@/components/ui/password-input';
 import { useAdminAuthStore } from '@/features/auth/store/auth-admin-store';
-import { fetchLogin } from '@/features/auth/services/auth-service'; // Gunakan fetchLogin
 import { fetchLoginAdmin } from '@/features/auth/services/auth-admin';
 
 const loginSchema = z.object({

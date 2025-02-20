@@ -57,6 +57,7 @@ export function Admin() {
       return { previousWithdraws };
     },
     onError: (err, _, context) => {
+      console.error('Withdraw error:', err); // Tetap bisa membaca error di console
       if (context?.previousWithdraws) {
         queryClient.setQueryData(['withdraws'], context.previousWithdraws);
       }

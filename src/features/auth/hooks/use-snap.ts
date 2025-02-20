@@ -1,4 +1,4 @@
-import { midtransApiUrl, midtransClientKey } from "@/utils/midtrans";
+
 import { useEffect, useState } from "react";
 
 declare global {
@@ -9,9 +9,9 @@ declare global {
   
 
 export default function useSnap(){
-    const [snap, setSnap] = useState<any>(null)
+    const [snap] = useState<any>(null)
     useEffect(() => {
-        const myMidtransClientKey = midtransClientKey;
+        // const myMidtransClientKey = midtransClientKey;
         let script = document.createElement('script');
         // script.src = `${midtransApiUrl}/snap/snap.js`;
         script.src = "https://app.sandbox.midtrans.com/snap/snap.js";

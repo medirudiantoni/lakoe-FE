@@ -1,17 +1,16 @@
 
-import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router';
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import LogoIcon from '@/components/icons/logo';
 import { apiURL } from '@/utils/baseurl';
 import { Center, VStack } from '@chakra-ui/react';
-import LogoIcon from '@/components/icons/logo';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router';
 
-import { fetchCurrentAdminData } from '@/features/auth/services/auth-admin';
-import toast from 'react-hot-toast';
 import LoadingLottie from '@/components/icons/lottie';
-import { useAdminAuthStore } from '@/features/auth/store/auth-admin-store';
 import LayoutAdmin from '@/components/layout/layout-admin';
+import { fetchCurrentAdminData } from '@/features/auth/services/auth-admin';
+import { useAdminAuthStore } from '@/features/auth/store/auth-admin-store';
 
 const PrivateRouteAdmin = () => {
   const { setAdmin, admin } = useAdminAuthStore();
@@ -31,7 +30,7 @@ const PrivateRouteAdmin = () => {
       })
       .catch((error) => {
         console.log(error);
-        toast.error('Anda belum login');
+        // toast.error('Anda belum login');
       });
   }
 

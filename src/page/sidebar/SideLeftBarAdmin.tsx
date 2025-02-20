@@ -11,17 +11,15 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { CircleUser, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { LayoutDashboard, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
-import LogoutButton from '../auth/logout';
 import LogoutAdminButton from '../admin/pages/logout';
-import ProfileLottie from '@/components/icons/lottie-profile';
+
 
 const SideBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const [isActiveButton, setIsActiveButton] = useState(false);
+
 
   const isActive = (paths: string[]) => {
     return paths.some(
@@ -46,22 +44,21 @@ const SideBar = () => {
           h={'80%'}
         >
           <ul className="list-none">
-            {/* <li>
+          <li>
               <Link
-                to="/dashboard"
+                to="/admin"
                 className={`flex items-center my-2 px-5 py-2 ${
-                  isActive(['/dashboard'])
+                  isActive(['/admin'])
                     ? 'text-[#0086B4] bg-[#F8F8F8]'
                     : 'hover:text-[#0086B4] hover:bg-[#F8F8F8]'
                 }`}
               >
                 <Flex gap={2}>
-                  <CircleUser />
-                  Profile
+                  <LayoutDashboard />
+                  <span>Dashboard </span>
                 </Flex>
               </Link>
-            </li> */}
-            <ProfileLottie />
+            </li>
           </ul>
 
           <DialogRoot>

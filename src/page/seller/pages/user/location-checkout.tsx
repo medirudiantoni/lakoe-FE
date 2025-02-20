@@ -22,6 +22,7 @@ import {
 } from '@/features/auth/services/location-buyer-service';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
 import { useSellerStore } from '@/hooks/store';
+import { useNavigate } from 'react-router';
 
 interface Location {
   id: string;
@@ -55,6 +56,7 @@ export function LocationSettingCheckout({
   const { store } = useSellerStore();
   const buyerId = buyer?.id;
   const token = Cookies.get(`token-buyer-${store?.name}`);
+  const navigate = useNavigate()
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['locations-buyer', buyerId],
@@ -139,6 +141,10 @@ export function LocationSettingCheckout({
       }
     );
   };
+  const handleRedirect = () => {
+    navigate(`/${store?.name}/buyer`);
+  };
+
 
   return (
     <Box>
@@ -146,7 +152,11 @@ export function LocationSettingCheckout({
         {isLoading ? (
           <LoadingButtonLottie />
         ) : isError ? (
+          <Box display={'flex'} justifyContent={'space-between'}>
           <Text color="red.500">Tidak ada lokasi di akun anda</Text>
+            <Button variant={'outline'} borderRadius={'10px'} onClick={handleRedirect}>Tambahkan Lokasi</Button>
+      
+          </Box>
         ) : data?.locations && data.locations.length > 0 ? (
           data.locations
             .filter((location: Location) => location.isMainLocation)

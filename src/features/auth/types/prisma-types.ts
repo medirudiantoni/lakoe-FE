@@ -290,7 +290,7 @@ export type OrderItemType = {
   category?: string;
   height?: number;
   length?: number;
-  weight: number;
+  weight?: number;
   width?: number;
   image: string;
   cartItemId: string;
