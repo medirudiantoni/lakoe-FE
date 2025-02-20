@@ -27,11 +27,12 @@ const SellerPage = () => {
   const { data, error, isLoading } = useQuery<StoreType>({
     queryKey: ['store'],
     queryFn: async () => {
-      const response = await axios.get(apiURL + `store/public/${storeName}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        }
-      });
+      // const response = await axios.get(apiURL + `store/public/${storeName}`, {
+      //   headers: {
+      //     "ngrok-skip-browser-warning": "69420",
+      //   }
+      // });
+      const response = await axios.get(apiURL + `store/public/${storeName}`);
       return response.data;
     },
   });
