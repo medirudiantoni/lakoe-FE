@@ -1,9 +1,9 @@
-import {
-  PaginationItems,
-  PaginationNextTrigger,
-  PaginationPrevTrigger,
-  PaginationRoot,
-} from '@/components/ui/pagination';
+// import {
+//   PaginationItems,
+//   PaginationNextTrigger,
+//   PaginationPrevTrigger,
+//   PaginationRoot,
+// } from '@/components/ui/pagination';
 import { fetchProductsByStoreId, searchQuery } from '@/features/auth/services/product-service';
 import { ProductType } from '@/features/auth/types/prisma-types';
 import { useSellerStore } from '@/hooks/store';
@@ -35,7 +35,7 @@ export default function SellerHomepage() {
   const { store } = useSellerStore();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchSectionRef = useRef<HTMLDivElement>(null);
-  const [page, setPage] = useState<number>(1);
+  const [page] = useState<number>(1); // setPage dihapus
   const [searchQueryInput, setSearchQueryInput] = useState<string>('');
 
   const { data, error, isLoading } = useQuery<ProductsResponse>({
@@ -232,7 +232,7 @@ export default function SellerHomepage() {
           )}
 
           </Grid>
-          {!searchQueryInput && data!.totalPage > 1 && (
+          {/* {!searchQueryInput && data!.totalPage > 1 && (
             <HStack w="full" justifyContent="center">
               <PaginationRoot count={data!.totalPage} onPageChange={(e) => setPage(e.page)} pageSize={1} defaultPage={1}>
                 <HStack>
@@ -242,7 +242,7 @@ export default function SellerHomepage() {
                 </HStack>
               </PaginationRoot>
             </HStack>
-          )}
+          )} */}
         </Box>
       ) 
     }
