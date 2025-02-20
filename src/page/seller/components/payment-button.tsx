@@ -34,7 +34,7 @@ const PaymentButtonMidtrans: React.FC<PaymentButtonProps> = ({
 
         const script = document.createElement("script");
         script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
-        script.setAttribute("data-client-key", "SB-Mid-client-PmlOUvnjXy23KtWr");
+        script.setAttribute("data-client-key", "SB-Mid-client-pHIhe0K6lRAiLRCd");
         script.id = "midtrans-script";
         script.async = true;
         

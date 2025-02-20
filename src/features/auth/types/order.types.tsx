@@ -32,6 +32,7 @@ export interface Order {
   id: string;
   courier: string;
   status: string;
+  recipientName:string;
   recipientAddress: string;
   createdAt: string;
   colorPalette: string;

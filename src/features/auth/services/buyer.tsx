@@ -17,6 +17,22 @@ export const getUserById = async (buyerId: string, token: string) => {
   }
 };
 
+export const getBuyerCount = async (storeName: string, token: string) => {
+  try {
+    const res: AxiosResponse = await axios.get(
+      apiURL + `buyer/buyer-count/${storeName}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.count;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const updateDataBuyer = async (
   buyerId: string,
   data: FormData,

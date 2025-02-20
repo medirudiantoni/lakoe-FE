@@ -49,48 +49,48 @@ export function RegisterBuyer() {
   });
 
   useEffect(() => {
-    console.log('dataStore', data);
-    console.log('dataStoreName', storeName);
     if (!store) {
       setStore(data!);
     }
   }, [store]);
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    const requestData = { ...data, storeName: store?.name };
-    toast.promise(
-      fetchRegister(requestData),
-      {
-        loading: 'Sedang mendaftarkan akun...',
-        success: (res) => {
-          const responseData = res.data;
-          navigate(`/${store?.name}/login-buyer`);
-          if (store?.name) {
-            Cookies.set('StoreNameBuyer', String(store?.name));
-          }
-          return responseData.message;
-        },
-
-        error: (error) => {
-          return error;
+const onSubmit = (data: RegisterFormInputs) => {
+  const requestData = { ...data, storeName: store?.name };
+  toast.promise(
+    fetchRegister(requestData),
+    {
+      loading: 'Sedang mendaftarkan akun...',
+      success: (res) => {
+        const responseData = res.data;
+        navigate(`/${store?.name}/login-buyer`);
+        if (store?.name) {
+          Cookies.set('StoreNameBuyer', String(store?.name));
+        }
+        return responseData.message;
+      },
+      error: (error) => {
+        return 'Email sudah digunakan';
+      },
+      
+      
+    },
+    {
+      success: {
+        style: {
+          background: '#FFFF',
+          color: '#1d1d1d',
         },
       },
-      {
-        success: {
-          style: {
-            background: '#FFFF',
-            color: '#1d1d1d',
-          },
+      error: {
+        style: {
+          background: '#FFFF',
+          color: '#1d1d1d',
         },
-        error: {
-          style: {
-            background: '#FFFF',
-            color: '#1d1d1d',
-          },
-        },
-      }
-    );
-  };
+      },
+    }
+  );
+};
+
 
   const onClickGoogle = () => {
     //   setIsLoading(true);

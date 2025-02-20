@@ -101,7 +101,7 @@ function SortMenu() {
   );
 }
 
-// Komponen Order
+
 export function Order() {
   const [status, setStatus] = useState('Semua');
   const [orders, setOrders] = useState<Order[]>([]);
@@ -109,9 +109,9 @@ export function Order() {
   const [error, setError] = useState<Error | null>(null);
   const token = Cookies.get('token');
   const { store } = useSellerStore();
-  const storeId = store?.id; // Pastikan mengambil storeId dengan aman
+  const storeId = store?.id;
   console.log(token);
-  console.log('✅ Store ID dari useSellerStore:', storeId); // 🔍 Debugging storeId
+  console.log('Store ID dari useSellerStore:', storeId); 
 
   useEffect(() => {
     if (!storeId) {
@@ -120,7 +120,7 @@ export function Order() {
     }
 
     const fetchData = async () => {
-      setOrders([]); // 🔥 Reset orders sebelum fetch baru untuk menghindari tampilan data toko sebelumnya
+      setOrders([]); 
       setIsLoading(true);
 
       try {

@@ -17,19 +17,17 @@ const BankDropdown = ({ onSelect }: { onSelect: (bank: Bank) => void }) => {
         try {
           const response = await axios.get(`${apiURL}bank`);
           console.log("API Response:", response.data);
-  
-          // Cek apakah response data adalah array
           if (Array.isArray(response.data)) {
             setBanks(response.data);
           } else if (Array.isArray(response.data.data)) {
-            setBanks(response.data.data); // Jika data ada di dalam property "data"
+            setBanks(response.data.data); 
           } else {
             console.error("Expected an array but got:", response.data);
-            setBanks([]); // Set default array kosong
+            setBanks([]); 
           }
         } catch (error) {
           console.error("Error fetching banks:", error);
-          setBanks([]); // Set default array kosong saat error
+          setBanks([]); 
         }
       };
   
