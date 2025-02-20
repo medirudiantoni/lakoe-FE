@@ -1,6 +1,11 @@
-import type { Order } from '@/features/auth/types/order.types';
+import { useState } from 'react';
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
-import { Link } from 'react-router';
+import { ProcessOrderDialog } from '../dialog-order-page/process-order-dialog'; 
+import type { Order } from '@/features/auth/types/order.types';
+import { processOrder } from '@/features/auth/services/order.service'; 
+import { useSellerStore } from '@/hooks/store';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router'; // Import useNavigate
 
 const getStatusColor = (status: string) => {
   const statusColors: Record<string, string> = {
@@ -27,11 +32,45 @@ const getButtonLabel = (status: string): string => {
 };
 
 function OrderItem({ order }: { order: Order }) {
+  const navigate = useNavigate(); // Inisialisasi useNavigate
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isProcessing, setProcessing] = useState(false);
+  const { store } = useSellerStore.getState();
+  const userId = store?.userId;
+
+  const handleProcessOrder = async () => {
+    const buyerId = order?.invoice?.buyerId;
+  
+    if (!userId || !buyerId) {
+      console.error('userId atau buyerId tidak ditemukan');
+      toast.error('Terjadi kesalahan: userId atau buyerId tidak ditemukan.');
+      return;
+    }
+  
+    setProcessing(true);
+    try {
+      const response = await processOrder(order.id, userId, buyerId);
+      
+      if (response?.message) {
+        toast.success(response.message);
+      } else {
+        toast.success('Pesanan berhasil diproses!');
+      }
+  
+      setDialogOpen(false);
+    } catch (error: any) {
+      console.error('Gagal memproses pesanan', error);
+      const errorMessage = error.response?.data?.message || 'Gagal memproses pesanan. Coba lagi nanti.';
+      toast.error(errorMessage);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const firstItem = order.orderItems?.[0];
 
-  console.log(order.orderItems);
   return (
-    <Link to={`/order-detail/${order.id}`}>
+    <>
       <Box
         width="full"
         border="1px solid"
@@ -56,9 +95,27 @@ function OrderItem({ order }: { order: Order }) {
               {order.invoice?.invoiceNumber || 'No Invoice'}
             </Text>
           </Box>
-          <Button variant="outline" borderRadius="20px">
-            {getButtonLabel(order.status)}
-          </Button>
+          {order.status === 'Dalam Pengiriman' ? (
+            <Button
+              variant="outline"
+              borderRadius="20px"
+              onClick={() => navigate(`/order-detail/${order.id}`)} // Navigasi ke halaman detail order
+            >
+              {getButtonLabel(order.status)}
+            </Button>
+          ) : order.status === 'Pesanan Baru' ? (
+            <Button
+              variant="outline"
+              borderRadius="20px"
+              onClick={() => setDialogOpen(true)}
+            >
+              {getButtonLabel(order.status)}
+            </Button>
+          ) : (
+            <Button variant="outline" borderRadius="20px">
+              {getButtonLabel(order.status)}
+            </Button>
+          )}
         </Box>
 
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -83,7 +140,6 @@ function OrderItem({ order }: { order: Order }) {
             </Box>
           </Box>
 
-          {/* Total Belanja */}
           <Box display="flex" flexDirection="column" alignItems="end">
             <Text>Total belanja</Text>
             <Text fontWeight="semibold">
@@ -92,7 +148,14 @@ function OrderItem({ order }: { order: Order }) {
           </Box>
         </Box>
       </Box>
-    </Link>
+
+      <ProcessOrderDialog
+        isOpen={isDialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={handleProcessOrder}
+        isProcessing={isProcessing}
+      />
+    </>
   );
 }
 

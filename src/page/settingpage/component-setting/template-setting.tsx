@@ -38,11 +38,11 @@ export function TemplateSetting() {
   } = useQuery({
     queryKey: ['templates', storeId],
     queryFn: async () => {
-      if (!storeId) return []; // Pastikan storeId ada sebelum fetch
+      if (!storeId) return []; 
       const token = Cookies.get('token') || '';
       return fetchTemplate(storeId, token);
     },
-    enabled: !!storeId, // Query hanya dijalankan jika storeId ada
+    enabled: !!storeId, 
   });
 
   
@@ -57,7 +57,7 @@ export function TemplateSetting() {
       setJudulPesan('');
       setIsiPesan('');
 
-      // **🔥 Tambahkan data baru ke cache secara manual**
+     
       queryClient.setQueryData(
         ['templates', storeId],
         (oldData: TemplateFormProps[]) => {

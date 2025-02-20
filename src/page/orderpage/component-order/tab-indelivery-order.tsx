@@ -1,7 +1,7 @@
 import type { Order } from '@/features/auth/types/order.types';
 import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router'; // Pastikan menggunakan `react-router-dom`
+import { Link } from 'react-router';
 
 type TabNewOrderProps = {
   orders: Order[];

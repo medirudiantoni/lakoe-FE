@@ -12,6 +12,7 @@ import {
   Tabs,
   Text,
   Skeleton,
+  Stack
 } from '@chakra-ui/react';
 import { ChevronDown, NotepadText } from 'lucide-react';
 import { TabAllOrder } from './tab-all-order';
@@ -101,7 +102,7 @@ function SortMenu() {
   );
 }
 
-// Komponen Order
+
 export function Order() {
   const [status, setStatus] = useState('Semua');
   const [orders, setOrders] = useState<Order[]>([]);
@@ -109,10 +110,9 @@ export function Order() {
   const [error, setError] = useState<Error | null>(null);
   const token = Cookies.get('token');
   const { store } = useSellerStore();
-  const storeId = store?.id; // Pastikan mengambil storeId dengan aman
+  const storeId = store?.id; 
   console.log(token);
-  console.log('✅ Store ID dari useSellerStore:', storeId); // 🔍 Debugging storeId
-
+  console.log('✅ Store ID dari useSellerStore:', storeId); 
   useEffect(() => {
     if (!storeId) {
       console.warn('⚠️ Tidak ada storeId, hentikan fetch.');
@@ -120,7 +120,7 @@ export function Order() {
     }
 
     const fetchData = async () => {
-      setOrders([]); // 🔥 Reset orders sebelum fetch baru untuk menghindari tampilan data toko sebelumnya
+      setOrders([]); 
       setIsLoading(true);
 
       try {
@@ -144,12 +144,29 @@ export function Order() {
 
   if (isLoading) {
     return (
-      <Box p={3} m={4} backgroundColor={'white'} borderRadius={10}>
-        <Skeleton height="20px" my="10px" />
-        <Skeleton height="20px" my="10px" />
-        <Skeleton height="20px" my="10px" />
+      <Box p={4} m={4} backgroundColor="white" borderRadius="10px">
+        <Stack gap={6}>
+          <Skeleton height="20px" width="10%" />
+          
+         
+          <Flex gap={4}>
+            {[...Array(7)].map((_, index) => (
+              <Skeleton key={index} height="20px" width="10%" />
+            ))}
+          </Flex>
+
+          <Flex gap={4} justify="space-between">
+            {[...Array(3)].map((_, index) => (
+              <Skeleton key={index} height="30px" width="40%" />
+            ))}
+          </Flex>
+    
+          <Skeleton height="200px" width="100%" />
+        </Stack>
       </Box>
     );
+    
+    
   }
 
   if (error) {

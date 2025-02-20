@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import React from 'react';
 import { toast } from 'react-hot-toast';
@@ -10,10 +11,13 @@ interface LogoutButtonProps {
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient()
 
   const handleLogout = () => {
     Cookies.remove('token');
 
+    queryClient.invalidateQueries({queryKey: ['balance']})
+    
     toast.success('Anda telah Logout', {
       style: {
         background: '#FFFF',
