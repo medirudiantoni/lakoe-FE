@@ -20,19 +20,30 @@ import { fetchBalance } from '@/features/auth/services/store-service';
 import { useSellerStore } from '@/hooks/store';
 import Cookies from 'js-cookie';
 import { formatRupiah } from '@/lib/rupiah';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 
 
 function WithdrawForm({ storeId }: { storeId: string }) {
   const [amount, setAmount] = useState<number | ''>('');
   const [error, setError] = useState<string | null>(null);
   const {store} = useSellerStore()
+  const { user } = useAuthStore()
   const token = Cookies.get('token')
+  const storeIdB = user?.Stores?.id
 
-  const { data: balance, isLoading, isError } = useQuery({
-    queryKey: ['balance', store?.id],
-    queryFn: async () => fetchBalance(store!.id, token!),
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['balance', storeId], 
+    queryFn: async () => {
+      const response = await fetchBalance(storeId!, token!);
+      return response; // Harus mengembalikan { balance, totalRevenue }
+    },
     enabled: !!store?.id, 
   });
+  
+  // Pastikan `data` ada sebelum membaca balance & totalRevenue
+  const balance = data?.balance ?? 0;
+  const totalRevenue = data?.totalRevenue ?? 0;
+  
 
   const handleWithdraw = async () => {
     setError(null);
@@ -70,7 +81,7 @@ function WithdrawForm({ storeId }: { storeId: string }) {
             <DialogTitle>Withdraw</DialogTitle>
           </DialogHeader>
           <DialogBody>
-          <Text mb="2" fontWeight={'medium'}>Saldo anda :      Rp {balance?.balance?.toLocaleString('id-ID') || '0'}</Text>
+          <Text mb="2" fontWeight={'medium'}>Saldo anda :      Rp {balance?.toLocaleString('id-ID') || '0'}</Text>
             <Input
               type="number"
               value={amount}

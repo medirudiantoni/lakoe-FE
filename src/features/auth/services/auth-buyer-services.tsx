@@ -14,7 +14,7 @@ export const fetchRegister = async (data: RegisterFormProps) => {
       }
     );
 
-    return res;
+    return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', error.response?.data || error.message);
@@ -45,3 +45,6 @@ export const fetchLogin = async (data: LoginFormProps) => {
     throw error;
   }
 };
+
+
+

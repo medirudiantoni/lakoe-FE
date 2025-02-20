@@ -1,8 +1,13 @@
 import { Box, Flex, Heading, HStack, Stack, Text } from '@chakra-ui/react';
-import { CopyrightIcon } from 'lucide-react';
+import { CopyrightIcon, Mail, MessageSquare } from 'lucide-react';
 import SellerLogo from './logo';
+import { useAuthStore } from '@/features/auth/store/auth-store';
+import { useEffect } from 'react';
+import { useSellerStore } from '@/hooks/store';
 
 export default function SellerFooter() {
+  const { store } = useSellerStore()
+
   return (
     <footer className="w-full bg-[#F4F4FB] font-poppins px-5 lg:px-10">
       <Box maxW="7xl" mx="auto" py="10">
@@ -10,40 +15,23 @@ export default function SellerFooter() {
           justifyContent="space-between"
           pb="4"
           borderBottomWidth={2}
-          borderBottomColor="gray.800"
+          borderBottomColor="gray.400"
         >
           <Box w="fit">
             <Box mb="10">
-              <SellerLogo brandName="Nama Toko" fontSize="2xl" />
+              <SellerLogo brandName={store!.name} fontSize="2xl" />
             </Box>
-            <Box mb="4">
-              <Heading fontWeight="semibold">Alamat</Heading>
-              <Text>Tempat lokasi kantor atau outlet</Text>
+            <Box mb="4"  color={'gray.700'}>
+              <Heading fontWeight="semibold" display={'flex'} alignItems={'center'} gap={2} mb={'2'}>Kontak <span><Mail/></span></Heading>
+              <Text>{store?.userIdRel?.phone}</Text>
+              <Text>{store?.userIdRel?.email}</Text>
             </Box>
-            <Box mb="4">
-              <Heading fontWeight="semibold">Kontak</Heading>
-              <Text>+62 888 8888 8888</Text>
-              <Text>tokoini@email.com</Text>
-            </Box>
-          </Box>
-          <Box w="fit">
-            <Box mb="4">
-              <Heading fontWeight="semibold" mb="4">
-                Ikuti Kami
-              </Heading>
-              <Stack>
-                <Text>Instagram</Text>
-                <Text>Facebook</Text>
-                <Text>Twitter</Text>
-                <Text>Youtube</Text>
-                <Text>Thread</Text>
-              </Stack>
-            </Box>
+  
           </Box>
         </Flex>
-        <HStack justifyContent="center" gap={0.5} my="2">
+        <HStack justifyContent="center" gap={0.5} my="2" >
           <CopyrightIcon size="16px" />
-          <Text>2025 nama toko powered by Lakoe</Text>
+          <Text color={'gray.700'}>2025 nama toko powered by Lakoe</Text>
         </HStack>
       </Box>
     </footer>

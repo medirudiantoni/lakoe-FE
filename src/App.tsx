@@ -53,7 +53,6 @@ function App() {
       HydrateFallback: Fallback
     },
     {
-      path: '',
       element: <PrivateRouteAdmin/>,
       children: [
         {
