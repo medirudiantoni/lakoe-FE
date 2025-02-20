@@ -9,27 +9,21 @@ import { ProductType } from '@/features/auth/types/prisma-types';
 import { useSellerStore } from '@/hooks/store';
 import {
   Box,
-  Button,
   Center,
   Grid,
-  Heading,
   HStack,
   Image,
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
   Text,
-  VStack,
+  VStack
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowDownUp, Search, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
-import CategoryDropDown, { CategoryType } from '../components/category';
+import { CategoryType } from '../components/category';
 import SellerFooter from '../components/footer';
 import SellerNavbar from '../components/navbar';
 import ProductCard from '../components/product-card';
+import { Search } from 'lucide-react';
 
 interface ProductsResponse {
   products: ProductType[];
@@ -82,6 +76,18 @@ export default function SellerHomepage() {
   return (
     <Box w="full" h="fit" minH="100vh">
       <SellerNavbar onSearch={() => handleFocusSearch()} />
+             
+      <form className="flex-1 pt-28 mb-10 mx-40" >
+            <HStack position="relative">
+              <Search size={20} className="absolute left-3" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                className="w-full h-full bg-[#FFFF] border border-solid border-gray-200 py-2.5 rounded-lg ps-10 pr-2 placeholder:font-normal outline-none focus:ring-2"
+                placeholder="Cari produk"
+              />
+            </HStack>
+          </form>
 
       {/* Banner start */}
       <VStack
@@ -91,7 +97,7 @@ export default function SellerHomepage() {
         maxW="7xl"
         mx="auto"
         h="fit"
-        pt="32"
+ 
         pb="10"
       >
         <Box w="full" aspectRatio="4/1" overflow="hidden" borderRadius={10}>
@@ -107,10 +113,14 @@ export default function SellerHomepage() {
       </VStack>
       {/* Banner end */}
 
+      <Box px={'40'} fontSize={'2xl'} fontWeight={'semibold'} mb={4}>
+             <Text>Semua Produk</Text>
+          </Box>
       {/* Search Input Start */}
       <HStack px={{ base: '5', lg: '10' }} w="full" maxW="7xl" mx="auto">
+        
         <HStack w="full" alignItems="stretch" position="relative">
-          <Box
+          {/* <Box
             className="peer group"
             w="fit"
             borderRadius="lg"
@@ -126,25 +136,15 @@ export default function SellerHomepage() {
               onSelectSubCategory={setSelectedSubCategory}
               onSelectSubSubCategory={setSelectedSubSubCategory}
             />
-          </Box>
+          </Box> */}
+  
 
-          <form className="flex-1">
-            <HStack position="relative">
-              <Search size={20} className="absolute left-2 di" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                className="w-full h-full bg-[#F4F4F5] py-2.5 rounded-lg ps-10 pr-2 placeholder:font-normal outline-none focus:ring-2"
-                placeholder="Cari produk"
-              />
-            </HStack>
-          </form>
         </HStack>
       </HStack>
       {/* Search Input end */}
 
       {/* Title, filter, & sort Start */}
-      <HStack
+      {/* <HStack
         px={{ base: '5', lg: '10' }}
         justifyContent="space-between"
         w="full"
@@ -203,7 +203,7 @@ export default function SellerHomepage() {
             </MenuRoot>
           </Box>
         </HStack>
-      </HStack>
+      </HStack> */}
       {/* Title, filter, & sort End */}
 
       {/* Products display Start */}
@@ -216,7 +216,7 @@ export default function SellerHomepage() {
           Gagal memuat produk
         </Center>
       ) : data?.products ? (
-        <Box w="full" h="fit" maxW="7xl" mx="auto" pb="200px">
+        <Box w="full" h="fit" maxW="7xl" mx="auto" pb="100px">
           <Grid
             px={{ base: '5', lg: '10' }}
             templateColumns="repeat(4, 1fr)"
