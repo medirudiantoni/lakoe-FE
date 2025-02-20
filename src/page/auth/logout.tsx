@@ -18,6 +18,8 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
     queryClient.invalidateQueries({ queryKey: ['balance'] });
 
 
+    queryClient.invalidateQueries({queryKey: ['balance']})
+    
     toast.success('Anda telah Logout', {
       style: {
         background: '#FFFF',

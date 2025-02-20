@@ -3,7 +3,7 @@ import { Box, Button, Flex, Image, Text, useDisclosure, Spinner } from '@chakra-
 import { useSellerStore } from '@/hooks/store';
 import type { Order } from '@/features/auth/types/order.types';
 import { useMutation } from '@tanstack/react-query';
-import { processOrder } from '@/features/auth/services/order.service'; // Import fungsi dari service
+import { processOrder } from '@/features/auth/services/order.service'; 
 
 type TabNewOrderProps = {
   orders: Order[];
@@ -135,7 +135,7 @@ export function TabNewOrder({ orders }: TabNewOrderProps) {
         <Text>Tidak ada pesanan baru</Text>
       )}
 
-      {/* Dialog Konfirmasi */}
+     
       {open && (
         <Box
           position="fixed"

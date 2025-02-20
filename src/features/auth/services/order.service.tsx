@@ -118,7 +118,7 @@ export const processOrder = async (
   if (!userId) throw new Error('User tidak ditemukan. Silakan login ulang.');
   if (!buyerId) throw new Error('Data pembeli tidak ditemukan.');
 
-  const response = await axios.post('http://localhost:5000/api/v1/order', {
+  const response = await axios.post(apiURL  + `order`, {
     userId,
     orderId,
     buyerId,
@@ -127,19 +127,4 @@ export const processOrder = async (
   return response.data;
 };
 
-export const fetchOrdersByStoreId = async (
-  storeId: string
-): Promise<Order[]> => {
-  try {
-    const response = await axios.get(
-      `http://localhost:5000/api/v1/order${storeId}`,
-      {
-        params: { storeId },
-      }
-    );
-    return response.data.orders;
-  } catch (error) {
-    console.error('❌ Error fetching orders:', error);
-    throw new Error('Gagal mengambil pesanan');
-  }
-};
+
