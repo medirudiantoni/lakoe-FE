@@ -32,9 +32,9 @@ const AboutPage = () => {
             </Text>
             <Text
               maxW="xl"
-              fontSize="2xl"
-              fontWeight="medium"
-              className="font-darker-grotesque"
+              fontSize="xl"
+              // fontWeight="medium"
+              // className="font-darker-grotesque"
               textAlign="end"
             >
               Kami hadir untuk membantu Anda menaklukkan dunia bisnis online.
@@ -76,9 +76,9 @@ const AboutPage = () => {
         </VStack>
       </section>
 
-      <section className="w-full h-screen flex items-end py-20">
+      <section className="w-full h-screen flex items-end py-20 mb-32">
         <HStack w="full" maxW="7xl" mx="auto">
-          <VStack alignItems="start" w="4/6" pr="20">
+          <VStack alignItems="start" w="4/6" pr="20" mt={-10}>
             <Heading
               size="5xl"
               fontWeight="semibold"
@@ -86,7 +86,7 @@ const AboutPage = () => {
             >
               Tentang Lakoe
             </Heading>
-            <Text fontSize="2xl">
+            <Text fontSize="xl" ml={'2'} color={'gray.600'}>
               Lakoe adalah website aplikasi yang diperuntukkan bagi siapa saja
               yang hendak membuka bisnis jualan produk barang dan jasa secara
               profesional. Fokus utamanya adalah untuk menjadikan seller sebagai

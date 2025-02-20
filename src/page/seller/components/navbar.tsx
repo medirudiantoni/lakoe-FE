@@ -107,6 +107,7 @@ const SellerNavbar: React.FC<SellerNavbarProps> = ({ onSearch }) => {
               display={'flex'}
               alignItems={'center'}
               onClick={() => navigate(`/${store?.name}/login-buyer`)}
+              variant={'outline'}
             >
               Login
               <LogIn />

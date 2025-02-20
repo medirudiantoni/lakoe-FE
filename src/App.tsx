@@ -261,6 +261,21 @@ function App() {
       Component: NotFound,
       HydrateFallback: Fallback,
     },
+    {
+      path: '/login-admin',
+      Component: AdminLogin,
+      HydrateFallback: Fallback
+    },
+    {
+      element: <PrivateRouteAdmin/>,
+      children: [
+        {
+          path: '/admin',
+          Component: Admin,
+          HydrateFallback: Fallback
+        },
+      ]
+    },
   ]);
 
   return (

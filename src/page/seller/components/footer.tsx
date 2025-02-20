@@ -9,7 +9,7 @@ export default function SellerFooter() {
   const { store } = useSellerStore()
 
   return (
-    <footer className="w-full bg-[#F4F4FB] font-poppins px-5 lg:px-10">
+    <footer className="w-full bg-[#F4F4FB] font-poppins px- lg:px-40">
       <Box maxW="7xl" mx="auto" py="10">
         <Flex
           justifyContent="space-between"
