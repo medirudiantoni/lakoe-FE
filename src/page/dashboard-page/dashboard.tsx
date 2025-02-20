@@ -2,7 +2,6 @@ import { Box, Flex, Grid, GridItem, Image, Text } from '@chakra-ui/react';
 import { BoxIcon, CircleDollarSign, ShoppingCart, Users } from 'lucide-react';
 import { useEffect } from 'react';
 import banner from '../../assets/Banner.png';
-import { ChartComponent } from './chart';
 import { TableDemo } from './table';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { useSellerStore } from '@/hooks/store';
@@ -12,15 +11,15 @@ import { fetchBalance } from '@/features/auth/services/store-service';
 import WithdrawForm from './withdraw';
 import { fetchOrders } from '@/features/auth/services/order.service';
 import { getBuyerCount } from '@/features/auth/services/buyer';
+import { useProductStore } from '@/features/auth/store/product-store';
 
 export function Dashboard() {
   const { user } = useAuthStore();
   const { store } = useSellerStore();
+  const { products } = useProductStore()
   const token = Cookies.get('token')
   const storeId = user?.Stores?.id
   const storeName = store?.name
-
-
   
   const { data, isLoading, isError } = useQuery({
     queryKey: ['balance', storeId], 
@@ -76,7 +75,7 @@ export function Dashboard() {
           >
             <Flex flexDirection={'column'} alignItems={'center'}>
               <Text fontWeight={'semibold'}>Total Produk</Text>
-              <Text fontWeight={'bold'}>1</Text>
+              <Text fontWeight={'bold'}>{products.length}</Text>
             </Flex>
           </GridItem>
    

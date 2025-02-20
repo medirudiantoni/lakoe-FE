@@ -30,18 +30,16 @@ import SellerHomepage from './page/seller/pages/home-page';
 import SellerPage from './page/seller/pages/seller-layout';
 import BuyerLayout from './page/seller/pages/user/buyer-layout';
 import SearchArea from './page/settingpage/data-territory/test';
-
-import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-buyer';
-import PrivateRouteBuyer from './layouts/private-layout-buyer';
-import AddProductForm from './page/productpage/add-product';
-import { LoginBuyer } from './page/seller/pages/login-page';
-import SellerProductDetail from './page/seller/pages/product-detail';
-import { RegisterBuyer } from './page/seller/pages/register-page';
-import PaymentCheckingPage from './page/seller/pages/payment-checking';
 import { LoadingScreenBuyerGoogle } from './components/loading-screen/loading-screen-buyer-google';
+import PrivateRouteAdmin from './layouts/private-layout-admin';
+import PrivateRouteBuyer from './layouts/private-layout-buyer';
 import { Admin } from './page/admin/pages/admin-page';
 import { AdminLogin } from './page/admin/pages/login-admin-page';
-import PrivateRouteAdmin from './layouts/private-layout-admin';
+import AddProductForm from './page/productpage/add-product';
+import { LoginBuyer } from './page/seller/pages/login-page';
+import PaymentCheckingPage from './page/seller/pages/payment-checking';
+import SellerProductDetail from './page/seller/pages/product-detail';
+import { RegisterBuyer } from './page/seller/pages/register-page';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);

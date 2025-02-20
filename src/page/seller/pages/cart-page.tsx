@@ -68,7 +68,7 @@ const SellerCartPage = () => {
   return (
     <Box w="full" minH="100vh" className="font-poppins">
       <SellerNavbar />
-      <Box w="full" px={{ base: '5', lg: '10' }} maxW="6xl" mx="auto" py="32">
+      <Box w="full"  px="40" py="32">
         {/* Heading start */}
         <HStack
           justifyContent="space-between"

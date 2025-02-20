@@ -10,13 +10,13 @@ import {
   TableRow,
 } from "../../../@/components/ui/table";
 import { useAuthStore } from "@/features/auth/store/auth-store";
-import { useSellerStore } from "@/hooks/store";
+
 import { fetchOrders } from "@/features/auth/services/order.service";
 
 
 export function TableDemo() {
   const { user } = useAuthStore();
-  const { store } = useSellerStore();
+ 
   const token = Cookies.get("token");
   const storeId = user?.Stores?.id;
 

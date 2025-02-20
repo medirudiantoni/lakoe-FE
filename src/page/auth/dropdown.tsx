@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, List, ListItem, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { apiURL } from "@/utils/baseurl";
 

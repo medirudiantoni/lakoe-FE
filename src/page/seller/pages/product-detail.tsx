@@ -228,8 +228,10 @@ const SellerProductDetail = () => {
       toast.error('Lu belum login kocak!, login dulu sana');
       return;
     }
+  
+    let data: CartItemType;
     if (product?.variants && product?.variants.length < 2) {
-      const data: CartItemType = {
+      data = {
         buyerId: buyer?.id,
         variantOptionValueId:
           selectedOption?.variantOptionValues &&
@@ -240,48 +242,52 @@ const SellerProductDetail = () => {
         quantity: 1,
         price: priceNumber,
         image: String(product?.attachments[0]),
-        product: product,
-        weight: Number(selectedOption?.variantOptionValues &&
-          selectedOption.variantOptionValues[0].id)
+        product,
+        weight: Number(
+          selectedOption?.variantOptionValues &&
+          selectedOption.variantOptionValues[0].id
+        )
       };
-      console.log('datanya: ', data);
-      // addCart(data);
-      toast.success('Produk Telah ditambahkan ke keranjang');
+    } else {
+      if (!selectedOption) return;
+      console.log(
+        "weightttttt: ",
+        selectedOption.variantOptionValues &&
+        selectedOption.variantOptionValues[0].weight
+      );
+      data = {
+        buyerId: buyer?.id,
+        variantOptionValueId:
+          selectedOption.variantOptionValues &&
+          selectedOption.variantOptionValues[0].id,
+        productId: String(product?.id),
+        storeId: product?.storeId,
+        name: `${product?.name} - ${selectedOptionName.join(' ')}`,
+        quantity: 1,
+        price: priceNumber,
+        image: String(product?.attachments[0]),
+        product,
+        weight: Number(
+          selectedOption.variantOptionValues &&
+          selectedOption.variantOptionValues[0].weight
+        )
+      };
+    }
+  
+    toast.promise(
       fetchAddToCart(data, tokenBuyer).then((res) => {
         console.log('add cart sukses: ', res.cartItem);
         const dataWithIdCart: CartItemType = { ...data, id: res.cartItem.id };
         addCart(dataWithIdCart);
-      });
-      // mutation.mutate(data);
-    } else {
-      if (selectedOption) {
-        console.log("weightttttt: ", selectedOption.variantOptionValues &&
-          selectedOption.variantOptionValues[0].weight)
-        const data: CartItemType = {
-          buyerId: buyer?.id,
-          variantOptionValueId:
-            selectedOption.variantOptionValues &&
-            selectedOption.variantOptionValues[0].id,
-          productId: String(product?.id),
-          storeId: product?.storeId,
-          name: `${product?.name} - ${selectedOptionName.join(' ')}`,
-          quantity: 1,
-          price: priceNumber,
-          image: String(product?.attachments[0]),
-          product,
-          weight: Number(selectedOption.variantOptionValues &&
-          selectedOption.variantOptionValues[0].weight),
-        };
-        toast.success('Produk Telah ditambahkan ke keranjang');
-        fetchAddToCart(data, tokenBuyer).then((res) => {
-          console.log('add cart sukses: ', res.cartItem);
-          const dataWithIdCart: CartItemType = { ...data, id: res.cartItem.id };
-          addCart(dataWithIdCart);
-        });
-        // mutation.mutate(data);
+      }),
+      {
+        loading: 'Menambahkan produk ke keranjang...',
+        success: 'Berhasil ditambahkan ke keranjang!',
+        error: 'Gagal menambahkan produk, coba lagi!',
       }
-    }
+    );
   }
+  
 
   useEffect(() => {
     window.scrollTo(0, 0);
