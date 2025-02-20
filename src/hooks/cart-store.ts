@@ -10,6 +10,7 @@ interface CartStore {
   increase: (id: string) => void;
   decrease: (id: string) => void;
   removeCart: (id: string) => void;
+  clearCart: () => void;
 }
 
 const calculateTotalPrice = (cart: CartItemType[]) =>
@@ -19,14 +20,20 @@ const useCart = create<CartStore>((set) => ({
   cart: [],
   totalQuantity: 0,
   totalPrice: 0,
-  setManyCart: (data) => set(() => ({
-    cart: Array.from(new Map(data.map(item => [item.id, item])).values()), // Menghapus duplikasi berdasarkan ID
-    totalQuantity: data.reduce((total, product) => total + product.quantity, 0),
-    totalPrice: calculateTotalPrice(data),
-  })),  
+  setManyCart: (data) =>
+    set(() => ({
+      cart: Array.from(new Map(data.map((item) => [item.id, item])).values()), // Menghapus duplikasi berdasarkan ID
+      totalQuantity: data.reduce(
+        (total, product) => total + product.quantity,
+        0
+      ),
+      totalPrice: calculateTotalPrice(data),
+    })),
   addCart: (item) =>
     set((state) => {
-      const existingItem = state.cart.find((product) => product.name === item.name);
+      const existingItem = state.cart.find(
+        (product) => product.name === item.name
+      );
 
       const updatedCart = existingItem
         ? state.cart.map((product) =>
@@ -38,18 +45,26 @@ const useCart = create<CartStore>((set) => ({
 
       return {
         cart: updatedCart,
-        totalQuantity: updatedCart.reduce((total, product) => total + product.quantity, 0),
+        totalQuantity: updatedCart.reduce(
+          (total, product) => total + product.quantity,
+          0
+        ),
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
   increase: (id) =>
     set((state) => {
       const updatedCart = state.cart.map((product) =>
-        product.name === id ? { ...product, quantity: product.quantity + 1 } : product
+        product.name === id
+          ? { ...product, quantity: product.quantity + 1 }
+          : product
       );
       return {
         cart: updatedCart,
-        totalQuantity: updatedCart.reduce((total, product) => total + product.quantity, 0),
+        totalQuantity: updatedCart.reduce(
+          (total, product) => total + product.quantity,
+          0
+        ),
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
@@ -57,13 +72,18 @@ const useCart = create<CartStore>((set) => ({
     set((state) => {
       const updatedCart = state.cart
         .map((product) =>
-          product.name === id ? { ...product, quantity: product.quantity - 1 } : product
+          product.name === id
+            ? { ...product, quantity: product.quantity - 1 }
+            : product
         )
         .filter((product) => product.quantity > 0);
 
       return {
         cart: updatedCart,
-        totalQuantity: updatedCart.reduce((total, product) => total + product.quantity, 0),
+        totalQuantity: updatedCart.reduce(
+          (total, product) => total + product.quantity,
+          0
+        ),
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
@@ -72,10 +92,14 @@ const useCart = create<CartStore>((set) => ({
       const updatedCart = state.cart.filter((product) => product.name !== id);
       return {
         cart: updatedCart,
-        totalQuantity: updatedCart.reduce((total, product) => total + product.quantity, 0),
+        totalQuantity: updatedCart.reduce(
+          (total, product) => total + product.quantity,
+          0
+        ),
         totalPrice: calculateTotalPrice(updatedCart),
       };
     }),
+    clearCart: () => set({ cart: [], totalPrice: 0, totalQuantity: 0 })
 }));
 
 export default useCart;

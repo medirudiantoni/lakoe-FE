@@ -1,28 +1,28 @@
 import { Field } from '@/components/ui/field';
-import { Box, Button, Grid, GridItem, Input, Text } from '@chakra-ui/react';
-import { LocationSetting } from '../location';
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserById, updateDataBuyer } from '@/features/auth/services/buyer';
-import Cookies from 'js-cookie';
 import { useAuthBuyerStore } from '@/features/auth/store/auth-buyer-store';
-import toast from 'react-hot-toast';
-import LogoutButtonBuyer from '../logout';
 import { useSellerStore } from '@/hooks/store';
+import { Box, Button, Grid, GridItem, Input, Text } from '@chakra-ui/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { LocationSetting } from '../location';
+import LogoutButtonBuyer from '../logout';
 
 export function TabsProfile() {
   const { buyer } = useAuthBuyerStore();
   const { store } = useSellerStore();
   const token = Cookies.get(`token-buyer-${store?.name}`);
   const queryClient = useQueryClient();
-  
+
   const [isEditing, setIsEditing] = useState(false); // State untuk mode edit
 
-  const { } = useQuery({
+  const {} = useQuery({
     queryKey: ['user-buyer', buyer?.id],
     queryFn: async () => {
       const res = await getUserById(String(buyer?.id), token!);
-      return res.data; 
+      return res.data;
     },
     enabled: !!buyer?.id,
   });
@@ -42,7 +42,6 @@ export function TabsProfile() {
       });
     }
   }, [buyer]);
-  
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -72,11 +71,11 @@ export function TabsProfile() {
     e.preventDefault();
     mutation.mutate();
   };
-  
+
   const handleSave = () => {
     mutation.mutate();
   };
-  
+
   return (
     <Box>
       <Text fontSize={'18px'} fontWeight={'semibold'}>
@@ -85,10 +84,11 @@ export function TabsProfile() {
 
       <Box display={'flex'} justifyContent={'space-between'} mt={4}>
         <Text>
-          Kelola informasi profil Anda untuk mengontrol, melindungi, dan mengamankan akun.
+          Kelola informasi profil Anda untuk mengontrol, melindungi, dan
+          mengamankan akun.
         </Text>
         {isEditing ? (
-          <Button colorScheme="blue" onClick={handleSave} >
+          <Button colorScheme="blue" onClick={handleSave}>
             Simpan
           </Button>
         ) : (
@@ -133,7 +133,6 @@ export function TabsProfile() {
           </GridItem>
         </Grid>
       </form>
-
 
       <LocationSetting />
       <LogoutButtonBuyer />

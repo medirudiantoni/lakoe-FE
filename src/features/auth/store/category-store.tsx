@@ -7,8 +7,8 @@ type Category = {
 };
 
 type CategoryStore = {
-  categories: Category[]; 
-  selectedCategoryId: string | null; 
+  categories: Category[];
+  selectedCategoryId: string | null;
   fetchCategories: () => Promise<void>;
   setSelectedCategoryId: (id: string) => void;
 };
@@ -20,18 +20,17 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
   fetchCategories: async () => {
     try {
       const categories = await fetchCategory();
-      
-      const formattedCategories = categories.map((cat:any) => ({
+
+      const formattedCategories = categories.map((cat: any) => ({
         ...cat,
-        children: cat.children ?? [] 
+        children: cat.children ?? [],
       }));
-  
+
       set({ categories: formattedCategories });
     } catch (error) {
-      console.error("Gagal ambil kategori:", error);
+      console.error('Gagal ambil kategori:', error);
     }
   },
-  
 
   setSelectedCategoryId: (id) => set({ selectedCategoryId: id }),
 }));

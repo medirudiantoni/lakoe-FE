@@ -41,7 +41,7 @@ export function RegisterBuyer() {
 // },[storeName])
 
 
-  const { data, error, isLoading } = useQuery<StoreType>({
+  const { data } = useQuery<StoreType>({
     queryKey:["store"],
     queryFn:async ()=> {
       const response = await axios.get(apiURL + `store/public/${storeName}`)

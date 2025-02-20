@@ -1,15 +1,15 @@
 import LogoIcon from '@/components/icons/logo';
 import { Field } from '@/components/ui/field';
+import { PasswordInput } from '@/components/ui/password-input';
 import { fetchRegister } from '@/features/auth/services/auth-service';
+import { apiURL } from '@/utils/baseurl';
 import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
-import { apiURL } from '@/utils/baseurl';
-import { PasswordInput } from '@/components/ui/password-input';
 
 const registerSchema = z.object({
   name: z.string().min(3, 'Full name is required'),
@@ -137,7 +137,7 @@ export function Register() {
               </Text>
             )}
           </Field>
-          
+
           <Field label="Email" mt={2}>
             <Input placeholder="Masukan email" {...register('email')} />
             {errors.email && (
@@ -152,7 +152,10 @@ export function Register() {
             )}
           </Field>
           <Field label="Password" mt={2}>
-            <PasswordInput placeholder="Masukan password" {...register('password')} />
+            <PasswordInput
+              placeholder="Masukan password"
+              {...register('password')}
+            />
             {errors.password && (
               <Text
                 color="red.500"
@@ -164,7 +167,7 @@ export function Register() {
               </Text>
             )}
           </Field>
-      
+
           {/* <Field label="Konfirmasi Password" mt={2}>
             <Input
               placeholder="Masukan ulang password"

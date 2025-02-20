@@ -1,12 +1,12 @@
-import LottieNotFound from '@/components/icons/not-found'
-import { Center } from '@chakra-ui/react'
+import LottieNotFound from '@/components/icons/not-found';
+import { Center } from '@chakra-ui/react';
 
 const NotFound = () => {
   return (
     <Center w="full" h="100vh">
-        <LottieNotFound />
+      <LottieNotFound />
     </Center>
-  )
-}
+  );
+};
 
-export default NotFound
+export default NotFound;

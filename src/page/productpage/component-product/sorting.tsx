@@ -1,14 +1,19 @@
-import { useState } from "react";
-import { Button } from "@chakra-ui/react";
-import { MenuRoot, MenuTrigger, MenuContent, MenuItem } from "@chakra-ui/react";
-import { ChevronDown } from "lucide-react";
+import {
+  Button,
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@chakra-ui/react';
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 interface Props {
   onChangeSortValue: (data: string) => void;
 }
 
-const SortingDropdown: React.FC<Props> = ({ onChangeSortValue }) => {
-  const [selectedItem, setSelectedItem] = useState("Urutkan");
+const SortingDropdown: React.FC<Props> = ({ onChangeSortValue } : Props) => {
+  const [selectedItem, setSelectedItem] = useState('Urutkan');
 
   const handleSelect = (value: string) => {
     setSelectedItem(value);
@@ -16,13 +21,13 @@ const SortingDropdown: React.FC<Props> = ({ onChangeSortValue }) => {
   };
 
   const menuItems = [
-    { value: "terakhir-diubah", label: "Terakhir Diubah" },
-    { value: "terlaris", label: "Terlaris" },
-    { value: "kurang-diminati", label: "Kurang Diminati" },
-    { value: "harga-tertinggi", label: "Harga Tertinggi" },
-    { value: "harga-terendah", label: "Harga Terendah" },
-    { value: "stok-terbanyak", label: "Stok Terbanyak" },
-    { value: "stok-tersedikit", label: "Stok Tersedikit" },
+    { value: 'terakhir-diubah', label: 'Terakhir Diubah' },
+    { value: 'terlaris', label: 'Terlaris' },
+    { value: 'kurang-diminati', label: 'Kurang Diminati' },
+    { value: 'harga-tertinggi', label: 'Harga Tertinggi' },
+    { value: 'harga-terendah', label: 'Harga Terendah' },
+    { value: 'stok-terbanyak', label: 'Stok Terbanyak' },
+    { value: 'stok-tersedikit', label: 'Stok Tersedikit' },
   ];
 
   return (
@@ -33,7 +38,7 @@ const SortingDropdown: React.FC<Props> = ({ onChangeSortValue }) => {
           className="w-full flex justify-between items-center"
         >
           <span className="font-normal">{selectedItem}</span>
-          <ChevronDown/>
+          <ChevronDown />
         </Button>
       </MenuTrigger>
       <MenuContent className="w-full" position={'absolute'}>
@@ -43,7 +48,7 @@ const SortingDropdown: React.FC<Props> = ({ onChangeSortValue }) => {
             value={item.value}
             onClick={() => handleSelect(item.value)}
             className={`flex items-center justify-between ${
-              selectedItem === item.label ? "bg-blue-100 text-blue-600" : ""
+              selectedItem === item.label ? 'bg-blue-100 text-blue-600' : ''
             }`}
           >
             {item.label}

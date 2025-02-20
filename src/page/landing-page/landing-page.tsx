@@ -1,4 +1,10 @@
+import Independensi from '@/assets/independensi.png';
+import kendaliPenuh from '@/assets/kendali-penuh.png';
+import loyalitas from '@/assets/loyalitas.png';
+
 import CurveSection from '@/components/curve-section/curve-section';
+import Footer from '@/components/landingPage/Footer';
+import Navbar_Landing_page from '@/components/landingPage/Navbar_Landing_page';
 import {
   Badge,
   Box,
@@ -10,12 +16,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router';
-import kendaliPenuh from '@/assets/kendali-penuh.png';
-import loyalitas from '@/assets/loyalitas.png';
-import Independensi from '@/assets/independensi.png';
-import Navbar_Landing_page from '@/components/landingPage/Navbar_Landing_page';
-import Footer from '@/components/landingPage/Footer';
-import RippleButton from '@/components/Button/Ripple.button';
 
 const Button_MulaiSekarang = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export function LandingPage() {
       {/* Hero Section Start */}
       <section className="w-full h-fit">
         <VStack w="full" h="100vh" justifyContent="center">
-          <VStack w="fit" maxW="4xl" h="fit" textAlign="center">
+          <VStack w="fit" maxW="4xl" h="fit" textAlign="center" mt={10}>
             <Heading size="7xl" className="font-bricolage-grosteque">
               Toko Online Resmi
               <br /> dibuat khusus untuk anda
@@ -58,9 +58,6 @@ export function LandingPage() {
               mantan jadi kagum, dan pelanggan ketagihan! Gak perlu jago coding,
               cukup jago bermimpi. Yuk, bangun toko impianmu sekarang
             </Text>
-            <RippleButton className="py-5 px-10 bg-neutral-900 text-white rounded-2xl">
-              Cari Tahu dulu, ah!
-            </RippleButton>
           </VStack>
         </VStack>
       </section>

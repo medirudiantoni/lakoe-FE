@@ -1,3 +1,4 @@
+import LoadingButtonLottie from '@/components/icons/loading-button';
 import {
   DialogActionTrigger,
   DialogBody,
@@ -9,15 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { deleteTemplate } from '@/features/auth/services/template-service';
+import { TemplateFormProps } from '@/features/auth/types/template-types';
 import { Button, Text } from '@chakra-ui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteTemplate } from '@/features/auth/services/template-service';
 import toast from 'react-hot-toast';
-import LoadingButtonLottie from '@/components/icons/loading-button';
-import { TemplateFormProps } from '@/features/auth/types/template-types';
-import Cookies from 'js-cookie';
 interface DialogDeleteProps {
   template: TemplateFormProps;
 }

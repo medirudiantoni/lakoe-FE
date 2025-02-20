@@ -128,7 +128,9 @@ export const fetchProductById = async (productId: string, token: string) => {
 
 export const fetchProductByUrl = async (productUrl: string) => {
   try {
-    const res: AxiosResponse = await axios.get(apiURL + `product/productUrl/${productUrl}`);
+    const res: AxiosResponse = await axios.get(
+      apiURL + `product/productUrl/${productUrl}`
+    );
     return res.data.product;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -140,13 +142,20 @@ export const fetchProductByUrl = async (productUrl: string) => {
   }
 };
 
-export const fetchProductsBySelectedCategory = async (data: string[], storeId: string) => {
+export const fetchProductsBySelectedCategory = async (
+  data: string[],
+  storeId: string
+) => {
   try {
-    const res: AxiosResponse = await axios.post(apiURL + `product/category/selected/${storeId}`, { selectedCategories: data }, {
-      headers: {
-        "Content-Type": "application/json"
+    const res: AxiosResponse = await axios.post(
+      apiURL + `product/category/selected/${storeId}`,
+      { selectedCategories: data },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       }
-    });
+    );
 
     return res.data;
   } catch (error) {
@@ -211,7 +220,7 @@ export const updateProductById = async (data: FormData, productId: string) => {
   const token = Cookies.get('token');
   try {
     const res: AxiosResponse = await axios.put(
-      apiURL + `product/alt/${productId}`,
+      apiURL + `product/${productId}`,
       data,
       {
         headers: {
@@ -318,9 +327,15 @@ export const toggleProductStatus = async (
   }
 };
 
-export const fetchProductsByStoreId = async (storeId: string, page?: number, limit?: number) => {
+export const fetchProductsByStoreId = async (
+  storeId: string,
+  page?: number,
+  limit?: number
+) => {
   try {
-    const res = await axios.get(apiURL + `product/store/${storeId}?page=${page}&limit=${limit}`);
+    const res = await axios.get(
+      apiURL + `product/store/${storeId}?page=${page}&limit=${limit}`
+    );
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -330,4 +345,4 @@ export const fetchProductsByStoreId = async (storeId: string, page?: number, lim
     console.error('Unexpected Error:', error);
     throw error;
   }
-}
+};

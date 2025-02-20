@@ -1,25 +1,40 @@
-// order-types.ts
-
 export type Product = {
-    name: string;
-    attachments?: string[];
-  };
-  
-  export type OrderItem = {
-    product: Product;
-    quantity: number;
-    name:string
-    image:string
-  };
-  
- export interface Order {
+  name: string;
+  attachments?: string[];
+};
+
+export type OrderItem = {
+  product: Product;
+  quantity: number;
+  name: string;
+  image: string;
+};
+
+export interface Order {
   invoice?: {
+
+    buyerId: string
     invoiceNumber: string;
+    receiverName: string;
+    receiverPhone: string;
+    serviceCharge: number;
+    price: number
+    waybill: string;
+
   };
+  storeId: string
+  trackingId: string
   orderItems: OrderItem[];
   totalPrice: number;
-  id: number;
+  buyer: {
+    id:string
+  }
+  id: string;
+  courier: string;
   status: string;
+  recipientName:string;
+  recipientAddress: string;
+  createdAt: string;
   colorPalette: string;
   product: {
     image: string;
@@ -28,4 +43,7 @@ export type Product = {
     price: number;
   };
 }
-  
+
+export interface OrderDetailResponse {
+  order: Order;
+}

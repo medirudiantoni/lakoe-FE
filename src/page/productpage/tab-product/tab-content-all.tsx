@@ -15,7 +15,7 @@ import {
   Grid,
   GridItem,
   Input,
-  Text
+  Text,
 } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 import { PackageSearch } from 'lucide-react';
@@ -37,57 +37,56 @@ export function TabContentAll() {
   const [loading, setLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [productsToDisplay, setProductsToDisplay] = useState<ProductType[]>([]);
-  const [sortValue, setSortValue] = useState("");
+  const [sortValue, setSortValue] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  // useEffect(() => {
+  //   setProductsToDisplay(productsZust);
+  // }, [productsZust]);
 
   useEffect(() => {
     restoreProductAfterSearch();
   }, [products]);
 
-  function restoreProductAfterSearch(){
-    if(products && query.length === 0)
-      setProductsToDisplay(products)
+  function restoreProductAfterSearch() {
+    if (products && query.length === 0) setProductsToDisplay(products);
   }
 
   useEffect(() => {
-    if(sortValue)
-      retrieveSortValue();
+    if (sortValue) retrieveSortValue();
   }, [sortValue]);
 
-  function retrieveSortValue(){
-    if(storeId)
-    sortQuery(sortValue, storeId)
-      .then(res => setProductsToDisplay(res))
-      .catch(error => console.log(error))
+  function retrieveSortValue() {
+    if (storeId)
+      sortQuery(sortValue, storeId)
+        .then((res) => setProductsToDisplay(res))
+        .catch((error) => console.log(error));
   }
 
   useEffect(() => {
-    if(selectedCategories.length > 0)
-      retrieveSelectedCategories()
-    else 
-      if(products)
-      setProductsToDisplay(products)
+    if (selectedCategories.length > 0) retrieveSelectedCategories();
+    else if (products) setProductsToDisplay(products);
   }, [selectedCategories]);
 
-  function retrieveSelectedCategories(){
-    if(storeId)
+  function retrieveSelectedCategories() {
+    if (storeId)
       fetchProductsBySelectedCategory(selectedCategories, storeId)
-        .then(res => setProductsToDisplay(res))
-        .catch(error => console.log(error))
+        .then((res) => setProductsToDisplay(res))
+        .catch((error) => console.log(error));
   }
 
   const storeId = user?.Stores?.id;
   const isAnyProductSelected = selectedProducts.length > 0;
 
   useEffect(() => {
-    const token = Cookies.get('token')
+    const token = Cookies.get('token');
     if (storeId && token) {
       fetchProduct(storeId, token)
         .then(setProducts)
         .catch(() => toast.error('Gagal mengambil data produk'))
-        .finally(() => setIsFetching(false))
+        .finally(() => setIsFetching(false));
     }
-  }, [storeId, setProducts])
+  }, [storeId, setProducts]);
 
   useEffect(() => {
     if (!query) return;
@@ -107,7 +106,7 @@ export function TabContentAll() {
       if (!storeId || !token || !query) return;
 
       const searchResults = await searchQuery(query, token, storeId);
-      console.log("searchResult: ", searchResults);
+      console.log('searchResult: ', searchResults);
       // setProducts(Array.isArray(searchResults) ? searchResults : []);
       setProductsToDisplay(searchResults);
     } catch (err: any) {
@@ -155,8 +154,8 @@ export function TabContentAll() {
 
       {loading ? (
         <Text>Searching...</Text>
-      ) : (
-        productsToDisplay.length > 0 ? productsToDisplay.map((product) => {
+      ) : productsToDisplay.length > 0 ? (
+        productsToDisplay.map((product) => {
           return (
             <ProductCardDashboard
               key={product.id}
@@ -166,11 +165,11 @@ export function TabContentAll() {
               updateProductStatus={updateProductStatus}
             />
           );
-        }) : (
-          <Center>
-            <Text color={"gray.500"}>Produk kosong</Text>
-          </Center>
-        )
+        })
+      ) : (
+        <Center>
+          <Text color={'gray.500'}>Produk kosong</Text>
+        </Center>
       )}
     </Box>
   );

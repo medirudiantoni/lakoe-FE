@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import LoadingButtonLottie from '@/components/icons/loading-button';
 import {
   DialogActionTrigger,
   DialogBody,
@@ -11,18 +10,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import toast from 'react-hot-toast';
-import { Box, Button, Text, Input, Textarea } from '@chakra-ui/react';
-import { DialogDelete } from '../dialog/dialog-delete';
-import { DialogEdit } from '../dialog/dialog-edit';
 import {
   CreatedTemplate,
   fetchTemplate,
 } from '@/features/auth/services/template-service';
-import { TemplateFormProps } from '@/features/auth/types/template-types';
-import Cookies from 'js-cookie';
 import { useAuthStore } from '@/features/auth/store/auth-store';
-import LoadingButtonLottie from '@/components/icons/loading-button';
+import { TemplateFormProps } from '@/features/auth/types/template-types';
+import { Box, Button, Input, Text, Textarea } from '@chakra-ui/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { DialogDelete } from '../dialog/dialog-delete';
+import { DialogEdit } from '../dialog/dialog-edit';
 
 export function TemplateSetting() {
   const [open, setOpen] = useState(false);
@@ -38,14 +38,14 @@ export function TemplateSetting() {
   } = useQuery({
     queryKey: ['templates', storeId],
     queryFn: async () => {
-      if (!storeId) return []; // Pastikan storeId ada sebelum fetch
+      if (!storeId) return []; 
       const token = Cookies.get('token') || '';
       return fetchTemplate(storeId, token);
     },
-    enabled: !!storeId, // Query hanya dijalankan jika storeId ada
+    enabled: !!storeId, 
   });
 
-  // Mutation untuk menyimpan template
+  
   const mutation = useMutation({
     mutationFn: async (data: TemplateFormProps) => {
       const token = Cookies.get('token') || '';
@@ -57,7 +57,7 @@ export function TemplateSetting() {
       setJudulPesan('');
       setIsiPesan('');
 
-      // **🔥 Tambahkan data baru ke cache secara manual**
+     
       queryClient.setQueryData(
         ['templates', storeId],
         (oldData: TemplateFormProps[]) => {
@@ -67,7 +67,7 @@ export function TemplateSetting() {
         }
       );
 
-      // **🔥 Tetap invalidasi cache agar data tetap akurat**
+
       queryClient.invalidateQueries({ queryKey: ['templates', storeId] });
     },
     onError: (error: Error) => {
@@ -128,7 +128,7 @@ export function TemplateSetting() {
                   borderRadius={'50px'}
                   bg={'white'}
                   color={'black'}
-                  onClick={() => handleAddText('[Nama Customer]')}
+                  onClick={() => handleAddText('{NamaCustomer}')}
                 >
                   Customer Name
                 </Button>
@@ -137,7 +137,7 @@ export function TemplateSetting() {
                   borderRadius={'50px'}
                   bg={'white'}
                   color={'black'}
-                  onClick={() => handleAddText('[Nama Produk]')}
+                  onClick={() => handleAddText('{NamaProduk}')}
                 >
                   Product Name
                 </Button>
@@ -146,7 +146,7 @@ export function TemplateSetting() {
                   borderRadius={'50px'}
                   bg={'white'}
                   color={'black'}
-                  onClick={() => handleAddText('[Nama Toko]')}
+                  onClick={() => handleAddText('{NamaToko}')}
                 >
                   Store Name
                 </Button>

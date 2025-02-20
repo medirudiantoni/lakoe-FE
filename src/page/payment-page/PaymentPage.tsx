@@ -1,6 +1,7 @@
 import LogoIcon from '@/components/icons/logo';
-import { useAuthStore } from '@/features/auth/store/auth-store';
+import LoadingLottie from '@/components/icons/lottie';
 import { fetchCurrentUserData } from '@/features/auth/services/auth-service';
+import { useAuthStore } from '@/features/auth/store/auth-store';
 import { apiURL } from '@/utils/baseurl';
 import {
   Box,
@@ -13,12 +14,11 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Navigate, useNavigate } from 'react-router';
-import Cookies from 'js-cookie';
-import LoadingLottie from '@/components/icons/lottie';
 
 export const eWallets = [
   {

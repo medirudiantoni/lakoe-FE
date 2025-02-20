@@ -1,5 +1,5 @@
 import { Checkbox } from '@/components/ui/checkbox';
-import {  } from '@chakra-ui/react';
+import {} from '@chakra-ui/react';
 
 interface CheckBoxProps {
   checked: boolean;

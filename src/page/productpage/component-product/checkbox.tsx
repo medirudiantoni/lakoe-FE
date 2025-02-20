@@ -1,10 +1,9 @@
 import { Checkbox } from '@/components/ui/checkbox';
-import { useCheckboxStore} from '@/features/auth/store/product-store';
+import { useCheckboxStore } from '@/features/auth/store/product-store';
 import { Box, Text } from '@chakra-ui/react';
 
-
 interface Props {
-  allProductIds: string[]; 
+  allProductIds: string[];
 }
 
 const SelectAllCheckbox: React.FC<Props> = ({ allProductIds }) => {

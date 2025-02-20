@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
-import { Box, Button, MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@chakra-ui/react";
-import { ChevronDown } from "lucide-react";
-import { Field } from "@/components/ui/field";
-import { fetchCities } from "@/features/auth/services/data-territory";
-import Cookies from "js-cookie";
-import { DistrictSelector } from "./district-selector";
+import { Field } from '@/components/ui/field';
+import { fetchCities } from '@/features/auth/services/data-territory';
+import {
+  Box,
+  Button,
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@chakra-ui/react';
+import Cookies from 'js-cookie';
+import { ChevronDown } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { DistrictSelector } from './district-selector';
 
 interface CitySelectorProps {
   provinceId: string | null;
@@ -12,12 +19,21 @@ interface CitySelectorProps {
   setSelectedCity: (city: { id: string; name: string } | null) => void;
   selectedDistrict: { id: string; name: string } | null;
   setSelectedDistrict: (district: { id: string; name: string } | null) => void;
-  selectedVillage: { id: string; name: string; postal_code:string; } | null;
-  setSelectedVillage: (village: { id: string; name: string; postal_code:string } | null) => void;
+  selectedVillage: { id: string; name: string; postal_code: string } | null;
+  setSelectedVillage: (
+    village: { id: string; name: string; postal_code: string } | null
+  ) => void;
 }
 
-export function CitySelector({ provinceId, selectedCity, setSelectedCity, selectedDistrict, 
-  setSelectedDistrict, selectedVillage, setSelectedVillage  }: CitySelectorProps) {
+export function CitySelector({
+  provinceId,
+  selectedCity,
+  setSelectedCity,
+  selectedDistrict,
+  setSelectedDistrict,
+  selectedVillage,
+  setSelectedVillage,
+}: CitySelectorProps) {
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [loadingCities, setLoadingCities] = useState(false);
 
@@ -26,9 +42,9 @@ export function CitySelector({ provinceId, selectedCity, setSelectedCity, select
 
     const fetchCityData = async () => {
       setLoadingCities(true);
-      const token = Cookies.get("token");
+      const token = Cookies.get('token');
       if (!token) {
-        console.error("No token found");
+        console.error('No token found');
         setLoadingCities(false);
         return;
       }
@@ -44,7 +60,7 @@ export function CitySelector({ provinceId, selectedCity, setSelectedCity, select
           );
         }
       } catch (error) {
-        console.error("Failed to fetch cities:", error);
+        console.error('Failed to fetch cities:', error);
       } finally {
         setLoadingCities(false);
       }
@@ -63,39 +79,51 @@ export function CitySelector({ provinceId, selectedCity, setSelectedCity, select
               width="100%"
               display="flex"
               justifyContent="space-between"
-              disabled={!provinceId} 
+              disabled={!provinceId}
             >
               <span className="font-normal">
-                {loadingCities ? "Loading..." : selectedCity?.name || "Pilih Kota/Kabupaten"}
+                {loadingCities
+                  ? 'Loading...'
+                  : selectedCity?.name || 'Pilih Kota/Kabupaten'}
               </span>
               <ChevronDown />
             </Button>
           </Field>
         </MenuTrigger>
         {provinceId && (
-          <MenuContent position="absolute" width="full" maxHeight="200px" overflowY="auto" bg="white">
+          <MenuContent
+            position="absolute"
+            width="full"
+            maxHeight="200px"
+            overflowY="auto"
+            bg="white"
+          >
             {cities.length > 0 ? (
               cities.map((city) => (
-                <MenuItem 
+                <MenuItem
                   value="item"
-                  key={city.id} 
+                  key={city.id}
                   onClick={() => setSelectedCity(city)} // ✅ Gunakan setSelectedCity dari props
                 >
                   {city.name}
                 </MenuItem>
               ))
             ) : (
-              <MenuItem value="item" disabled>{loadingCities ? "Memuat..." : "Tidak ada data tersedia"}</MenuItem>
+              <MenuItem value="item" disabled>
+                {loadingCities ? 'Memuat...' : 'Tidak ada data tersedia'}
+              </MenuItem>
             )}
           </MenuContent>
         )}
       </MenuRoot>
 
-      <DistrictSelector citiesId={selectedCity?.id || null}
-              selectedDistrict={selectedDistrict} 
-              setSelectedDistrict={setSelectedDistrict}
-              selectedVillage={selectedVillage}
-              setSelectedVillage={setSelectedVillage}   />
+      <DistrictSelector
+        citiesId={selectedCity?.id || null}
+        selectedDistrict={selectedDistrict}
+        setSelectedDistrict={setSelectedDistrict}
+        selectedVillage={selectedVillage}
+        setSelectedVillage={setSelectedVillage}
+      />
     </Box>
   );
 }
