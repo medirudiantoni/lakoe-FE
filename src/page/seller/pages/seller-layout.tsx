@@ -37,17 +37,18 @@ const SellerPage = () => {
   });
 
   useEffect(() => {
-    console.log('buyerr', buyer)
     if (buyer === null) {
       retrieveCurrentBuyer();
     }
   }, [buyer]);
 
   useEffect(() => {
-    if (cart.length === 0 && buyer) {
-      retrieveBuyerCart();
+    if(buyer){
+      if (cart.length === 0) {
+        retrieveBuyerCart();
+      }
     }
-  }, [cart, buyer]);;
+  }, [cart, buyer]);
 
   function retrieveCurrentBuyer() {
     const token = Cookies.get(`token-buyer-${storeName}`);

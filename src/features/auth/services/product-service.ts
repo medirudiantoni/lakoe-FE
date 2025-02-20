@@ -220,7 +220,7 @@ export const updateProductById = async (data: FormData, productId: string) => {
   const token = Cookies.get('token');
   try {
     const res: AxiosResponse = await axios.put(
-      apiURL + `product/alt/${productId}`,
+      apiURL + `product/${productId}`,
       data,
       {
         headers: {
