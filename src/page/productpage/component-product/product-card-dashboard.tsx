@@ -7,8 +7,6 @@ import { Link2 } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router';
 import DialogOption from '../dialog-product/dialog-option';
-import { DialogPrice } from '../dialog-product/dialog-price';
-import { DialogStock } from '../dialog-product/dialog-stock';
 import ProductToggleSwitch from './switch-status';
 
 interface Props {
