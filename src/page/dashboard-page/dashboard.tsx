@@ -20,6 +20,10 @@ export function Dashboard() {
   const token = Cookies.get('token')
   const storeId = user?.Stores?.id
   const storeName = store?.name
+
+  useEffect(()=>{
+    console.log('akdaks', products)
+  },[products])
   
   const { data, isLoading, isError } = useQuery({
     queryKey: ['balance', storeId], 
@@ -66,8 +70,8 @@ export function Dashboard() {
           </Text>
         </Flex>
 
-        <Grid templateColumns={'repeat(2, 1fr)'} gap={'3'} mt={'5'}>
-          <GridItem
+        <Grid templateColumns={'repeat(1, 1fr)'} gap={'3'} mt={'5'}>
+          {/* <GridItem
             backgroundColor={'#F8F8F8'}
             display={'flex'}
             justifyContent={'center'}
@@ -77,7 +81,7 @@ export function Dashboard() {
               <Text fontWeight={'semibold'}>Total Produk</Text>
               <Text fontWeight={'bold'}>{products.length}</Text>
             </Flex>
-          </GridItem>
+          </GridItem> */}
    
           <GridItem
             backgroundColor={'#F8F8F8'}

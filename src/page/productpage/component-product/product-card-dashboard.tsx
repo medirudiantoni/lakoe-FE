@@ -104,8 +104,7 @@ const ProductCardDashboard: React.FC<Props> = ({
           <Box display="flex" gap={2}>
             {product.variants && product.variants?.length <= 1 ? (
               <>
-                <DialogPrice productId={product.id} />
-                <DialogStock productId={product.id} />
+              
               </>
             ) : (
               <Link to={`/edit-product/${product.id}`}>

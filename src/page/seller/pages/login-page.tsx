@@ -48,39 +48,27 @@ export function LoginBuyer() {
           Cookies.set(`token-buyer-${store?.name}`, data.token, {
             secure: true,
             sameSite: "None",
-            expires: 7
+            expires: 7,
           });
           initOrCheckBuyerCart(data.buyer.id, String(store?.id), data.token);
           navigate(`/${store?.name}/`);
-          return data.message;
-        })
-        .catch((err) => {
-          // Menangani error jika akun tidak ditemukan
-          const errorMessage =
-            err.response?.data?.message || "Terjadi kesalahan saat login";
-          toast.error(errorMessage, {
-            style: {
-              backgroundColor: '#FFFF',
-              color: '#1d1d1d',
-            },
-          });
-          throw err; // Agar toast tetap menangani error
         }),
-        {
-          loading: 'Sedang login...',
-          success: (message) => <div>{message}</div>,
-          error: (err) => <div>{err}</div>,
+      {
+        loading: 'Sedang login...',
+        success: 'Login berhasil!',
+        error: 'Email atau password salah!',
+      },
+      {
+        position: 'top-center',
+        style: {
+          background: '#FFFF',
+          color: '#1d1d1d',
+          fontWeight: 'normal',
         },
-        {
-          position: 'top-center',
-          style: {
-            background: '#FFFF',
-            color: '#1d1d1d',
-            fontWeight: 'normal',
-          },
-        }
+      }
     );
   };
+  
   
   const onClickGoogle = () => {
     //   setIsLoading(true);
