@@ -56,26 +56,20 @@ export function RegisterBuyer() {
         setStore(data!)
       }
   }, [store])
-
   const onSubmit = (data: RegisterFormInputs) => {    
-
-    const requestData = { ...data, storeName: store?.name};
+    const requestData = { ...data, storeName: store?.name };
+  
     toast.promise(
-      fetchRegister(requestData),
+      fetchRegister(requestData).then(() => {
+        navigate(`/${store?.name}/login-buyer`);
+        if (store?.name) {
+          Cookies.set('StoreNameBuyer', String(store?.name));
+        }
+      }),
       {
         loading: 'Sedang mendaftarkan akun...',
-        success: (res) => {
-          const responseData = res.data;
-          navigate(`/${store?.name}/login-buyer`);
-          if (store?.name) {
-            Cookies.set('StoreNameBuyer', String(store?.name));
-          }
-          return responseData.message;
-        },
-
-        error: (error) => {
-          return error;
-        },
+        success: 'Akun berhasil didaftarkan!',
+        error: 'Email sudah digunakan',
       },
       {
         success: {
@@ -93,6 +87,7 @@ export function RegisterBuyer() {
       }
     );
   };
+  
 
     const onClickGoogle = () => {
     //   setIsLoading(true);

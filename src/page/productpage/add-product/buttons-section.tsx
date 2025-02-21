@@ -14,10 +14,7 @@ const ButtonsSectionForm: React.FC<any> = ({ isLoading, isUpdateCase }) => {
       display={'flex'}
       flexDirection={'column'}
     >
-      <Box display={'flex'} justifyContent={'space-between'}>
-        <Button variant="outline" borderRadius={'20px'}>
-          Preview Halaman Checkout
-        </Button>
+      <Box display={'flex'} justifyContent={'end'}>
         <Box display={'flex'} gap={2}>
           <Button variant="outline" borderRadius={'20px'}>
             Batal
