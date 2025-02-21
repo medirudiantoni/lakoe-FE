@@ -6,7 +6,7 @@ import { useSellerStore } from '@/hooks/store';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
-import { TabsPesanan } from './tabs/tab-pesanan';
+// import { TabsPesanan } from './tabs/tab-pesanan';
 import { TabsProfile } from './tabs/tab-profile';
 import { useLocation } from 'react-router';
 
@@ -92,14 +92,14 @@ export function NewKeep() {
       <Tabs.Root defaultValue={`${pathname.includes('order') ? 'pesanan' : 'profile'}`} variant={'subtle'}>
         <Tabs.List>
           <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
-          <Tabs.Trigger value="pesanan">Pesanan</Tabs.Trigger>
+          {/* <Tabs.Trigger value="pesanan">Pesanan</Tabs.Trigger> */}
         </Tabs.List>
         <Tabs.Content value="profile">
           <TabsProfile />
         </Tabs.Content>
-        <Tabs.Content value="pesanan">
+        {/* <Tabs.Content value="pesanan">
           <TabsPesanan />
-        </Tabs.Content>
+        </Tabs.Content> */}
       </Tabs.Root>
     </Box>
   );

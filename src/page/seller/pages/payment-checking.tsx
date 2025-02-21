@@ -27,7 +27,7 @@ export default function PaymentCheckingPage(){
                     <LoadingCheckingPayment />
                 </Box>
             ) : (
-                <SuccessAnimation onClick={() => navigate(`/${store?.name}/buyer/order`)}  />
+                <SuccessAnimation onClick={() => navigate(`/${store?.name}`)}  />
             )}
         </Center>
     )

@@ -174,7 +174,7 @@ const SellerBillingPage = () => {
       {isSuccess && (
         <SuccessAnimation onClick={() => {
           setLoadingSuccess(true)
-          navigate(`/${store?.name}/buyer/order`)
+          navigate(`/${store?.name}`)
         }} />
       )}
       {loadingSuccess ? (
