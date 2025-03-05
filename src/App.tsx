@@ -40,6 +40,7 @@ import { LoginBuyer } from './page/seller/pages/login-page';
 import PaymentCheckingPage from './page/seller/pages/payment-checking';
 import SellerProductDetail from './page/seller/pages/product-detail';
 import { RegisterBuyer } from './page/seller/pages/register-page';
+import { LoadingScreenBuyer } from './components/loading-screen/loading-screen-buyer';
 
 function App() {
   // const user = useAuthStore((state: any) => state.user);
@@ -103,6 +104,11 @@ function App() {
     {
       path: '/loading-screen-buyer',
       Component: LoadingScreenBuyerGoogle,
+      HydrateFallback: Fallback,
+    },
+    {
+      path: '/loading-screen-buyerr',
+      Component: LoadingScreenBuyer,
       HydrateFallback: Fallback,
     },
     {

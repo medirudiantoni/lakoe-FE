@@ -12,6 +12,7 @@ import WithdrawForm from './withdraw';
 import { fetchOrders } from '@/features/auth/services/order.service';
 import { getBuyerCount } from '@/features/auth/services/buyer';
 import { useProductStore } from '@/features/auth/store/product-store';
+import { ChartComponent } from './chart';
 
 export function Dashboard() {
   const { user } = useAuthStore();
@@ -70,8 +71,8 @@ export function Dashboard() {
           </Text>
         </Flex>
 
-        <Grid templateColumns={'repeat(1, 1fr)'} gap={'3'} mt={'5'}>
-          {/* <GridItem
+        <Grid templateColumns={'repeat(2, 1fr)'} gap={'3'} mt={'5'}>
+          <GridItem
             backgroundColor={'#F8F8F8'}
             display={'flex'}
             justifyContent={'center'}
@@ -80,9 +81,20 @@ export function Dashboard() {
             <Flex flexDirection={'column'} alignItems={'center'}>
               <Text fontWeight={'semibold'}>Total Produk</Text>
               <Text fontWeight={'bold'}>{products.length}</Text>
+              {/* <Text fontWeight={'bold'}>34</Text> */}
+            </Flex>
+          </GridItem>
+          {/* <GridItem
+            backgroundColor={'#F8F8F8'}
+            display={'flex'}
+            justifyContent={'center'}
+            p={4}
+          >
+            <Flex flexDirection={'column'} alignItems={'center'}>
+              <Text fontWeight={'semibold'}>Aktivitas</Text>
+              <Text fontWeight={'bold'}>100</Text>
             </Flex>
           </GridItem> */}
-   
           <GridItem
             backgroundColor={'#F8F8F8'}
             display={'flex'}
@@ -101,13 +113,16 @@ export function Dashboard() {
               <Text fontWeight="bold">
               Rp {balance.toLocaleString('id-ID') || '0'}
             </Text>
+            //   <Text fontWeight="bold">
+            //   Rp 400.000
+            // </Text>
             
             )}
             </Flex>
           </GridItem>
         </Grid>
             <WithdrawForm storeId={storeId!}/>
-        <Grid templateColumns="repeat(1, 1fr)" gap={4} mt={5}>
+        <Grid templateColumns="repeat(2, 1fr)" gap={4} mt={5}>
           <Box>
             <Grid templateColumns="repeat(2, 1fr)" gap={4} height="100%">
               <GridItem
@@ -129,6 +144,7 @@ export function Dashboard() {
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Total Pendapatan</Text>
                   <Text fontWeight="bold">Rp {totalRevenue.toLocaleString('id-ID') || '0'}</Text>
+                  {/* <Text fontWeight="bold">Rp 767.000</Text> */}
                 </Box>
               </GridItem>
               <GridItem
@@ -149,6 +165,7 @@ export function Dashboard() {
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Total Order</Text>
                   <Text fontWeight="bold">{(orders?.length ?? 0).toLocaleString('id-ID')}</Text>
+                  {/* <Text fontWeight="bold">142</Text> */}
                 </Box>
               </GridItem>
               <GridItem
@@ -169,6 +186,7 @@ export function Dashboard() {
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Produk terjual</Text>
                   <Text fontWeight="bold"> {(orders?.filter(order => order.status === "pesanan selesai").length ?? 0).toLocaleString('id-ID')}</Text>
+                  {/* <Text fontWeight="bold">21</Text> */}
                 </Box>
               </GridItem>
               <GridItem
@@ -188,13 +206,14 @@ export function Dashboard() {
                 </Box>
                 <Box mt={3} fontSize={'24px'}>
                   <Text fontSize="14px">Pelanggan Aktif</Text>
-                  <Text fontWeight="bold">{userCount}</Text>
+                  {/* <Text fontWeight="bold">{userCount}</Text> */}
+                  <Text fontWeight="bold">65</Text>
                 </Box>
               </GridItem>
             </Grid>
           </Box>
 
-          {/* <ChartComponent /> */}
+          <ChartComponent/>
         </Grid>
         <TableDemo />
       </Box>
