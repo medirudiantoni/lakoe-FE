@@ -11,6 +11,8 @@ import LoadingLottie from '@/components/icons/lottie';
 import LayoutAdmin from '@/components/layout/layout-admin';
 import { fetchCurrentAdminData } from '@/features/auth/services/auth-admin';
 import { useAdminAuthStore } from '@/features/auth/store/auth-admin-store';
+import toast from 'react-hot-toast';
+
 
 const PrivateRouteAdmin = () => {
   const { setAdmin, admin } = useAdminAuthStore();
@@ -30,7 +32,7 @@ const PrivateRouteAdmin = () => {
       })
       .catch((error) => {
         console.log(error);
-        // toast.error('Anda belum login');
+        toast.error('Anda belum login');
       });
   }
 

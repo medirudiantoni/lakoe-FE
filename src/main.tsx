@@ -8,11 +8,11 @@ import './index.css';
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider>
         <App />
       </Provider>
     </QueryClientProvider>
-  </StrictMode>
+  // </StrictMode>
 );

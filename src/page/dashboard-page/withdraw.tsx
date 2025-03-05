@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { apiURL } from '@/utils/baseurl';
-import { Box, Input, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Input,
+  Text,
+  Badge,
+  Skeleton,
+} from '@chakra-ui/react';
 import {
   DialogActionTrigger,
   DialogBody,
@@ -9,67 +15,99 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogRoot,
   DialogTitle,
+  DialogRoot,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { fetchBalance } from '@/features/auth/services/store-service';
-import { useSellerStore } from '@/hooks/store';
 import Cookies from 'js-cookie';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../@/components/ui/table';
 
+type Withdraw = {
+  id: string;
+  amount: number;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  createdAt: string;
+};
 
 function WithdrawForm({ storeId }: { storeId: string }) {
-  const [amount, setAmount] = useState<number | ''>('');
+  const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const {store} = useSellerStore()
-  const token = Cookies.get('token')
+  const token = Cookies.get('token');
 
-
-  const { data, } = useQuery({
-    queryKey: ['balance', storeId], 
-    queryFn: async () => {
-      const response = await fetchBalance(storeId!, token!);
-      return response; // Harus mengembalikan { balance, totalRevenue }
-    },
-    enabled: !!store?.id, 
+  // Fetch saldo
+  const { data: balanceData, refetch: refetchBalance } = useQuery<{ balance: number }>({
+    queryKey: ['balance', storeId],
+    queryFn: async () => (storeId ? await fetchBalance(storeId, token!) : { balance: 0 }),
+    enabled: !!storeId,
   });
-  
-  // Pastikan `data` ada sebelum membaca balance & totalRevenue
-  const balance = data?.balance ?? 0;
 
-  
+  // Fetch daftar withdraw
+  const {
+    data: withdrawList = [],
+    isLoading: isLoadingWithdraws,
+    refetch: refetchWithdrawList,
+  } = useQuery<Withdraw[]>({
+    queryKey: ['withdrawList', storeId],
+    queryFn: async () => {
+      if (!storeId) return [];
+      try {
+        const response = await axios.get<{ data: Withdraw[] }>(
+          `${apiURL}withdraw?storeId=${storeId}`
+        );
+        return response.data.data || [];
+      } catch (error) {
+        console.error('Error fetching withdraw list:', error);
+        return [];
+      }
+    },
+    enabled: !!storeId,
+  });
+
+  const balance = balanceData?.balance ?? 0;
+  const isWithdrawPending = withdrawList.some((w) => w.status === 'Pending');
 
   const handleWithdraw = async () => {
     setError(null);
+    const withdrawAmount = Number(amount);
 
-    if (amount === '' || amount <= 0) {
-      setError('Masukan jumlah withdraw');
-      // toast.error('Masukan jumlah withdraw');
+    if (!withdrawAmount || withdrawAmount <= 0) {
+      setError('Masukkan jumlah withdraw yang valid');
       return;
     }
 
-    if (amount > balance) {
+    if (withdrawAmount > balance) {
       setError('Saldo tidak cukup');
       return;
     }
 
-    try {
-      await axios.post(`${apiURL}withdraw/request`, { amount, storeId });
-      toast.success('Berhasil mengajukan withdraw');
-      setAmount('');
-    } catch (err) {
-      setError('Saldo tidak cukup');
-    }
+    await toast.promise(
+      axios.post(
+        `${apiURL}withdraw/request`,
+        { amount: withdrawAmount, storeId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      ),
+      {
+        loading: 'Mengajukan withdraw...',
+        success: () => {
+          setAmount('');
+          refetchWithdrawList();
+          refetchBalance();
+          return 'Withdraw berhasil diajukan';
+        },
+        error: (err) => err.response?.data?.message || 'Terjadi kesalahan',
+      }
+    );
   };
 
   return (
     <Box>
       <DialogRoot>
         <DialogTrigger asChild>
-          <Button variant="outline" mt={'5'} size="sm" width={'full'}>
+          <Button variant="outline" mt="5" size="sm" width="full">
             Withdraw
           </Button>
         </DialogTrigger>
@@ -78,17 +116,65 @@ function WithdrawForm({ storeId }: { storeId: string }) {
             <DialogTitle>Withdraw</DialogTitle>
           </DialogHeader>
           <DialogBody>
-          <Text mb="2" fontWeight={'medium'}>Saldo anda :      Rp {balance?.toLocaleString('id-ID') || '0'}</Text>
+            <Text mb="2" fontWeight="medium">
+              Saldo anda: Rp {balance.toLocaleString('id-ID')}
+            </Text>
             <Input
               type="number"
               value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              placeholder="Masukan jumlah withdraw"
-              outline={'blue'}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Masukkan jumlah withdraw"
+              disabled={isWithdrawPending}
             />
-            {error && (
-              <Text color={'red'} mt={'2'}>
-                {error}
+            {error && <Text color="red" mt="2">{error}</Text>}
+            {isWithdrawPending && (
+              <Text fontSize="sm" color="gray.500" mt="1">
+                Menunggu proses withdraw...
+              </Text>
+            )}
+
+            <Text fontWeight="medium" mt="4">
+              Riwayat Withdraw:
+            </Text>
+            {isLoadingWithdraws ? (
+              <Skeleton height="150px" mt="2" />
+            ) : withdrawList.length > 0 ? (
+              <div className="overflow-x-auto max-h-64">
+              <Table className="min-w-full">
+                <TableHeader >
+                  <TableRow>
+                    <TableHead>Tanggal</TableHead>
+                    <TableHead>Jumlah</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {withdrawList.map((withdraw) => (
+                    <TableRow key={withdraw.id}>
+                      <TableCell>{new Date(withdraw.createdAt).toLocaleDateString('id-ID')}</TableCell>
+                      <TableCell>Rp {withdraw.amount.toLocaleString('id-ID')}</TableCell>
+                      <TableCell>
+                        <Badge
+                          colorPalette={
+                            withdraw.status === 'Pending'
+                              ? 'orange'
+                              : withdraw.status === 'Approved'
+                              ? 'green'
+                              : 'red'
+                          }
+                        >
+                          {withdraw.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            
+            ) : (
+              <Text color="gray.500" mt="2">
+                Belum ada transaksi withdraw
               </Text>
             )}
           </DialogBody>
@@ -96,7 +182,13 @@ function WithdrawForm({ storeId }: { storeId: string }) {
             <DialogActionTrigger asChild>
               <Button variant="outline">Batal</Button>
             </DialogActionTrigger>
-             <Button onClick={handleWithdraw} colorPalette={'blue'}>Ajukan</Button>
+            <Button
+              onClick={handleWithdraw}
+              colorPalette="blue"
+              disabled={isWithdrawPending || !amount}
+            >
+              Ajukan
+            </Button>
           </DialogFooter>
           <DialogCloseTrigger />
         </DialogContent>

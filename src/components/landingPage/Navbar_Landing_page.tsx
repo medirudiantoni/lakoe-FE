@@ -28,7 +28,7 @@ const Navbar_Landing_page = () => {
             </Text>
           </Link>
           <Link to={'/tentang'}>
-            <Text color="gray.600" _hover={{ color: 'blue.600' }}>
+            <Text color="blue.600" _hover={{ color: 'blue.600' }}>
               Tentang
             </Text>
           </Link>

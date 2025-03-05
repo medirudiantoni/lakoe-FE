@@ -1,14 +1,16 @@
-import { Badge, Box, Button, Table, } from '@chakra-ui/react';
+import { Badge, Box, Button, Table } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { apiURL } from '@/utils/baseurl';
 import { formatRupiah } from '@/lib/rupiah';
+import toast from 'react-hot-toast';
 
 export function Admin() {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState('Semua'); 
+  const token = Cookies.get('token');
 
   const {
     data: withdraws = [],
@@ -17,8 +19,11 @@ export function Admin() {
   } = useQuery({
     queryKey: ['withdraws'],
     queryFn: async () => {
-      const response = await axios.get(`${apiURL}withdraw/`);
-      console.log('respondataw', response.data)
+      const response = await axios.get(`${apiURL}withdraw/admin`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return Array.isArray(response.data) ? response.data : [];
     },
     staleTime: 1000 * 60, // 1 menit
@@ -34,12 +39,18 @@ export function Admin() {
       withdrawId: string;
       status: string;
     }) => {
-      await axios.post(`${apiURL}withdraw/process`, {
-        withdrawId,
-        status,
-        adminId,
-      });
-      return { withdrawId, status };
+      return toast.promise(
+        axios.post(`${apiURL}withdraw/process`, {
+          withdrawId,
+          status,
+          adminId,
+        }),
+        {
+          loading: `Memproses withdraw...`,
+          success: `Withdraw ${status.toLowerCase()} berhasil!`,
+          error: `Terjadi kesalahan, coba lagi!`,
+        }
+      );
     },
     onMutate: async ({ withdrawId, status }) => {
       await queryClient.cancelQueries({ queryKey: ['withdraws'] });
@@ -56,8 +67,7 @@ export function Admin() {
 
       return { previousWithdraws };
     },
-    onError: (err, _, context) => {
-      console.error('Withdraw error:', err); // Tetap bisa membaca error di console
+    onError: (_, __, context) => {
       if (context?.previousWithdraws) {
         queryClient.setQueryData(['withdraws'], context.previousWithdraws);
       }
@@ -67,13 +77,12 @@ export function Admin() {
     },
   });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error fetching withdraws</p>;
+  if (isLoading) return <p className='mt-10'>Loading...</p>;
+  if (isError) return <p className='mt-10'>Error fetching withdraws</p>;
 
-  // Filter withdraws berdasarkan status yang dipilih
   const filteredWithdraws = statusFilter === 'Semua'
-    ?  withdraws : withdraws.filter((withdraw) => withdraw.status === statusFilter)
-    ;
+    ? withdraws
+    : withdraws.filter((withdraw) => withdraw.status === statusFilter);
 
   return (
     <Box pt={5} px={12} textAlign={'right'}>
